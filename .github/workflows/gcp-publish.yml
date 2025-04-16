@@ -1,0 +1,26 @@
+name: Deploy to GCP
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: SSH to GCP and run Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USERNAME }}
+          key: ${{ secrets.GCP_SSH_KEY }}
+          script: |
+            mkdir -p aaps-ci-preparation
+            cd aaps-ci-preparation
+            rm -rf docker-compose.yml
+            wget https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/docker-compose.yml
+            docker-compose down --rmi all
+            docker-compose up -d

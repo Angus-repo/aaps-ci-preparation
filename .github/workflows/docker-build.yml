@@ -1,0 +1,52 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main') && github.repository_owner == 'Angus-repo'
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Get Maven project version
+      run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+
+    - name: print context
+      run: ls -al target
+
+    - name: Copy jar to Docker context
+      run: cp target/aaps-ci-preparation-*.jar aaps-ci-preparation.jar
+      
+    - name: print context2
+      run: ls -al
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/aaps-ci-preparation:latest
+          ${{ secrets.DOCKER_HUB_USERNAME }}/aaps-ci-preparation:${{ env.PROJECT_VERSION }}

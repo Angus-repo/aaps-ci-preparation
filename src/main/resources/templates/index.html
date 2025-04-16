@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" th:attr="content=${googleSiteVerification}" />
+    <title th:text="#{index.title}">AAPS CI 設定工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --success-color: #34a853;
+            --success-light: #e6f4ea;
+            --error-color: #ea4335;
+            --error-light: #fce8e6;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+            --background-light: #f8f9fa;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            background-image: linear-gradient(to bottom right, #f5f9ff, #f5f5f5);
+            padding: 20px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            width: 90%;
+            max-width: 800px;
+            padding: 32px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 1rem;
+        }
+        
+        .logo {
+            height: 48px;
+            margin-right: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .info-box {
+            background-color: var(--primary-light);
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 32px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: var(--text-primary);
+        }
+        
+        .info-box a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+
+        .steps-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .steps-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            position: relative;
+            max-width: 100%;
+            overflow: visible;
+        }
+        
+        .steps-indicator::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 24px;
+            right: 24px;
+            height: 2px;
+            background-color: var(--border-color);
+            z-index: -1;
+        }
+        
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            min-width: 80px;
+            max-width: 33.33%;
+        }
+        
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            flex-shrink: 0;
+        }
+        
+        .step-indicator.active .step-circle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.2);
+        }
+        
+        .step-indicator.completed .step-circle {
+            background-color: var(--success-color);
+            border-color: var (--success-color);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: center;
+            width: 100%;
+            overflow: visible;
+            white-space: normal;
+            line-height: 1.3;
+        }
+
+        .step {
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .step.active {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .step-header {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            background-color: white;
+            transition: background-color var(--transition-fast);
+            border-bottom: 1px solid transparent;
+        }
+        
+        .step.active .step-header {
+            border-bottom-color: var(--border-color);
+            background-color: var(--primary-light);
+        }
+
+        .step-header:hover {
+            background-color: var(--background-light);
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-right: 12px;
+            transition: all var(--transition-normal);
+        }
+        
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .step-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .step.active .step-header h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .step-icon {
+            margin-left: 8px;
+            transition: transform var(--transition-normal);
+        }
+        
+        .step.active .step-icon {
+            transform: rotate(180deg);
+        }
+
+        .step-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-normal);
+            padding: 0 20px;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .step.active .step-content {
+            max-height: 2000px;
+            padding: 24px 20px;
+            opacity: 1;
+            transform: translateY(0);
+            transition: max-height var (--transition-normal), padding var(--transition-normal), opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .field-group {
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .field-group label {
+            font-weight: 500;
+            color: var(--text-primary);
+            flex: 0 0 180px;
+        }
+
+        .field-group input[type="text"],
+        .field-group input[type="file"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background-color: var(--background-light);
+            min-width: 0;
+            transition: all var(--transition-fast);
+        }
+
+        .field-group input[type="text"]:focus,
+        .field-group input[type="file"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+            background-color: white;
+        }
+
+        .field-group input[type="text"][readonly] {
+            background-color: var(--background-light);
+            cursor: not-allowed;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+        }
+
+        input[type="file"]::file-selector-button {
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            margin-right: 16px;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            min-height: 44px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .button i {
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .button:active {
+            transform: translateY(-1px);
+        }
+
+        .button-success {
+            background-color: var(--success-color);
+        }
+
+        .button-success:hover {
+            background-color: #2d9247;
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            min-height: 36px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .copy-btn i {
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background-color: #2d9247;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .copy-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: var (--radius-sm);
+            display: none;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success {
+            background-color: var(--success-light);
+            color: var (--success-color);
+            border: 1px solid #b7dfb9;
+        }
+
+        .error {
+            background-color: var(--error-light);
+            color: var(--error-color);
+            border: 1px solid #f5c2c0;
+        }
+
+        .google-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: white;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .google-btn:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: #4285f4;
+        }
+        
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            color: white;
+            border-radius: var(--radius-sm);
+            display: none;
+            animation: fadeInOut 2s ease-in-out;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            font-weight: 500;
+            text-align: center;
+            min-width: 250px;
+        }
+
+        .toast-success {
+            background: var(--success-color);
+        }
+
+        .toast-error {
+            background: var(--error-color);
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-description {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* 平板裝置 */
+        @media (max-width: 1024px) {
+            .container {
+                width: 95%;
+                padding: 24px;
+            }
+        }
+
+        /* 手機裝置 */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                width: 100%;
+                padding: 20px;
+                margin: 20px 0;
+                border-radius: var(--radius-sm);
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                height: 36px;
+            }
+
+            .step-label {
+                font-size: 0.7rem;
+            }
+
+            .field-group {
+                margin: 12px 0;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .field-group label {
+                width: 100%;
+                min-width: unset;
+                margin: 0;
+                flex: none;
+            }
+
+            .field-group input[type="text"],
+            .field-group input[type="file"] {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .button,
+            .copy-btn {
+                width: 100%;
+            }
+
+            .step-header h2 {
+                font-size: 1rem;
+            }
+        }
+
+        /* 較小的手機裝置 */
+        @media (max-width: 320px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .step-circle {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/androidaps-logo.png" alt="AndroidAPS Logo" class="logo">
+            <h1 th:text="#{index.title}">AAPS CI 設定工具</h1>
+        </div>
+        
+        <div class="info-box">
+            <p th:text="#{index.description}">本網頁為AAPS CI前置設定，目地在於每個AAPS github fork可以透過github actions來建置apk，並將apk上傳到google drive，方便後續使用。</p>
+            <p style="margin-top: 12px;">
+                <span th:text="#{index.privacy.notice}">使用本工具前，請詳閱我們的</span>
+                <a href="/docs/privacy.md" th:text="#{index.privacy.link}">隱私政策</a>
+                <span th:text="#{index.privacy.consent}">。繼續使用本服務，即表示您同意我們的隱私政策條款。</span>
+            </p>
+        </div>
+        
+        <!-- 步驟 1 -->
+        <div class="step active" id="step1">
+            <div class="step-header" onclick="toggleStep(1)">
+                <div class="step-title">
+                    <div class="step-number">1</div>
+                    <h2 th:text="#{index.step1.title}">產生 JKS 金鑰庫</h2>
+                </div>
+                <i class="fas fa-chevron-down step-icon"></i>
+            </div>
+            <div class="step-content">
+                <p class="step-description" th:text="#{index.step1.description}">如果您是第一次使用 AAPS，需要產生新的 JKS 金鑰庫：</p>
+                <div class="button-container">
+                    <button onclick="generateJks()" class="button">
+                        <i class="fas fa-key"></i>
+                        <span th:text="#{index.step1.generate}">產生 JKS</span>
+                    </button>
+                    <button onclick="verifyCurrentJks()" class="button button-success">
+                        <i class="fas fa-check-circle"></i>
+                        <span th:text="#{index.step1.verify}">立即驗證</span>
+                    </button>
+                </div>
+                <div id="jksFields">
+                    <div class="warning-box" style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #ffeeba;" th:text="#{index.step1.save.warning}">
+                        重要提示：這些金鑰值在頁面重新載入後將不會被保存。請務必將所有值複製到安全的地方後再繼續。
+                    </div>
+                    <div class="field-group">
+                        <label>KEYSTORE_BASE64:</label>
+                        <input type="text" id="keystoreBase64" readonly>
+                        <button onclick="copyToClipboard('keystoreBase64')" class="copy-btn">
+                            <i class="fas fa-copy"></i>
+                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                    </div>
+                    <div class="field-group">
+                        <label>KEYSTORE_PASSWORD:</label>
+                        <input type="text" id="keystorePassword" readonly>
+                        <button onclick="copyToClipboard('keystorePassword')" class="copy-btn">
+                            <i class="fas fa-copy"></i>
+                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                    </div>
+                    <div class="field-group">
+                        <label>KEY_ALIAS:</label>
+                        <input type="text" id="keyAlias" readonly>
+                        <button onclick="copyToClipboard('keyAlias')" class="copy-btn">
+                            <i class="fas fa-copy"></i>
+                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                    </div>
+                    <div class="field-group">
+                        <label>KEY_PASSWORD:</label>
+                        <input type="text" id="keyPassword" readonly>
+                        <button onclick="copyToClipboard('keyPassword')" class="copy-btn">
+                            <i class="fas fa-copy"></i>
+                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                    </div>
+                    <div id="verifyMessage" class="message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步驟 2 -->
+        <div class="step" id="step2">
+            <div class="step-header" onclick="toggleStep(2)">
+                <div class="step-title">
+                    <div class="step-number">2</div>
+                    <h2 th:text="#{index.step2.title}">上傳及轉換 JKS</h2>
+                </div>
+                <i class="fas fa-chevron-down step-icon"></i>
+            </div>
+            <div class="step-content">
+                <p class="step-description" th:text="#{index.step2.description}">請選擇要上傳的 JKS 檔案：</p>
+                <div class="button-container">
+                    <input type="file" id="jksFile" accept=".jks">
+                    <button onclick="convertJks()" class="button">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span th:text="#{index.step2.convert}">轉換為 Base64</span>
+                    </button>
+                </div>
+                <div class="warning-box" style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #ffeeba;" th:text="#{index.step2.save.warning}">
+                    重要提示：此 Base64 值在頁面重新載入後將不會被保存。請務必將其複製到安全的地方。
+                </div>
+                <div class="field-group">
+                    <label>KEYSTORE_BASE64:</label>
+                    <input type="text" id="convertedBase64" readonly>
+                    <button onclick="copyConvertedBase64()" class="copy-btn">
+                        <i class="fas fa-copy"></i>
+                        <span th:text="#{auth.copy}">複製</span>
+                    </button>
+                </div>
+                <div id="convertMessage" class="message"></div>
+            </div>
+        </div>
+
+        <!-- 步驟 3 -->
+        <div class="step" id="step3">
+            <div class="step-header" onclick="toggleStep(3)">
+                <div class="step-title">
+                    <div class="step-number">3</div>
+                    <h2 th:text="#{index.step3.title}">取得 Google Drive 授權</h2>
+                </div>
+                <i class="fas fa-chevron-down step-icon"></i>
+            </div>
+            <div class="step-content">
+                <p class="step-description" th:text="#{index.step3.description}">授權 AAPS CI 存取您的 Google Drive，用於儲存編譯後的 APK：</p>
+                <a href="/login" class="google-btn">
+                    <img src="https://accounts.google.com/favicon.ico" 
+                            alt="Google Logo" 
+                            class="google-icon" />
+                    <span th:text="#{index.google.login}">使用 Google 帳號登入</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast toast-success" id="copySuccess" th:text="#{auth.copied}">已複製到剪貼簿</div>
+    <div class="toast toast-success" id="testSuccess" th:text="#{auth.test.success}">驗證成功</div>
+    <div class="toast toast-error" id="testError" th:text="#{auth.test.failed}">驗證失敗</div>
+    
+    <script>
+        function toggleStep(stepNumber) {
+            const steps = document.querySelectorAll('.step');
+            
+            steps.forEach((step, index) => {
+                if (index + 1 === stepNumber) {
+                    step.classList.toggle('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+
+        function generateJks() {
+            const button = document.querySelector('#step1 .button');
+            const originalText = button.innerHTML;
+            const generatingMessage = document.getElementById('i18n-step1-generating').textContent;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + generatingMessage;
+            button.disabled = true;
+            
+            fetch('/generate-jks', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('keystoreBase64').value = data.keystoreBase64;
+                document.getElementById('keystorePassword').value = data.keystorePassword;
+                document.getElementById('keyAlias').value = data.keyAlias;
+                document.getElementById('keyPassword').value = data.keyPassword;
+                
+                // 顯示成功訊息 - 使用國際化標籤
+                const successMessage = document.getElementById('i18n-step1-success').textContent;
+                showVerifyMessage(successMessage, true);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // 顯示錯誤訊息 - 使用國際化標籤
+                const errorMessage = document.getElementById('i18n-step1-error').textContent;
+                showVerifyMessage(errorMessage, false);
+            })
+            .finally(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
+
+        function showToast(elementId, message) {
+            const toast = document.getElementById(elementId);
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+
+        function copyToClipboard(elementId) {
+            const input = document.getElementById(elementId);
+            input.select();
+            input.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            const copiedMessage = document.getElementById('copySuccess').textContent;
+            showToast('copySuccess', copiedMessage);
+        }
+
+        function verifyCurrentJks() {
+            const data = {
+                keystoreBase64: document.getElementById('keystoreBase64').value,
+                keystorePassword: document.getElementById('keystorePassword').value,
+                keyAlias: document.getElementById('keyAlias').value,
+                keyPassword: document.getElementById('keyPassword').value
+            };
+
+            if (!data.keystoreBase64 || !data.keystorePassword || !data.keyAlias || !data.keyPassword) {
+                const verifyRequiredMessage = document.getElementById('i18n-step1-verify-required').textContent;
+                showToast('testError', verifyRequiredMessage);
+                return;
+            }
+            
+            const button = document.querySelector('#step1 .button-success');
+            const originalText = button.innerHTML;
+            const verifyingMessage = document.getElementById('i18n-step1-verifying').textContent;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + verifyingMessage;
+            button.disabled = true;
+
+            fetch('/verify-jks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showToast('testSuccess', result.message);
+                } else {
+                    showToast('testError', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const processErrorMessage = document.getElementById('i18n-jks-verify-process-error').textContent;
+                showToast('testError', processErrorMessage);
+            })
+            .finally(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
+
+        function showVerifyMessage(message, isSuccess) {
+            const messageDiv = document.getElementById('verifyMessage');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            messageDiv.className = 'message ' + (isSuccess ? 'success' : 'error');
+        }
+
+        function convertJks() {
+            const fileInput = document.getElementById('jksFile');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                const fileRequiredMessage = document.getElementById('i18n-step2-file-required').textContent;
+                showConvertMessage(fileRequiredMessage, false);
+                return;
+            }
+            
+            const button = document.querySelector('#step2 .button');
+            const originalText = button.innerHTML;
+            const convertingMessage = document.getElementById('i18n-step2-converting').textContent;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + convertingMessage;
+            button.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            fetch('/convert-jks', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    document.getElementById('convertedBase64').value = result.base64Content;
+                    showConvertMessage(result.message, true);
+                } else {
+                    showConvertMessage(result.message, false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorMessage = document.getElementById('i18n-step2-error').textContent;
+                showConvertMessage(errorMessage, false);
+            })
+            .finally(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
+
+        function copyConvertedBase64() {
+            const input = document.getElementById('convertedBase64');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            const copiedMessage = document.getElementById('copySuccess').textContent;
+            showToast('copySuccess', copiedMessage);
+        }
+
+        function showConvertMessage(message, isSuccess) {
+            const messageDiv = document.getElementById('convertMessage');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            messageDiv.className = 'message ' + (isSuccess ? 'success' : 'error');
+        }
+
+        // 預設開啟第一個步驟
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleStep(1);
+            
+            // 清除任何可能存在的表單值
+            document.getElementById('keystoreBase64').value = '';
+            document.getElementById('keystorePassword').value = '';
+            document.getElementById('keyAlias').value = '';
+            document.getElementById('keyPassword').value = '';
+            document.getElementById('convertedBase64').value = '';
+            
+            // 添加頁面卸載事件，確保頁面關閉或重新載入時清除敏感值
+            window.addEventListener('beforeunload', function() {
+                document.getElementById('keystoreBase64').value = '';
+                document.getElementById('keystorePassword').value = '';
+                document.getElementById('keyAlias').value = '';
+                document.getElementById('keyPassword').value = '';
+                document.getElementById('convertedBase64').value = '';
+            });
+        });
+    </script>
+    
+    <!-- 隱藏的國際化訊息元素 -->
+    <div style="display: none;">
+        <span id="i18n-step1-success" th:text="#{index.step1.success}">JKS 已成功產生！請複製這些值並保存在安全的地方。</span>
+        <span id="i18n-step1-error" th:text="#{index.step1.error}">產生 JKS 時發生錯誤</span>
+        <span id="i18n-step1-generating" th:text="#{index.step1.generating}">產生中...</span>
+        <span id="i18n-step1-verify-required" th:text="#{index.step1.verify.required}">請先產生 JKS</span>
+        <span id="i18n-step1-verifying" th:text="#{index.step1.verifying}">驗證中...</span>
+        <span id="i18n-jks-verify-process-error" th:text="#{index.jks.verify.process.error}">驗證過程發生錯誤</span>
+        <span id="i18n-step2-file-required" th:text="#{index.step2.file.required}">請先選擇 JKS 檔案</span>
+        <span id="i18n-step2-converting" th:text="#{index.step2.converting}">轉換中...</span>
+        <span id="i18n-step2-error" th:text="#{index.step2.error}">轉換過程發生錯誤</span>
+    </div>
+</body>
+</html>

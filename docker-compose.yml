@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  aaps-ci-preparation:
+    container_name: aaps-ci-preparation
+    image: lh0528/aaps-ci-preparation:latest
+    ports:
+      - "8082:8080"
+    environment:
+      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
+      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI}
+    restart: always
+    networks:
+        - aaps
+
+  nginx:
+      image: nginx:latest
+      container_name: nginx-aaps-ci
+      restart: always
+      ports:
+        - "81:80"
+        - "8443:443"
+      volumes:
+        - ./nginx.conf:/etc/nginx/nginx.conf
+        - ./certs:/etc/nginx/certs
+      networks:
+        - aaps
+
+networks:
+  aaps:
+    name: aaps-network

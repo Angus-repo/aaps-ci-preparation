@@ -639,35 +639,43 @@
                         重要提示：這些金鑰值在頁面重新載入後將不會被保存。請務必將所有值複製到安全的地方後再繼續。
                     </div>
                     <div class="field-group">
-                        <label>KEYSTORE_BASE64:</label>
-                        <input type="text" id="keystoreBase64" readonly>
-                        <button onclick="copyToClipboard('keystoreBase64')" class="copy-btn">
+                        <label id="KEYSTORE_BASE64_LABEL">KEYSTORE_BASE64:</label>
+                        <button onclick="copyToClipboardText('KEYSTORE_BASE64')" class="copy-btn" title="copy">
                             <i class="fas fa-copy"></i>
-                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                        <input type="text" id="keystoreBase64" readonly>
+                        <button onclick="copyToClipboard('keystoreBase64')" class="copy-btn" title="copy">
+                            <i class="fas fa-copy"></i>
                         </button>
                     </div>
                     <div class="field-group">
                         <label>KEYSTORE_PASSWORD:</label>
-                        <input type="text" id="keystorePassword" readonly>
-                        <button onclick="copyToClipboard('keystorePassword')" class="copy-btn">
+                        <button onclick="copyToClipboardText('KEYSTORE_PASSWORD')" class="copy-btn" title="copy">
                             <i class="fas fa-copy"></i>
-                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                        <input type="text" id="keystorePassword" readonly>
+                        <button onclick="copyToClipboard('keystorePassword')" class="copy-btn" title="copy">
+                            <i class="fas fa-copy"></i>
                         </button>
                     </div>
                     <div class="field-group">
                         <label>KEY_ALIAS:</label>
-                        <input type="text" id="keyAlias" readonly>
-                        <button onclick="copyToClipboard('keyAlias')" class="copy-btn">
+                        <button onclick="copyToClipboardText('KEY_ALIAS')" class="copy-btn" title="copy">
                             <i class="fas fa-copy"></i>
-                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                        <input type="text" id="keyAlias" readonly>
+                        <button onclick="copyToClipboard('keyAlias')" class="copy-btn" title="copy">
+                            <i class="fas fa-copy"></i>
                         </button>
                     </div>
                     <div class="field-group">
                         <label>KEY_PASSWORD:</label>
-                        <input type="text" id="keyPassword" readonly>
-                        <button onclick="copyToClipboard('keyPassword')" class="copy-btn">
+                        <button onclick="copyToClipboardText('KEY_PASSWORD')" class="copy-btn" title="copy">
                             <i class="fas fa-copy"></i>
-                            <span th:text="#{auth.copy}">複製</span>
+                        </button>
+                        <input type="text" id="keyPassword" readonly>
+                        <button onclick="copyToClipboard('keyPassword')" class="copy-btn" title="copy">
+                            <i class="fas fa-copy"></i>
                         </button>
                     </div>
                     <div id="verifyMessage" class="message"></div>
@@ -698,10 +706,12 @@
                 </div>
                 <div class="field-group">
                     <label>KEYSTORE_BASE64:</label>
-                    <input type="text" id="convertedBase64" readonly>
-                    <button onclick="copyConvertedBase64()" class="copy-btn">
+                    <button onclick="copyToClipboardText('KEYSTORE_BASE64')" class="copy-btn" title="copy">
                         <i class="fas fa-copy"></i>
-                        <span th:text="#{auth.copy}">複製</span>
+                    </button>
+                    <input type="text" id="convertedBase64" readonly>
+                    <button onclick="copyConvertedBase64()" class="copy-btn" title="copy">
+                        <i class="fas fa-copy"></i>
                     </button>
                 </div>
                 <div id="convertMessage" class="message"></div>
@@ -709,6 +719,7 @@
         </div>
 
         <!-- 步驟 3 -->
+         <!--
         <div class="step" id="step3">
             <div class="step-header" onclick="toggleStep(3)">
                 <div class="step-title">
@@ -727,6 +738,7 @@
                 </a>
             </div>
         </div>
+        -->
     </div>
 
     <div class="toast toast-success" id="copySuccess" th:text="#{auth.copied}">已複製到剪貼簿</div>
@@ -786,6 +798,16 @@
             setTimeout(() => {
                 toast.style.display = 'none';
             }, 2000);
+        }
+
+        //請調整這個function，將text放入剪貼簿
+        function copyToClipboardText(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() {
+                    const copiedMessage = document.getElementById('copySuccess').textContent;
+                    showToast('copySuccess', copiedMessage);
+                });
+            }
         }
 
         function copyToClipboard(elementId) {

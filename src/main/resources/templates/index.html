@@ -961,21 +961,6 @@
             });
         });
 
-        // 自動偵測瀏覽器語系，若網址未帶 lang 參數才自動導向
-        (function() {
-            if (!window.location.search.includes('lang=')) {
-                var browserLang = navigator.language || navigator.userLanguage;
-                var lang = 'en';
-                if (browserLang.toLowerCase().startsWith('zh')) {
-                    lang = 'zh_TW';
-                } else if (browserLang.toLowerCase().startsWith('cs')) {
-                    lang = 'cs';
-                }
-                var url = new URL(window.location.href);
-                url.searchParams.set('lang', lang);
-                window.location.replace(url.toString());
-            }
-        })();
     </script>
     
     <!-- 隱藏的國際化訊息元素 -->

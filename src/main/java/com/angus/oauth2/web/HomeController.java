@@ -104,7 +104,7 @@ public class HomeController {
             String keyPassword = generateRandomPassword();
             String keyAlias = "key0";
             String tempDir = System.getProperty("java.io.tmpdir");
-            String keystorePath = tempDir + "/keystore.jks";
+            String keystorePath = tempDir + "/keystore_" + java.util.UUID.randomUUID() + ".jks";
 
             // 使用 keytool 生成 keystore
             String[] command = {
@@ -118,6 +118,7 @@ public class HomeController {
                 "-validity", "10000",
                 "-storepass", keystorePassword,
                 "-keypass", keyPassword,
+                "-storetype", "JKS",
                 "-dname", "CN=Android Debug,O=Android,C=US"
             };
 
@@ -158,7 +159,8 @@ public class HomeController {
         String tempDir = System.getProperty("java.io.tmpdir");
         Path keystorePath = Path.of(tempDir, "keystore");
         File keystoreDir = keystorePath.toFile();
-        File jksFile = new File(keystoreDir, "keystore.jks");
+        String randomJksName = "keystore_" + java.util.UUID.randomUUID() + ".jks";
+        File jksFile = new File(keystoreDir, randomJksName);
 
         try {
             // 確保目錄存在
@@ -179,7 +181,8 @@ public class HomeController {
                 "-alias", request.getKeyAlias(),
                 "-keystore", jksFile.getAbsolutePath(),
                 "-storepass", request.getKeystorePassword(),
-                "-keypass", request.getKeyPassword()
+                "-keypass", request.getKeyPassword(),
+                "-storetype", "JKS"
             };
 
             // 執行 keytool 命令

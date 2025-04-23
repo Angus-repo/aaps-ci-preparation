@@ -606,7 +606,34 @@
                 <form id="langForm" method="get" style="display:inline;">
                     <select id="langSelect" name="lang" onchange="document.getElementById('langForm').submit();" style="padding:6px 12px; border-radius:6px; border:1px solid #dadce0; font-size:1rem;">
                         <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                        <option value="ar" th:selected="${#locale.language == 'ar'}">العربية</option>
+                        <option value="bg" th:selected="${#locale.language == 'bg'}">Български</option>
+                        <option value="ca" th:selected="${#locale.language == 'ca'}">Català</option>
                         <option value="cs" th:selected="${#locale.language == 'cs'}">Čeština</option>
+                        <option value="da" th:selected="${#locale.language == 'da'}">Dansk</option>
+                        <option value="de" th:selected="${#locale.language == 'de'}">Deutsch</option>
+                        <option value="el" th:selected="${#locale.language == 'el'}">Ελληνικά</option>
+                        <option value="es" th:selected="${#locale.language == 'es'}">Español</option>
+                        <option value="fr" th:selected="${#locale.language == 'fr'}">Français</option>
+                        <option value="he" th:selected="${#locale.language == 'he'}">עברית</option>
+                        <option value="hr" th:selected="${#locale.language == 'hr'}">Hrvatski</option>
+                        <option value="hu" th:selected="${#locale.language == 'hu'}">Magyar</option>
+                        <option value="it" th:selected="${#locale.language == 'it'}">Italiano</option>
+                        <option value="ko" th:selected="${#locale.language == 'ko'}">한국어</option>
+                        <option value="lt" th:selected="${#locale.language == 'lt'}">Lietuvių</option>
+                        <option value="nb" th:selected="${#locale.language == 'nb'}">Norsk Bokmål</option>
+                        <option value="nl" th:selected="${#locale.language == 'nl'}">Nederlands</option>
+                        <option value="pl" th:selected="${#locale.language == 'pl'}">Polski</option>
+                        <option value="pt-BR" th:selected="${#locale.language == 'pt' && #locale.country == 'BR'}">Português (Brasil)</option>
+                        <option value="pt-PT" th:selected="${#locale.language == 'pt' && #locale.country == 'PT'}">Português (Portugal)</option>
+                        <option value="ro" th:selected="${#locale.language == 'ro'}">Română</option>
+                        <option value="ru" th:selected="${#locale.language == 'ru'}">Русский</option>
+                        <option value="sk" th:selected="${#locale.language == 'sk'}">Slovenčina</option>
+                        <option value="sr-Latn" th:selected="${#locale.language == 'sr' && #locale.script == 'Latn'}">Srpski (latinica)</option>
+                        <option value="sv" th:selected="${#locale.language == 'sv'}">Svenska</option>
+                        <option value="tr" th:selected="${#locale.language == 'tr'}">Türkçe</option>
+                        <option value="uk" th:selected="${#locale.language == 'uk'}">Українська</option>
+                        <option value="zh-CN" th:selected="${#locale.language == 'zh' && #locale.country == 'CN'}">简体中文</option>
                         <option value="zh-TW" th:selected="${#locale.language == 'zh' && #locale.country == 'TW'}">繁體中文</option>
                     </select>
                 </form>

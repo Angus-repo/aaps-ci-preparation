@@ -29,6 +29,13 @@ public class OAuth2Application {
                     }
                 }
                 Locale browserLocale = request.getLocale();
+                // 1. 先精確比對完整的 Locale（language + country）
+                for (Locale supported : getSupportedLocales()) {
+                    if (supported.equals(browserLocale)) {
+                        return supported;
+                    }
+                }
+                // 2. 再 fallback 比對 language
                 for (Locale supported : getSupportedLocales()) {
                     if (supported.getLanguage().equals(browserLocale.getLanguage())) {
                         return supported;
@@ -38,8 +45,35 @@ public class OAuth2Application {
             }
         };
         resolver.setSupportedLocales(Arrays.asList(
-            Locale.forLanguageTag("en"),
+            Locale.forLanguageTag("ar"),
+            Locale.forLanguageTag("bg"),
+            Locale.forLanguageTag("ca"),
             Locale.forLanguageTag("cs"),
+            Locale.forLanguageTag("da"),
+            Locale.forLanguageTag("de"),
+            Locale.forLanguageTag("el"),
+            Locale.forLanguageTag("en"),
+            Locale.forLanguageTag("es"),
+            Locale.forLanguageTag("fr"),
+            Locale.forLanguageTag("he"),
+            Locale.forLanguageTag("hr"),
+            Locale.forLanguageTag("hu"),
+            Locale.forLanguageTag("it"),
+            Locale.forLanguageTag("ko"),
+            Locale.forLanguageTag("lt"),
+            Locale.forLanguageTag("nb"),
+            Locale.forLanguageTag("nl"),
+            Locale.forLanguageTag("pl"),
+            Locale.forLanguageTag("pt-BR"),
+            Locale.forLanguageTag("pt-PT"),
+            Locale.forLanguageTag("ro"),
+            Locale.forLanguageTag("ru"),
+            Locale.forLanguageTag("sk"),
+            Locale.forLanguageTag("sr-Latn"),
+            Locale.forLanguageTag("sv"),
+            Locale.forLanguageTag("tr"),
+            Locale.forLanguageTag("uk"),
+            Locale.forLanguageTag("zh-CN"),
             Locale.forLanguageTag("zh-TW")
         ));
         resolver.setDefaultLocale(Locale.ENGLISH);

@@ -507,6 +507,10 @@
             color: var(--text-secondary);
         }
 
+        .hidden-on-load {
+            display: none !important;
+        }
+
         /* Tablet device*/
         @media (max-width: 1024px) {
             .container {
@@ -652,7 +656,7 @@
                 </div>
                 <i class="fas fa-chevron-down step-icon"></i>
             </div>
-            <div class="step-content">
+            <div class="step-content hidden-on-load">
                 <p class="step-description" th:text="#{index.step1.description}">如果您是第一次使用 AAPS，需要產生新的 JKS 金鑰庫：</p>
                 <div class="button-container">
                     <button onclick="generateJks()" class="button">
@@ -721,7 +725,7 @@
                 </div>
                 <i class="fas fa-chevron-down step-icon"></i>
             </div>
-            <div class="step-content">
+            <div class="step-content hidden-on-load">
                 <p class="step-description" th:text="#{index.step2.description}">請選擇要上傳的 JKS 檔案：</p>
                 <div class="button-container">
                     <input type="file" id="jksFile" accept=".jks">
@@ -936,6 +940,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // 解除 step-content 的 hidden-on-load
+            document.querySelectorAll('.step-content.hidden-on-load').forEach(function(el) {
+                el.classList.remove('hidden-on-load');
+            });
             toggleStep(1);
             
             document.getElementById('keystoreBase64').value = '';

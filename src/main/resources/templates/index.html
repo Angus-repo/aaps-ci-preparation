@@ -601,7 +601,16 @@
     <div class="container">
         <div class="header">
             <img src="/androidaps-logo.png" alt="AndroidAPS Logo" class="logo">
-            <h1 th:text="#{index.title}">AAPS CI 設定工具</h1>
+            <h1 th:text="#{index.title}">AAPS CI Keystore tool</h1>
+            <div style="margin-left:auto;">
+                <form id="langForm" method="get" style="display:inline;">
+                    <select id="langSelect" name="lang" onchange="document.getElementById('langForm').submit();" style="padding:6px 12px; border-radius:6px; border:1px solid #dadce0; font-size:1rem;">
+                        <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                        <option value="cs" th:selected="${#locale.language == 'cs'}">Čeština</option>
+                        <option value="zh-TW" th:selected="${#locale.language == 'zh' && #locale.country == 'TW'}">繁體中文</option>
+                    </select>
+                </form>
+            </div>
         </div>
         
         <div class="info-box">
@@ -951,6 +960,22 @@
                 document.getElementById('convertedBase64').value = '';
             });
         });
+
+        // 自動偵測瀏覽器語系，若網址未帶 lang 參數才自動導向
+        (function() {
+            if (!window.location.search.includes('lang=')) {
+                var browserLang = navigator.language || navigator.userLanguage;
+                var lang = 'en';
+                if (browserLang.toLowerCase().startsWith('zh')) {
+                    lang = 'zh_TW';
+                } else if (browserLang.toLowerCase().startsWith('cs')) {
+                    lang = 'cs';
+                }
+                var url = new URL(window.location.href);
+                url.searchParams.set('lang', lang);
+                window.location.replace(url.toString());
+            }
+        })();
     </script>
     
     <!-- 隱藏的國際化訊息元素 -->

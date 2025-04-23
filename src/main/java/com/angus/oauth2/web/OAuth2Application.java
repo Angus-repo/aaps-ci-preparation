@@ -18,12 +18,29 @@ public class OAuth2Application {
 
     @Bean
     public LocaleResolver localeResolver() {
-        AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
+        AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver() {
+            @Override
+            public Locale resolveLocale(javax.servlet.http.HttpServletRequest request) {
+                String langParam = request.getParameter("lang");
+                if (langParam != null && !langParam.isEmpty()) {
+                    Locale locale = Locale.forLanguageTag(langParam.replace('_', '-'));
+                    if (getSupportedLocales().contains(locale)) {
+                        return locale;
+                    }
+                }
+                Locale browserLocale = request.getLocale();
+                for (Locale supported : getSupportedLocales()) {
+                    if (supported.getLanguage().equals(browserLocale.getLanguage())) {
+                        return supported;
+                    }
+                }
+                return getDefaultLocale();
+            }
+        };
         resolver.setSupportedLocales(Arrays.asList(
-            new Locale("en")
-            // ,
-            // new Locale("cs"),
-            // new Locale("zh", "TW")
+            Locale.forLanguageTag("en"),
+            Locale.forLanguageTag("cs"),
+            Locale.forLanguageTag("zh-TW")
         ));
         resolver.setDefaultLocale(Locale.ENGLISH);
         return resolver;
@@ -32,7 +49,7 @@ public class OAuth2Application {
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasenames("messages");
+        source.setBasenames("messages", "i18n/messages");
         source.setDefaultEncoding("UTF-8");
         source.setUseCodeAsDefaultMessage(true);
         return source;

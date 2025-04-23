@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" th:attr="content=${googleSiteVerification}" />
-    <title th:text="#{index.title}">AAPS CI 設定工具</title>
+    <title th:text="#{index.title}">AAPS CI Keystore 工具</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -507,7 +507,7 @@
             color: var(--text-secondary);
         }
 
-        /* 平板裝置 */
+        /* Tablet device*/
         @media (max-width: 1024px) {
             .container {
                 width: 95%;
@@ -515,7 +515,7 @@
             }
         }
 
-        /* 手機裝置 */
+        /* phone device*/
         @media (max-width: 768px) {
             body {
                 padding: 12px;
@@ -615,14 +615,8 @@
         
         <div class="info-box">
             <p th:text="#{index.description}">本網頁為AAPS CI前置設定，目地在於每個AAPS github fork可以透過github actions來建置apk，並將apk上傳到google drive，方便後續使用。</p>
-            <p style="margin-top: 12px;">
-                <span th:text="#{index.privacy.notice}">使用本工具前，請詳閱我們的</span>
-                <a href="/docs/privacy.md" th:text="#{index.privacy.link}">隱私政策</a>
-                <span th:text="#{index.privacy.consent}">。繼續使用本服務，即表示您同意我們的隱私政策條款。</span>
-            </p>
         </div>
         
-        <!-- 步驟 1 -->
         <div class="step active" id="step1">
             <div class="step-header" onclick="toggleStep(1)">
                 <div class="step-title">
@@ -692,7 +686,6 @@
             </div>
         </div>
 
-        <!-- 步驟 2 -->
         <div class="step" id="step2">
             <div class="step-header" onclick="toggleStep(2)">
                 <div class="step-title">
@@ -726,28 +719,6 @@
                 <div id="convertMessage" class="message"></div>
             </div>
         </div>
-
-        <!-- 步驟 3 -->
-         <!--
-        <div class="step" id="step3">
-            <div class="step-header" onclick="toggleStep(3)">
-                <div class="step-title">
-                    <div class="step-number">3</div>
-                    <h2 th:text="#{index.step3.title}">取得 Google Drive 授權</h2>
-                </div>
-                <i class="fas fa-chevron-down step-icon"></i>
-            </div>
-            <div class="step-content">
-                <p class="step-description" th:text="#{index.step3.description}">授權 AAPS CI 存取您的 Google Drive，用於儲存編譯後的 APK：</p>
-                <a href="/login" class="google-btn">
-                    <img src="https://accounts.google.com/favicon.ico" 
-                            alt="Google Logo" 
-                            class="google-icon" />
-                    <span th:text="#{index.google.login}">使用 Google 帳號登入</span>
-                </a>
-            </div>
-        </div>
-        -->
     </div>
 
     <div class="toast toast-success" id="copySuccess" th:text="#{auth.copied}">已複製到剪貼簿</div>
@@ -784,13 +755,11 @@
                 document.getElementById('keyAlias').value = data.keyAlias;
                 document.getElementById('keyPassword').value = data.keyPassword;
                 
-                // 顯示成功訊息 - 使用國際化標籤
                 const successMessage = document.getElementById('i18n-step1-success').textContent;
                 showVerifyMessage(successMessage, true);
             })
             .catch(error => {
                 console.error('Error:', error);
-                // 顯示錯誤訊息 - 使用國際化標籤
                 const errorMessage = document.getElementById('i18n-step1-error').textContent;
                 showVerifyMessage(errorMessage, false);
             })
@@ -809,7 +778,6 @@
             }, 2000);
         }
 
-        //請調整這個function，將text放入剪貼簿
         function copyToClipboardText(text) {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(function() {
@@ -940,18 +908,15 @@
             messageDiv.className = 'message ' + (isSuccess ? 'success' : 'error');
         }
 
-        // 預設開啟第一個步驟
         document.addEventListener('DOMContentLoaded', function() {
             toggleStep(1);
             
-            // 清除任何可能存在的表單值
             document.getElementById('keystoreBase64').value = '';
             document.getElementById('keystorePassword').value = '';
             document.getElementById('keyAlias').value = '';
             document.getElementById('keyPassword').value = '';
             document.getElementById('convertedBase64').value = '';
             
-            // 添加頁面卸載事件，確保頁面關閉或重新載入時清除敏感值
             window.addEventListener('beforeunload', function() {
                 document.getElementById('keystoreBase64').value = '';
                 document.getElementById('keystorePassword').value = '';
@@ -963,7 +928,6 @@
 
     </script>
     
-    <!-- 隱藏的國際化訊息元素 -->
     <div style="display: none;">
         <span id="i18n-step1-success" th:text="#{index.step1.success}">JKS 已成功產生！請複製這些值並保存在安全的地方。</span>
         <span id="i18n-step1-error" th:text="#{index.step1.error}">產生 JKS 時發生錯誤</span>

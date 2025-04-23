@@ -29,15 +29,14 @@ public class OAuth2Application {
                     }
                 }
                 Locale browserLocale = request.getLocale();
-                // 1. 先精確比對完整的 Locale（language + country）
                 for (Locale supported : getSupportedLocales()) {
-                    if (supported.equals(browserLocale)) {
+                    if (supported.getLanguage().equalsIgnoreCase(browserLocale.getLanguage()) &&
+                        supported.getCountry().equalsIgnoreCase(browserLocale.getCountry())) {
                         return supported;
                     }
                 }
-                // 2. 再 fallback 比對 language
                 for (Locale supported : getSupportedLocales()) {
-                    if (supported.getLanguage().equals(browserLocale.getLanguage())) {
+                    if (supported.getLanguage().equalsIgnoreCase(browserLocale.getLanguage())) {
                         return supported;
                     }
                 }

@@ -1,4 +1,4 @@
-package com.angus.oauth2.web;
+package com.angus.aaps.ci.keystore;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,11 +9,11 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import java.util.Locale;
 import java.util.Arrays;
 
-@SpringBootApplication(scanBasePackages = "com.angus.oauth2")
-public class OAuth2Application {
+@SpringBootApplication(scanBasePackages = "com.angus.aaps.ci.keystore")
+public class AapsCiKeystoreApplication {
     public static void main(String[] args) {
         
-        SpringApplication.run(OAuth2Application.class, args);
+        SpringApplication.run(AapsCiKeystoreApplication.class, args);
     }
 
     @Bean
@@ -82,7 +82,7 @@ public class OAuth2Application {
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasenames("messages", "i18n/messages");
+        source.setBasenames("i18n/messages");
         source.setDefaultEncoding("UTF-8");
         source.setUseCodeAsDefaultMessage(true);
         return source;

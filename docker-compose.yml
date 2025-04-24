@@ -6,9 +6,7 @@ services:
     ports:
       - "8082:8080"
     environment:
-      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
-      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
-      - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI}
+      - GOOGLE_SITE_VERIFICATION=${GOOGLE_SITE_VERIFICATION}
     restart: always
     networks:
         - aaps

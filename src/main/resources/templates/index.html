@@ -679,6 +679,11 @@
 
         <div class="info-box">
             <p th:text="#{index.description}">本網頁為AAPS CI前置設定，目地在於每個AAPS github fork可以透過github actions來建置apk，並將apk上傳到google drive，方便後續使用。</p>
+            <p style="margin-top: 12px;">
+                <span th:text="#{index.privacy.notice}">使用本工具前，請詳閱我們的</span>
+                <a href="/docs/privacy.md" th:text="#{index.privacy.link}">隱私政策</a>
+                <span th:text="#{index.privacy.consent}">。繼續使用本服務，即表示您同意我們的隱私政策條款。</span>
+            </p>
         </div>
         
         <div class="step active" id="step1">

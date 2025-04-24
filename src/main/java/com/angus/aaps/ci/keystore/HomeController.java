@@ -3,6 +3,7 @@ package com.angus.aaps.ci.keystore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.SecureRandom;
@@ -13,20 +14,29 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.angus.aaps.ci.service.MarkdownService;
 
 @Controller
 public class HomeController {
     
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private MarkdownService markdownService;
     
     @GetMapping("/")
     public String home(Model model) {
@@ -173,6 +183,56 @@ public class HomeController {
             sb.append(chars.charAt(index));
         }
         return sb.toString();
+    }
+
+    @GetMapping("/docs/{fileName:.+}")
+    public String viewDocument(@PathVariable String fileName, Model model) {
+        try {
+            // 從 resources/docs 目錄讀取文件
+            ClassPathResource resource = new ClassPathResource("docs/" + fileName);
+            String markdown = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            
+            // 移除 YAML front matter 並取得標題
+            String content = removeYamlFrontMatter(markdown);
+            String title = extractTitle(markdown);
+            
+            // 將 Markdown 轉換為 HTML
+            String html = markdownService.convertToHtml(content);
+            
+            // 添加到模型
+            model.addAttribute("content", html);
+            model.addAttribute("title", title);
+            
+            return "docs/document";
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Document not found");
+        }
+    }
+
+    private String removeYamlFrontMatter(String markdown) {
+        if (markdown.startsWith("---")) {
+            int endIndex = markdown.indexOf("---", 3);
+            if (endIndex != -1) {
+                // 返回 front matter 之後的內容，並移除多餘的空行
+                return markdown.substring(endIndex + 3).trim();
+            }
+        }
+        return markdown;
+    }
+
+    private String extractTitle(String markdown) {
+        if (markdown.startsWith("---")) {
+            int endIndex = markdown.indexOf("---", 3);
+            if (endIndex != -1) {
+                String frontMatter = markdown.substring(3, endIndex).trim();
+                for (String line : frontMatter.split("\n")) {
+                    if (line.startsWith("title:")) {
+                        return line.substring("title:".length()).trim();
+                    }
+                }
+            }
+        }
+        return "Document";
     }
 }
 

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import java.util.Locale;
 import java.util.Arrays;
 
-@SpringBootApplication(scanBasePackages = "com.angus.aaps.ci.keystore")
+@SpringBootApplication(scanBasePackages = "com.angus.aaps.ci")
 public class AapsCiKeystoreApplication {
     public static void main(String[] args) {
         

@@ -45,6 +45,13 @@
             <version>2.13.5</version>
         </dependency>
 
+        <!-- Markdown to HTML converter -->
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.21.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

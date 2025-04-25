@@ -240,7 +240,7 @@
       sessionStorage.setItem('clientMode', clientMode);
       sessionStorage.setItem('customClientId', document.getElementById('customClientId').value);
       if (!clientId) {
-        document.getElementById('refreshToken').value = '❌ Missing client ID.';
+        document.getElementById('oauth2Base64').value = '❌ Missing client ID.';
         return;
       }
 
@@ -266,7 +266,7 @@
       }
       const codeVerifier = sessionStorage.getItem("pkce_code_verifier");
       if (!codeVerifier) {
-        document.getElementById('refreshToken').value = '❌ Missing code_verifier.';
+        document.getElementById('oauth2Base64').value = '❌ Missing code_verifier.';
         return;
       }
 
@@ -285,7 +285,11 @@
       });
 
       const data = await res.json();
-      document.getElementById('refreshToken').value = data.refresh_token || '❌ No refresh token returned.\n' + JSON.stringify(data, null, 2);
+      if (data.refresh_token) {
+        document.getElementById('refreshToken').value = data.refresh_token;
+      } else {
+        document.getElementById('oauth2Base64').value = '❌ No refresh token returned.\n' + JSON.stringify(data, null, 2);
+      }
     }
 
     function copyRefreshToken() {

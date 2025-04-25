@@ -145,6 +145,25 @@
       from { bottom: 30px; opacity: 1; }
       to { bottom: 0; opacity: 0; }
     }
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+    .logo-divider {
+      width: 100%;
+      border-bottom: 2px solid #e8f0fe;
+      margin: 8px 0 12px 0;
+    }
+    h1[data-i18n="title"] {
+      color: #1a73e8;
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 0;
+      text-align: left;
+    }
   </style>
 </head>
 <body onload="setLanguageFromBrowser(); toggleClientInput();">
@@ -156,9 +175,10 @@
         <option value="zh-TW">繁體中文</option>
       </select>
     </div>
-    <div class="header" style="display: flex; align-items: center; gap: 24px; margin-bottom: 24px;">
+    <div class="header">
       <img src="/androidaps-logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;">
-      <h1 data-i18n="title" style="margin: 0;">OAuth2 PKCE Flow</h1>
+      <h1 data-i18n="title">OAuth2 PKCE Flow</h1>
+      <div class="logo-divider"></div>
     </div>
     <div id="clientModeGroup" style="margin: 0.5rem 0 1.5rem 0; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
       <label style="display: flex; align-items: center; gap: 0.25rem;">

@@ -8,11 +8,44 @@
 <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f9f9f9;
-      padding: 1rem;
+      background: #f5f5f5;
+      background-image: linear-gradient(to bottom right, #f5f9ff, #f5f5f5);
+      padding: 2rem;
       color: #333;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.10);
+      width: 90%;
       max-width: 700px;
-      margin: auto;
+      padding: 32px;
+      margin: 40px 0;
+      position: relative;
+    }
+    @media (max-width: 1024px) {
+      .container {
+        width: 95%;
+        padding: 24px;
+      }
+    }
+    @media (max-width: 768px) {
+      .container {
+        width: 100%;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+    }
+    @media (max-width: 320px) {
+      .container {
+        padding: 12px;
+      }
     }
     input[type="text"] {
       width: 100%;
@@ -115,36 +148,35 @@
   </style>
 </head>
 <body onload="setLanguageFromBrowser(); toggleClientInput();">
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-  
-    <select id="langSelector" style="margin-left: auto;" onchange="switchLanguage(this.value)">
-      <option value="en">English</option>
-      <option value="zh-TW">繁體中文</option>
-    </select>
-  </div>
-
-  <h2 data-i18n="title">OAuth2 PKCE Flow</h2>
-
-  <div id="clientModeGroup" style="margin: 0.5rem 0 1.5rem 0; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
-    <label style="display: flex; align-items: center; gap: 0.25rem;">
-      <input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()">
-      <span data-i18n="default">Default</span>
-    </label>
-    <label style="display: flex; align-items: center; gap: 0.25rem;">
-      <input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()">
-      <span data-i18n="custom">Custom</span>
-    </label>
-  </div>
-  
-  <div id="clientIdRow" style="display: none;">
-    <label>
-      <span data-i18n="clientId">Client ID:</span>
-      <input type="text" id="customClientId" placeholder="Your Google Client ID">
-    </label>
-  </div>
-  
-  <button onclick="startAuth()">Start Auth</button>
-
+  <div class="container">
+    <div style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+      <div style="flex: 1;"></div>
+      <select id="langSelector" style="margin-left: auto;" onchange="switchLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="zh-TW">繁體中文</option>
+      </select>
+    </div>
+    <div class="header" style="display: flex; align-items: center; gap: 24px; margin-bottom: 24px;">
+      <img src="/androidaps-logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;">
+      <h1 data-i18n="title" style="margin: 0;">OAuth2 PKCE Flow</h1>
+    </div>
+    <div id="clientModeGroup" style="margin: 0.5rem 0 1.5rem 0; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+      <label style="display: flex; align-items: center; gap: 0.25rem;">
+        <input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()">
+        <span data-i18n="default">Default</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.25rem;">
+        <input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()">
+        <span data-i18n="custom">Custom</span>
+      </label>
+    </div>
+    <div id="clientIdRow" style="display: none;">
+      <label>
+        <span data-i18n="clientId">Client ID:</span>
+        <input type="text" id="customClientId" placeholder="Your Google Client ID">
+      </label>
+    </div>
+    <button onclick="startAuth()">Start Auth</button>
     <h3 data-i18n="refreshToken">Refresh Token</h3>
     <input type="text" id="refreshToken" style="width:100%;box-sizing:border-box;margin-bottom:0.5rem;" readonly>
     <div class="copy-container" style="margin-top:0.5rem; flex-direction:column; align-items: flex-start; width:100%;">
@@ -152,7 +184,7 @@
       <textarea id="oauth2Base64" rows="4" readonly style="width:100%;box-sizing:border-box;resize:vertical; margin-top: 0.5rem; margin-bottom: 0.5rem;"></textarea>
     </div>
     <div class="copy-container" style="justify-content: flex-end; margin-top:0.5rem;">
-      <button onclick="copyOauth2Base64()" title="Copy to clipboard"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
+      <button onclick="copyOauth2Base64()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
           <path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 
           26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67
           0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 
@@ -160,6 +192,7 @@
         </svg> <span data-i18n="copy">Copy Oauth2 data</span></button>
     </div>
     <span id="toast" class="toast">Copied to clipboard!</span>
+  </div>
 
       <script>
     const redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
@@ -304,12 +337,12 @@
         "placeholder": "Your Google Client ID",
         "startAuth": "Start Auth",
         "refreshToken": "Refresh Token",
-        "copy": "Copy OAuth2 data:",
+        "copy": "Copy OAuth2 data",
         "toast": "Copied to clipboard!", "default": "Default", "custom": "Custom",
         "oauth2Data": "OAuth2 data:"
       },
       "zh-TW": {
-        "title": "AAPS-CI Auth",
+        "title": "AAPS-CI 授權",
         "clientId": "用戶端 ID：",
         "placeholder": "你的 Google 用戶端 ID",
         "startAuth": "開始授權",
@@ -317,259 +350,8 @@
         "copy": "複製 OAuth2 資料",
         "toast": "已複製到剪貼簿！", "default": "預設", "custom": "自訂",
         "oauth2Data": "OAuth2 資料："
-      },
-      "ar": {
-        "title": "OAuth2 PKCE",
-        "clientId": "معرف العميل:",
-        "placeholder": "معرف عميل Google الخاص بك",
-        "startAuth": "ابدأ المصادقة",
-        "refreshToken": "رمز التحديث",
-        "copy": "نسخ رمز التحديث:",
-        "toast": "تم النسخ إلى الحافظة!", "default": "افتراضي", "custom": "مخصص"
-      },
-      "de": {
-        "title": "OAuth2 PKCE-Flow",
-        "clientId": "Client-ID:",
-        "placeholder": "Ihre Google-Client-ID",
-        "startAuth": "Authentifizierung starten",
-        "refreshToken": "Aktualisieren Sie das Token",
-        "copy": "Kopieren Sie das Aktualisierungstoken:",
-        "toast": "In die Zwischenablage kopiert!", "default": "Standard", "custom": "Benutzerdefiniert"
-      },
-      "es": {
-        "title": "Flujo OAuth2 PKCE",
-        "clientId": "ID de cliente:",
-        "placeholder": "Tu ID de cliente de Google",
-        "startAuth": "Iniciar autenticación",
-        "refreshToken": "Token de actualización",
-        "copy": "Copiar token de actualización:",
-        "toast": "¡Copiado al portapapeles!", "default": "Predeterminado", "custom": "Personalizado"
-      },
-      "fr": {
-        "title": "Flux OAuth2 PKCE",
-        "clientId": "ID client:",
-        "placeholder": "Votre ID client Google",
-        "startAuth": "Démarrer l'authentification",
-        "refreshToken": "Jeton d'actualisation",
-        "copy": "Copier le jeton d'actualisation:",
-        "toast": "Copié dans le presse-papiers!", "default": "Par défaut", "custom": "Personnalisé"
-      },
-      "hi": {
-        "title": "OAuth2 PKCE प्रवाह",
-        "clientId": "क्लाइंट आईडी:",
-        "placeholder": "आपकी गूगल क्लाइंट आईडी",
-        "startAuth": "प्रमाणीकरण प्रारंभ करें",
-        "refreshToken": "रीफ्रेश टोकन",
-        "copy": "कॉपी रीफ्रेश टोकन:",
-        "toast": "क्लिपबोर्ड पर कॉपी किया गया!", "default": "डिफ़ॉल्ट", "custom": "कस्टम"
-      },
-      "it": {
-        "title": "Flusso OAuth2 PKCE",
-        "clientId": "ID client:",
-        "placeholder": "Il tuo ID client Google",
-        "startAuth": "Inizia autenticazione",
-        "refreshToken": "Token di aggiornamento",
-        "copy": "Copia token di aggiornamento:",
-        "toast": "Copiato negli appunti!", "default": "Predefinito", "custom": "Personalizzato"
-      },
-      "ja": {
-        "title": "OAuth2 PKCE フロー",
-        "clientId": "クライアント ID:",
-        "placeholder": "あなたの Google クライアント ID",
-        "startAuth": "認証を開始",
-        "refreshToken": "リフレッシュトークン",
-        "copy": "リフレッシュトークンをコピー:",
-        "toast": "クリップボードにコピーしました！", "default": "デフォルト", "custom": "カスタム"
-      },
-      "ko": {
-        "title": "OAuth2 PKCE 흐름",
-        "clientId": "클라이언트 ID:",
-        "placeholder": "Google 클라이언트 ID",
-        "startAuth": "인증 시작",
-        "refreshToken": "리프레시 토큰",
-        "copy": "리프레시 토큰 복사:",
-        "toast": "클립 보드에 복사됨!", "default": "기본값", "custom": "사용자 정의"
-      },
-      "ml": {
-        "title": "OAuth2 PKCE പ്രവാഹം",
-        "clientId": "ക്ലയന്റ് ഐഡി:",
-        "placeholder": "നിങ്ങളുടെ ഗൂഗിൾ ക്ലയന്റ് ഐഡി",
-        "startAuth": "അംഗീകാരം ആരംഭിക്കുക",
-        "refreshToken": "പുനരുജ്ജീവന ടോക്കൺ",
-        "copy": "പുനരുജ്ജീവന ടോക്കൺ പകർപ്പ്:",
-        "toast": "ക്ലിപ്ബോർഡിലേക്ക് പകർന്നെടുത്തു!", "default": "മൂലധനം", "custom": "കസ്റ്റം"
-      },
-      "mr": {
-        "title": "OAuth2 PKCE प्रवाह",
-        "clientId": "क्लायंट आयडी:",
-        "placeholder": "आपली गूगल क्लायंट आयडी",
-        "startAuth": "प्रमाणीकरण सुरू करा",
-        "refreshToken": "रीफ्रेश टोकन",
-        "copy": "कॉपी रीफ्रेश टोकन:",
-        "toast": "क्लिपबोर्डवर कॉपी केले!", "default": "डीफॉल्ट", "custom": "कस्टम"
-      },
-      "pl": {
-        "title": "OAuth2 PKCE Flow",
-        "clientId": "Identyfikator klienta:",
-        "placeholder": "Twój identyfikator klienta Google",
-        "startAuth": "Rozpocznij uwierzytelnianie",
-        "refreshToken": "Token odświeżania",
-        "copy": "Kopiuj token odświeżania:",
-        "toast": "Skopiowano do schowka!", "default": "Domyślnie", "custom": "Dostosowane"
-      },
-      "pt": {
-        "title": "Fluxo OAuth2 PKCE",
-        "clientId": "ID do cliente:",
-        "placeholder": "Seu ID de cliente do Google",
-        "startAuth": "Iniciar autenticação",
-        "refreshToken": "Token de atualização",
-        "copy": "Copiar token de atualização:",
-        "toast": "Copiado para a área de transferência!", "default": "Padrão", "custom": "Personalizado"
-      },
-      "ro": {
-        "title": "Flux OAuth2 PKCE",
-        "clientId": "ID client:",
-        "placeholder": "ID-ul clientului Google",
-        "startAuth": "Începeți autentificarea",
-        "refreshToken": "Refresh Token",
-        "copy": "Copiați Refresh Token:",
-        "toast": "Copiat în clipboard!", "default": "Implicit", "custom": "Personalizat"
-      },
-      "ru": {
-        "title": "OAuth2 PKCE",
-        "clientId": "ID клиента:",
-        "placeholder": "Ваш Google Client ID",
-        "startAuth": "Начать аутентификацию",
-        "refreshToken": "Токен обновления",
-        "copy": "Копировать токен обновления:",
-        "toast": "Скопировано в буфер обмена!", "default": "По умолчанию", "custom": "Пользовательский"
-      },
-      "ta": {
-        "title": "OAuth2 PKCE प्रवाहம்",
-        "clientId": "கிளையன்ட் ஐடி:",
-        "placeholder": "உங்கள் கூகிள் கிளையன்ட் ஐடி",
-        "startAuth": "அங்கீகாரம் தொடங்கு",
-        "refreshToken": "மீட்டமைப்பு டோக்கன்",
-        "copy": "ப Copies ியர் மீட்டமைப்பு டோக்கன்:",
-        "toast": "கிளிப்ப்போர்டுக்கு நகலெடுக்கப்பட்டது!", "default": "மூலதனம்", "custom": "விருப்பமிட்ட"
-      },
-      "th": {
-        "title": "OAuth2 PKCE",
-        "clientId": "ไคลเอนต์รหัสประจำตัว:",
-        "placeholder": "รหัสประจำตัว Google ไคลเอนต์ของคุณ",
-        "startAuth": "เริ่มการรับรองความถูกต้อง",
-        "refreshToken": "รีเฟรชโทเค็น",
-        "copy": "คัดลอกรีเฟรชโทเค็น:",
-        "toast": "คัดลอกไปยังคลิปบอร์ด!", "default": "ค่าเริ่มต้น", "custom": "ที่กำหนดเอง"
-      },
-      "tr": {
-        "title": "OAuth2 PKCE Akışı",
-        "clientId": "İstemci Kimliği:",
-        "placeholder": "Google İstemci Kimliğiniz",
-        "startAuth": "Kimlik Doğrulamayı Başlat",
-        "refreshToken": "Yenileme Jetonu",
-        "copy": "Yenileme Jetonunu Kopyala:",
-        "toast": "Pano'ya kopyalandı!", "default": "Varsayılan", "custom": "Özel"
-      },
-      "uk": {
-        "title": "OAuth2 PKCE",
-        "clientId": "ID клієнта:",
-        "placeholder": "Ваш Google Client ID",
-        "startAuth": "Почати автентифікацію",
-        "refreshToken": "Токен оновлення",
-        "copy": "Копіювати токен оновлення:",
-        "toast": "Скопійовано в буфер обміну!", "default": "За замовчуванням", "custom": "Користувацький"
-      },
-      "vi": {
-        "title": "Luồng OAuth2 PKCE",
-        "clientId": "ID khách hàng:",
-        "placeholder": "ID khách hàng Google của bạn",
-        "startAuth": "Bắt đầu xác thực",
-        "refreshToken": "Mã thông báo làm mới",
-        "copy": "Sao chép mã thông báo làm mới:",
-        "toast": "Đã sao chép vào clipboard!", "default": "Mặc định", "custom": "Tùy chỉnh"
-      },
-      "cy": {
-        "title": "OAuth2 PKCE llif",
-        "clientId": "ID cwsmer:",
-        "placeholder": "Eich ID Cwsmer Google",
-        "startAuth": "Dechrau Dilysu",
-        "refreshToken": "Token adnewyddu",
-        "copy": "Copiwr Token adnewyddu:",
-        "toast": "Wedi'i gopïo i'r clipfwrdd!", "default": "Diffyg", "custom": "Custom"
-      },
-      "el": {
-        "title": "Ροή OAuth2 PKCE",
-        "clientId": "Client ID:",
-        "placeholder": "Το αναγνωριστικό πελάτη της Google",
-        "startAuth": "Έναρξη αυθεντικοποίησης",
-        "refreshToken": "Ανανέωση Token",
-        "copy": "Αντιγραφή ανανέωσης Token:",
-        "toast": "Αντιγράφηκε στο πρόχειρο!", "default": "Προεπιλογή", "custom": "Προσαρμοσμένο"
-      },
-      "hi": {
-        "title": "OAuth2 PKCE प्रवाह",
-        "clientId": "क्लाइंट आईडी:",
-        "placeholder": "आपकी गूगल क्लाइंट आईडी",
-        "startAuth": "प्रमाणीकरण प्रारंभ करें",
-        "refreshToken": "रीफ्रेश टोकन",
-        "copy": "कॉपी रीफ्रेश टोकन:",
-        "toast": "क्लिपबोर्ड पर कॉपी किया गया!", "default": "डिफ़ॉल्ट", "custom": "कस्टम"
-      },
-      "hu": {
-        "title": "OAuth2 PKCE áramlás",
-        "clientId": "Ügyfél azonosító:",
-        "placeholder": "A Google ügyfélazonosítója",
-        "startAuth": "Hitelesítés indítása",
-        "refreshToken": "Frissítő jel",
-        "copy": "Másolja a frissítő jelet:",
-        "toast": "Másolva a vágólapra!", "default": "Alapértelmezett", "custom": "Testreszabott"
-      },
-      "id": {
-        "title": "Alur OAuth2 PKCE",
-        "clientId": "ID Klien:",
-        "placeholder": "ID Klien Google Anda",
-        "startAuth": "Mulai Otorisasi",
-        "refreshToken": "Token Penyegaran",
-        "copy": "Salin Token Penyegaran:",
-        "toast": "Disalin ke papan klip!", "default": "Bawaan", "custom": "Kustom"
-      },
-      "bn": {
-        "title": "OAuth2 PKCE প্রবাহ",
-        "clientId": "ক্লায়েন্ট আইডি:",
-        "placeholder": "আপনার গুগল ক্লায়েন্ট আইডি",
-        "startAuth": "প্রমাণীকরণ শুরু করুন",
-        "refreshToken": "রিফ্রেশ টোকেন",
-        "copy": "রিফ্রেশ টোকেন কপি করুন:",
-        "toast": "ক্লিপবোর্ডে কপি করা হয়েছে!", "default": "ডিফল্ট", "custom": "কাস্টম"
-      },
-      "pa": {
-        "title": "OAuth2 PKCE ਪ੍ਰਵਾਹ",
-        "clientId": "ਕਲਾਇੰਟ ਆਈਡੀ:",
-        "placeholder": "ਤੁਹਾਡੀ ਗੂਗਲ ਕਲਾਇੰਟ ਆਈਡੀ",
-        "startAuth": "ਪ੍ਰਮਾਣਿਕਤਾ ਸ਼ੁਰੂ ਕਰੋ",
-        "refreshToken": "ਰੀਫਰੈਸ਼ ਟੋਕਨ",
-        "copy": "ਕਾਪੀ ਰੀਫਰੈਸ਼ ਟੋਕਨ:",
-        "toast": "ਕਲਿੱਪਬੋਰਡ 'ਤੇ ਨਕਲ ਕੀਤਾ!", "default": "ਡਿਫਾਲਟ", "custom": "ਕਸਟਮ"
-      },
-      "sw": {
-        "title": "OAuth2 PKCE",
-        "clientId": "Kitambulisho cha mteja:",
-        "placeholder": "Kitambulisho chako cha Google Client",
-        "startAuth": "Anza Uthibitishaji",
-        "refreshToken": "Fungua Token",
-        "copy": "Nakili Refresh Token:",
-        "toast": "Kopiwa kwenye clipboard!", "default": "Chaguo-msingi", "custom": "Desturi"
-      },
-      "zu": {
-        "title": "OAuth2 PKCE",
-        "clientId": "Ikheli yekhasimende:",
-        "placeholder": "Ikheli yakho ye-Google Client",
-        "startAuth": "Qala Ukuqinisekiswa",
-        "refreshToken": "Vuselela i-Token",
-        "copy": "Copy Vuselela i-Token:",
-        "toast": "Kopishiwe kwi-clipboard!", "default": "Okwenziwa ngokuzenzakalelayo", "custom": "Okwenziwe ngokwezifiso"
       }
+      
     };
 
     function setLanguageFromBrowser() {
@@ -606,7 +388,7 @@
       const dict = i18nStrings[lang];
       document.querySelector('[data-i18n="title"]').innerText = dict.title;
       document.querySelector('[data-i18n="clientId"]').innerText = dict.clientId;
-      document.getElementById('clientId').placeholder = dict.placeholder;
+      document.getElementById('customClientId').placeholder = dict.placeholder;
       document.querySelector('button').innerText = dict.startAuth;
       document.querySelector('h3').innerText = dict.refreshToken;
       document.querySelector('[data-i18n="copy"]').innerText = dict.copy;

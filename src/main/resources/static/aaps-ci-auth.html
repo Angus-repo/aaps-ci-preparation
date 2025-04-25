@@ -145,21 +145,23 @@
   
   <button onclick="startAuth()">Start Auth</button>
 
-  <h3>Refresh Token</h3>
-  <textarea id="refreshToken" rows="6" readonly></textarea>
-  <div class="copy-container" style="justify-content: flex-end;">
-    <span data-i18n="copy">Copy Refresh Token:</span>
-    <button onclick="copyRefreshToken()" title="Copy to clipboard"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
-        <path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 
-        26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67
-        0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 
-        32-32V128c0-17.67-14.33-32-32-32z"/>
-      </svg></button>
-  </div>
+    <h3 data-i18n="refreshToken">Refresh Token</h3>
+    <input type="text" id="refreshToken" style="width:100%;box-sizing:border-box;margin-bottom:0.5rem;" readonly>
+    <div class="copy-container" style="margin-top:0.5rem; flex-direction:column; align-items: flex-start; width:100%;">
+      <h3 data-i18n="oauth2Data">OAuth2 data:</h3>
+      <textarea id="oauth2Base64" rows="4" readonly style="width:100%;box-sizing:border-box;resize:vertical; margin-top: 0.5rem; margin-bottom: 0.5rem;"></textarea>
+    </div>
+    <div class="copy-container" style="justify-content: flex-end; margin-top:0.5rem;">
+      <button onclick="copyOauth2Base64()" title="Copy to clipboard"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
+          <path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 
+          26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67
+          0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 
+          32-32V128c0-17.67-14.33-32-32-32z"/>
+        </svg> <span data-i18n="copy">Copy Oauth2 data</span></button>
+    </div>
+    <span id="toast" class="toast">Copied to clipboard!</span>
 
-  <span id="toast" class="toast">Copied to clipboard!</span>
-
-  <script>
+      <script>
     const redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
     const defaultClientId = "432976538159-sami58r882ojtupro9ir9il7kvtfpuoa.apps.googleusercontent.com";
 
@@ -242,6 +244,42 @@
       toast.className = "toast show";
       setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
     }
+    function updateOauth2Base64() {
+        let clientId = defaultClientId;
+        const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
+        if (clientMode === 'custom') {
+          clientId = document.getElementById('customClientId').value;
+        }
+        const refreshToken = document.getElementById('refreshToken').value;
+        let result = '';
+        if (clientId && refreshToken) {
+          result = btoa(clientId + '|' + refreshToken);
+        }
+        document.getElementById('oauth2Base64').value = result;
+      }
+      document.getElementById('refreshToken').addEventListener('input', updateOauth2Base64);
+      document.addEventListener('DOMContentLoaded', function() {
+        // 監聽 clientMode 與 customClientId 變動
+        document.querySelectorAll('input[name="clientMode"]').forEach(input => input.addEventListener('change', updateOauth2Base64));
+        const customClientId = document.getElementById('customClientId');
+        if (customClientId) customClientId.addEventListener('input', updateOauth2Base64);
+      });
+      function copyOauth2Base64() {
+        const input = document.getElementById('oauth2Base64');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        const toast = document.getElementById('toast');
+        toast.className = "toast show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+      }
+      // 當 refreshToken 由 exchangeCodeForToken 產生時自動更新 oauth2
+      const origExchangeCodeForToken = exchangeCodeForToken;
+      exchangeCodeForToken = async function(code) {
+        await origExchangeCodeForToken.apply(this, arguments);
+        updateOauth2Base64();
+      }
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('code')) {
@@ -261,22 +299,24 @@
   
     const i18nStrings = {
       "en": {
-        "title": "OAuth2 PKCE Flow",
+        "title": "AAPS-CI Auth",
         "clientId": "Client ID:",
         "placeholder": "Your Google Client ID",
         "startAuth": "Start Auth",
         "refreshToken": "Refresh Token",
-        "copy": "Copy Refresh Token:",
-        "toast": "Copied to clipboard!", "default": "Default", "custom": "Custom"
+        "copy": "Copy OAuth2 data:",
+        "toast": "Copied to clipboard!", "default": "Default", "custom": "Custom",
+        "oauth2Data": "OAuth2 data:"
       },
       "zh-TW": {
-        "title": "OAuth2 PKCE 流程",
+        "title": "AAPS-CI Auth",
         "clientId": "用戶端 ID：",
         "placeholder": "你的 Google 用戶端 ID",
         "startAuth": "開始授權",
         "refreshToken": "Refresh Token（更新權杖）",
-        "copy": "複製 Refresh Token：",
-        "toast": "已複製到剪貼簿！", "default": "預設", "custom": "自訂"
+        "copy": "複製 OAuth2 資料",
+        "toast": "已複製到剪貼簿！", "default": "預設", "custom": "自訂",
+        "oauth2Data": "OAuth2 資料："
       },
       "ar": {
         "title": "OAuth2 PKCE",
@@ -548,19 +588,19 @@
     }
 
     // 同時調整 i18n 補充切換 clientIdRow 文字
-    function switchLanguage(lang) {
-      const dict = i18nStrings[lang];
-      document.querySelector('[data-i18n="title"]').innerText = dict.title;
-      document.querySelector('h3').innerText = dict.refreshToken;
-      document.querySelector('.copy-container span').innerText = dict.copy;
-      document.getElementById('toast').innerText = dict.toast;
+    // function switchLanguage(lang) {
+    //   const dict = i18nStrings[lang];
+    //   document.querySelector('[data-i18n="title"]').innerText = dict.title;
+    //   document.querySelector('h3').innerText = dict.refreshToken;
+    //   document.querySelector('.copy-container span').innerText = dict.copy;
+    //   document.getElementById('toast').innerText = dict.toast;
 
-      // 如果使用自訂欄位才更新 placeholder
-      if (document.querySelector('input[name="clientMode"]:checked').value === 'custom') {
-        document.querySelector('#clientId').placeholder = dict.placeholder;
-        document.querySelector('[data-i18n="clientId"]').innerText = dict.clientId;
-      }
-    }
+    //   // 如果使用自訂欄位才更新 placeholder
+    //   if (document.querySelector('input[name="clientMode"]:checked').value === 'custom') {
+    //     document.querySelector('#clientId').placeholder = dict.placeholder;
+    //     document.querySelector('[data-i18n="clientId"]').innerText = dict.clientId;
+    //   }
+    // }
 
     function switchLanguage(lang) {
       const dict = i18nStrings[lang];
@@ -573,6 +613,7 @@
       document.getElementById('toast').innerText = dict.toast;
       document.querySelector('[data-i18n="default"]').innerText = dict.default;
       document.querySelector('[data-i18n="custom"]').innerText = dict.custom;
+      document.querySelector('[data-i18n="oauth2Data"]').innerText = dict.oauth2Data;
     }
 </script>
 </body>

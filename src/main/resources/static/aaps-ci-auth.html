@@ -70,6 +70,11 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      .copy-container.copy-btn-right {
+        flex-direction: row !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+      }
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -176,7 +181,7 @@
       </select>
     </div>
     <div class="header">
-      <img src="/androidaps-logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;">
+      <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/androidaps-logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;">
       <h1 data-i18n="title">OAuth2 PKCE Flow</h1>
       <div class="logo-divider"></div>
     </div>
@@ -203,7 +208,7 @@
       <h3 data-i18n="oauth2Data">OAuth2 data:</h3>
       <textarea id="oauth2Base64" rows="4" readonly style="width:100%;box-sizing:border-box;resize:vertical; margin-top: 0.5rem; margin-bottom: 0.5rem;"></textarea>
     </div>
-    <div class="copy-container" style="justify-content: flex-end; margin-top:0.5rem;">
+    <div class="copy-container copy-btn-right" style="justify-content: flex-end; margin-top:0.5rem;">
       <button onclick="copyOauth2Base64()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
           <path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 
           26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67

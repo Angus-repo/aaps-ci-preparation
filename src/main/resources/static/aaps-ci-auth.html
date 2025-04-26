@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OAuth2 PKCE Demo (Enhanced UI)</title>
+  <title>AAPS-CI</title>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -185,7 +185,40 @@
       <div class="lang-switcher">
         <select id="langSelector" onchange="switchLanguage(this.value)">
           <option value="en">English</option>
-          <option value="zh-TW">繁體中文</option>
+          <option value="ar">العربية</option>
+          <option value="bg">Български</option>
+          <option value="ca">Català</option>
+          <option value="cs">Čeština</option>
+          <option value="da">Dansk</option>
+          <option value="de">Deutsch</option>
+          <option value="el">Ελληνικά</option>
+          <option value="es">Español</option>
+          <option value="fi">Suomi</option>
+          <option value="fr">Français</option>
+          <option value="he">עברית</option>
+          <option value="hr">Hrvatski</option>
+          <option value="hu">Magyar</option>
+          <option value="it">Italiano</option>
+          <option value="ko">한국어</option>
+          <option value="nb">Norsk Bokmål</option>
+          <option value="nl">Nederlands</option>
+          <option value="nn">Norsk Nynorsk</option>
+          <option value="no_NO">Norsk (Norge)</option>
+          <option value="no">Norsk</option>
+          <option value="pl_PL">Polski (Polska)</option>
+          <option value="pl">Polski</option>
+          <option value="pt_BR">Português (Brasil)</option>
+          <option value="pt_PT">Português (Portugal)</option>
+          <option value="ro">Română</option>
+          <option value="ru">Русский</option>
+          <option value="sk">Slovenčina</option>
+          <option value="sl">Slovenščina</option>
+          <option value="sr">Српски</option>
+          <option value="sv">Svenska</option>
+          <option value="tr">Türkçe</option>
+          <option value="uk">Українська</option>
+          <option value="zh_CN">简体中文</option>
+          <option value="zh_TW">繁體中文</option>
         </select>
       </div>
       <div class="header">
@@ -396,7 +429,7 @@
         "toast": "Copied to clipboard!", "default": "Default", "custom": "Custom",
         "needAuthMsg": "❌ Please use the Start Auth button to get a refreshToken first"
       },
-      "zh-TW": {
+      "zh_TW": {
         "title": "AAPS-CI 授權",
         "clientId": "用戶端 ID：",
         "placeholder": "你的 Google 用戶端 ID",
@@ -405,13 +438,360 @@
         "copy": "複製",
         "toast": "已複製到剪貼簿！", "default": "預設", "custom": "自訂",
         "needAuthMsg": "❌ 請先使用「開始授權」按鈕取得 refreshToken"
+      },
+      "zh_CN": {
+        "title": "AAPS-CI 授权",
+        "clientId": "客户端 ID：",
+        "placeholder": "你的 Google 客户端 ID",
+        "startAuth": "开始授权",
+        "refreshToken": "Refresh Token（更新令牌）",
+        "copy": "复制",
+        "toast": "已复制到剪贴板！", "default": "默认", "custom": "自定义",
+        "needAuthMsg": "❌ 请先使用“开始授权”按钮获取 refreshToken"
+      },
+      "ja": {
+        "title": "AAPS-CI 認証",
+        "clientId": "クライアントID：",
+        "placeholder": "あなたの Google クライアントID",
+        "startAuth": "認証開始",
+        "refreshToken": "リフレッシュトークン",
+        "copy": "コピー",
+        "toast": "クリップボードにコピーしました！", "default": "デフォルト", "custom": "カスタム",
+        "needAuthMsg": "❌ まず「認証開始」ボタンでリフレッシュトークンを取得してください"
+      },
+      "ko": {
+        "title": "AAPS-CI 인증",
+        "clientId": "클라이언트 ID:",
+        "placeholder": "Google 클라이언트 ID",
+        "startAuth": "인증 시작",
+        "refreshToken": "Refresh Token(갱신 토큰)",
+        "copy": "복사",
+        "toast": "클립보드에 복사됨!", "default": "기본값", "custom": "사용자 지정",
+        "needAuthMsg": "❌ 먼저 '인증 시작' 버튼을 사용해 refreshToken을 받아주세요"
+      },
+      "de": {
+        "title": "AAPS-CI Authentifizierung",
+        "clientId": "Client-ID:",
+        "placeholder": "Ihre Google Client-ID",
+        "startAuth": "Authentifizierung starten",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopieren",
+        "toast": "In die Zwischenablage kopiert!", "default": "Standard", "custom": "Benutzerdefiniert",
+        "needAuthMsg": "❌ Bitte zuerst auf 'Authentifizierung starten' klicken, um ein Refresh Token zu erhalten"
+      },
+      "fr": {
+        "title": "AAPS-CI Auth",
+        "clientId": "ID client :",
+        "placeholder": "Votre ID client Google",
+        "startAuth": "Démarrer l'authentification",
+        "refreshToken": "Jeton d'actualisation",
+        "copy": "Copier",
+        "toast": "Copié dans le presse-papiers !", "default": "Par défaut", "custom": "Personnalisé",
+        "needAuthMsg": "❌ Veuillez d'abord utiliser le bouton Démarrer l'authentification pour obtenir un refreshToken"
+      },
+      "ar": {
+        "title": "مصادقة AAPS-CI",
+        "clientId": "معرّف العميل:",
+        "placeholder": "معرّف عميل Google الخاص بك",
+        "startAuth": "بدء المصادقة",
+        "refreshToken": "رمز التحديث",
+        "copy": "نسخ",
+        "toast": "تم النسخ إلى الحافظة!", "default": "افتراضي", "custom": "مخصص",
+        "needAuthMsg": "❌ يرجى استخدام زر بدء المصادقة للحصول على رمز التحديث أولاً"
+      },
+      "bg": {
+        "title": "AAPS-CI Удостоверяване",
+        "clientId": "Клиентски ID:",
+        "placeholder": "Вашият Google Client ID",
+        "startAuth": "Стартиране на удостоверяване",
+        "refreshToken": "Refresh Token",
+        "copy": "Копирай",
+        "toast": "Копирано в клипборда!", "default": "По подразбиране", "custom": "Потребителски",
+        "needAuthMsg": "❌ Моля, използвайте бутона за стартиране на удостоверяване, за да получите refreshToken"
+      },
+      "ca": {
+        "title": "AAPS-CI Autenticació",
+        "clientId": "ID de client:",
+        "placeholder": "El teu ID de client de Google",
+        "startAuth": "Inicia l'autenticació",
+        "refreshToken": "Token d'actualització",
+        "copy": "Copia",
+        "toast": "Copiat al porta-retalls!", "default": "Per defecte", "custom": "Personalitzat",
+        "needAuthMsg": "❌ Utilitza primer el botó Inicia l'autenticació per obtenir un refreshToken"
+      },
+      "cs": {
+        "title": "AAPS-CI Ověření",
+        "clientId": "ID klienta:",
+        "placeholder": "Váš Google Client ID",
+        "startAuth": "Spustit ověření",
+        "refreshToken": "Obnovovací token",
+        "copy": "Kopírovat",
+        "toast": "Zkopírováno do schránky!", "default": "Výchozí", "custom": "Vlastní",
+        "needAuthMsg": "❌ Nejprve použijte tlačítko Spustit ověření pro získání refreshToken"
+      },
+      "da": {
+        "title": "AAPS-CI Godkendelse",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start godkendelse",
+        "refreshToken": "Opdateringstoken",
+        "copy": "Kopiér",
+        "toast": "Kopieret til udklipsholder!", "default": "Standard", "custom": "Brugerdefineret",
+        "needAuthMsg": "❌ Brug først knappen Start godkendelse for at få en refreshToken"
+      },
+      "el": {
+        "title": "AAPS-CI Επαλήθευση",
+        "clientId": "ID πελάτη:",
+        "placeholder": "Το Google Client ID σας",
+        "startAuth": "Έναρξη επαλήθευσης",
+        "refreshToken": "Διακριτικό ανανέωσης",
+        "copy": "Αντιγραφή",
+        "toast": "Αντιγράφηκε στο πρόχειρο!", "default": "Προεπιλογή", "custom": "Προσαρμοσμένο",
+        "needAuthMsg": "❌ Χρησιμοποιήστε πρώτα το κουμπί Έναρξη επαλήθευσης για να λάβετε refreshToken"
+      },
+      "es": {
+        "title": "AAPS-CI Autenticación",
+        "clientId": "ID de cliente:",
+        "placeholder": "Tu ID de cliente de Google",
+        "startAuth": "Iniciar autenticación",
+        "refreshToken": "Refresh Token",
+        "copy": "Copiar",
+        "toast": "¡Copiado al portapapeles!", "default": "Predeterminado", "custom": "Personalizado",
+        "needAuthMsg": "❌ Por favor, usa primero el botón Iniciar autenticación para obtener un refreshToken"
+      },
+      "fi": {
+        "title": "AAPS-CI Todennus",
+        "clientId": "Asiakastunnus:",
+        "placeholder": "Google Client ID",
+        "startAuth": "Aloita todennus",
+        "refreshToken": "Virkistystunnus",
+        "copy": "Kopioi",
+        "toast": "Kopioitu leikepöydälle!", "default": "Oletus", "custom": "Mukautettu",
+        "needAuthMsg": "❌ Käytä ensin Aloita todennus -painiketta saadaksesi refreshToken"
+      },
+      "he": {
+        "title": "אימות AAPS-CI",
+        "clientId": "מזהה לקוח:",
+        "placeholder": "מזהה הלקוח שלך ב-Google",
+        "startAuth": "התחל אימות",
+        "refreshToken": "רענן אסימון",
+        "copy": "העתק",
+        "toast": "הועתק ללוח!", "default": "ברירת מחדל", "custom": "מותאם אישית",
+        "needAuthMsg": "❌ השתמש תחילה בכפתור התחל אימות כדי לקבל refreshToken"
+      },
+      "hr": {
+        "title": "AAPS-CI Autentikacija",
+        "clientId": "ID klijenta:",
+        "placeholder": "Vaš Google Client ID",
+        "startAuth": "Pokreni autentikaciju",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopiraj",
+        "toast": "Kopirano u međuspremnik!", "default": "Zadano", "custom": "Prilagođeno",
+        "needAuthMsg": "❌ Prvo koristite gumb Pokreni autentikaciju za dobivanje refreshToken"
+      },
+      "hu": {
+        "title": "AAPS-CI Hitelesítés",
+        "clientId": "Ügyfélazonosító:",
+        "placeholder": "Google Client ID",
+        "startAuth": "Hitelesítés indítása",
+        "refreshToken": "Frissítő token",
+        "copy": "Másolás",
+        "toast": "Vágólapra másolva!", "default": "Alapértelmezett", "custom": "Egyedi",
+        "needAuthMsg": "❌ Először használja a Hitelesítés indítása gombot a refreshToken megszerzéséhez"
+      },
+      "it": {
+        "title": "AAPS-CI Autenticazione",
+        "clientId": "ID client:",
+        "placeholder": "Il tuo ID client Google",
+        "startAuth": "Avvia autenticazione",
+        "refreshToken": "Refresh Token",
+        "copy": "Copia",
+        "toast": "Copiato negli appunti!", "default": "Predefinito", "custom": "Personalizzato",
+        "needAuthMsg": "❌ Usa prima il pulsante Avvia autenticazione per ottenere un refreshToken"
+      },
+      "nb": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken"
+      },
+      "nl": {
+        "title": "AAPS-CI Authenticatie",
+        "clientId": "Client-ID:",
+        "placeholder": "Je Google Client ID",
+        "startAuth": "Start authenticatie",
+        "refreshToken": "Vernieuwtoken",
+        "copy": "Kopiëren",
+        "toast": "Gekopieerd naar klembord!", "default": "Standaard", "custom": "Aangepast",
+        "needAuthMsg": "❌ Gebruik eerst de knop Start authenticatie om een refreshToken te krijgen"
+      },
+      "nn": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Eigendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken"
+      },
+      "no_NO": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken"
+      },
+      "no": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken"
+      },
+      "pl_PL": {
+        "title": "AAPS-CI Uwierzytelnianie",
+        "clientId": "ID klienta:",
+        "placeholder": "Twój Google Client ID",
+        "startAuth": "Rozpocznij uwierzytelnianie",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopiuj",
+        "toast": "Skopiowano do schowka!", "default": "Domyślny", "custom": "Niestandardowy",
+        "needAuthMsg": "❌ Najpierw użyj przycisku Rozpocznij uwierzytelnianie, aby uzyskać refreshToken"
+      },
+      "pl": {
+        "title": "AAPS-CI Uwierzytelnianie",
+        "clientId": "ID klienta:",
+        "placeholder": "Twój Google Client ID",
+        "startAuth": "Rozpocznij uwierzytelnianie",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopiuj",
+        "toast": "Skopiowano do schowka!", "default": "Domyślny", "custom": "Niestandardowy",
+        "needAuthMsg": "❌ Najpierw użyj przycisku Rozpocznij uwierzytelnianie, aby uzyskać refreshToken"
+      },
+      "pt_BR": {
+        "title": "AAPS-CI Autenticação",
+        "clientId": "ID do cliente:",
+        "placeholder": "Seu ID de cliente do Google",
+        "startAuth": "Iniciar autenticação",
+        "refreshToken": "Refresh Token",
+        "copy": "Copiar",
+        "toast": "Copiado para a área de transferência!", "default": "Padrão", "custom": "Personalizado",
+        "needAuthMsg": "❌ Use primeiro o botão Iniciar autenticação para obter um refreshToken"
+      },
+      "pt_PT": {
+        "title": "AAPS-CI Autenticação",
+        "clientId": "ID do cliente:",
+        "placeholder": "O seu ID de cliente Google",
+        "startAuth": "Iniciar autenticação",
+        "refreshToken": "Refresh Token",
+        "copy": "Copiar",
+        "toast": "Copiado para a área de transferência!", "default": "Padrão", "custom": "Personalizado",
+        "needAuthMsg": "❌ Use primeiro o botão Iniciar autenticação para obter um refreshToken"
+      },
+      "ro": {
+        "title": "AAPS-CI Autentificare",
+        "clientId": "ID client:",
+        "placeholder": "ID-ul dvs. de client Google",
+        "startAuth": "Începe autentificarea",
+        "refreshToken": "Token de reîmprospătare",
+        "copy": "Copiază",
+        "toast": "Copiat în clipboard!", "default": "Implicit", "custom": "Personalizat",
+        "needAuthMsg": "❌ Folosiți mai întâi butonul Începe autentificarea pentru a obține un refreshToken"
+      },
+      "ru": {
+        "title": "AAPS-CI Авторизация",
+        "clientId": "ID клиента:",
+        "placeholder": "Ваш Google Client ID",
+        "startAuth": "Начать авторизацию",
+        "refreshToken": "Refresh Token (токен обновления)",
+        "copy": "Копировать",
+        "toast": "Скопировано в буфер обмена!", "default": "По умолчанию", "custom": "Пользовательский",
+        "needAuthMsg": "❌ Сначала используйте кнопку 'Начать авторизацию', чтобы получить refreshToken"
+      },
+      "sk": {
+        "title": "AAPS-CI Overenie",
+        "clientId": "ID klienta:",
+        "placeholder": "Váš Google Client ID",
+        "startAuth": "Spustiť overenie",
+        "refreshToken": "Obnovovací token",
+        "copy": "Kopírovať",
+        "toast": "Skopírované do schránky!", "default": "Predvolené", "custom": "Vlastné",
+        "needAuthMsg": "❌ Najprv použite tlačidlo Spustiť overenie na získanie refreshToken"
+      },
+      "sl": {
+        "title": "AAPS-CI Avtentikacija",
+        "clientId": "ID odjemalca:",
+        "placeholder": "Vaš Google Client ID",
+        "startAuth": "Začni avtentikacijo",
+        "refreshToken": "Obnovitveni žeton",
+        "copy": "Kopiraj",
+        "toast": "Kopirano v odložišče!", "default": "Privzeto", "custom": "Prilagojeno",
+        "needAuthMsg": "❌ Najprej uporabite gumb Začni avtentikacijo za pridobitev refreshToken"
+      },
+      "sr": {
+        "title": "AAPS-CI Аутентификација",
+        "clientId": "ID клијента:",
+        "placeholder": "Ваш Google Client ID",
+        "startAuth": "Покрени аутентификацију",
+        "refreshToken": "Refresh Token",
+        "copy": "Копирај",
+        "toast": "Копирано у клипборд!", "default": "Подразумевано", "custom": "Прилагођено",
+        "needAuthMsg": "❌ Прво користите дугме Покрени аутентификацију да бисте добили refreshToken"
+      },
+      "sv": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Ditt Google Client ID",
+        "startAuth": "Starta autentisering",
+        "refreshToken": "Uppdateringstoken",
+        "copy": "Kopiera",
+        "toast": "Kopierat till urklipp!", "default": "Standard", "custom": "Anpassad",
+        "needAuthMsg": "❌ Använd först knappen Starta autentisering för att få en refreshToken"
+      },
+      "tr": {
+        "title": "AAPS-CI Kimlik Doğrulama",
+        "clientId": "İstemci Kimliği:",
+        "placeholder": "Google İstemci Kimliğiniz",
+        "startAuth": "Kimlik Doğrulamayı Başlat",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopyala",
+        "toast": "Panoya kopyalandı!", "default": "Varsayılan", "custom": "Özel",
+        "needAuthMsg": "❌ Önce refreshToken almak için Kimlik Doğrulamayı Başlat düğmesini kullanın"
+      },
+      "uk": {
+        "title": "AAPS-CI Авторизація",
+        "clientId": "ID клієнта:",
+        "placeholder": "Ваш Google Client ID",
+        "startAuth": "Почати авторизацію",
+        "refreshToken": "Refresh Token (токен оновлення)",
+        "copy": "Копіювати",
+        "toast": "Скопійовано в буфер обміну!", "default": "За замовчуванням", "custom": "Користувацький",
+        "needAuthMsg": "❌ Спочатку скористайтеся кнопкою Почати авторизацію, щоб отримати refreshToken"
       }
-      
     };
 
     function setLanguageFromBrowser() {
-      const lang = navigator.language || navigator.userLanguage;
-      const selectedLang = i18nStrings[lang] ? lang : 'en';
+      let lang = (navigator.language || navigator.userLanguage || 'en').replace('-', '_');
+      // 先嘗試完整語系（如 zh_TW），再 fallback 到前兩碼（如 zh）
+      let selectedLang = null;
+      if (i18nStrings[lang]) {
+        selectedLang = lang;
+      } else if (i18nStrings[lang.split('_')[0]]) {
+        selectedLang = lang.split('_')[0];
+      } else {
+        selectedLang = 'en';
+      }
       document.getElementById('langSelector').value = selectedLang;
       switchLanguage(selectedLang);
     }
@@ -426,6 +806,7 @@
 
     function switchLanguage(lang) {
       const dict = i18nStrings[lang];
+      document.getElementById('langSelector').value = lang;
       document.querySelector('[data-i18n="title"]').innerText = dict.title;
       document.querySelector('[data-i18n="clientId"]').innerText = dict.clientId;
       document.getElementById('customClientId').placeholder = dict.placeholder;

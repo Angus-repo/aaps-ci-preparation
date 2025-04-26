@@ -1,4 +1,6 @@
 name: Pre-release aaps-ci-auth.html
+permissions:
+  contents: write
 
 on:
   push:

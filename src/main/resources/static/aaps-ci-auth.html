@@ -44,8 +44,8 @@
       }
       .header {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
         gap: 0;
         margin-bottom: 16px;
       }
@@ -167,12 +167,13 @@
         align-items: center;
         width: 100%;
         margin-bottom: 8px;
+
       }
       @media (min-width: 769px) {
         .lang-switcher {
           position: absolute;
-          top: 16px;
-          right: 24px;
+          top: 20px;
+          right: 28px;
           width: auto;
           margin-bottom: 0;
         }
@@ -188,10 +189,11 @@
         </select>
       </div>
       <div class="header">
+         <!-- <img src="/androidaps-logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;"> -->
         <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/androidaps-logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;">
-        <h1 data-i18n="title">OAuth2 PKCE Flow</h1>
-        <div class="logo-divider"></div>
+        <h1 data-i18n="title">AAPC-CI Auth</h1>
       </div>
+      <div class="logo-divider"></div>
       <div id="clientModeGroup">
         <label>
           <input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()">
@@ -208,12 +210,15 @@
           <input type="text" id="customClientId" placeholder="Your Google Client ID">
         </label>
       </div>
-      <button onclick="startAuth()">Start Auth</button>
+      <button onclick="startAuth()">
+        <img src="data:image/png;base64,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" alt="Google Drive Logo" style="height:1.2em;vertical-align:middle;margin-left:0.5em;">
+        <span data-i18n="startAuth">Start Auth</span>
+</button>
       <h3 data-i18n="refreshToken">Refresh Token</h3>
-      <input type="text" id="refreshToken" style="width:100%;box-sizing:border-box;margin-bottom:0.5rem;" readonly>
+      <input type="text" id="refreshToken" style="width:100%;box-sizing:border-box;margin-top: -8px;margin-bottom:0.5rem;" readonly>
       <div class="copy-container">
         <h3 data-i18n="oauth2Data">OAuth2 data:</h3>
-        <textarea id="oauth2Base64" rows="4" readonly style="width:100%;box-sizing:border-box;resize:vertical; margin-top: 0.5rem; margin-bottom: 0.5rem;"></textarea>
+        <textarea id="oauth2Base64" rows="4" readonly style="width:100%;box-sizing:border-box;resize:vertical; margin-top: -12px; margin-bottom: 0.5rem;"></textarea>
       </div>
       <div class="copy-container">
         <button onclick="copyOauth2Base64()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
@@ -221,14 +226,14 @@
             26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67
             0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 
             32-32V128c0-17.67-14.33-32-32-32z"/>
-          </svg> <span data-i18n="copy">Copy Oauth2 data</span></button>
+          </svg> <span data-i18n="copy">Copy</span></button>
       </div>
       <span id="toast" class="toast">Copied to clipboard!</span>
     </div>
 
       <script>
     const redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
-    const defaultClientId = "432976538159-sami58r882ojtupro9ir9il7kvtfpuoa.apps.googleusercontent.com";
+    const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
 
     function base64URLEncode(str) {
       return btoa(String.fromCharCode.apply(null, new Uint8Array(str)))
@@ -373,7 +378,7 @@
         "placeholder": "Your Google Client ID",
         "startAuth": "Start Auth",
         "refreshToken": "Refresh Token",
-        "copy": "Copy OAuth2 data",
+        "copy": "Copy",
         "toast": "Copied to clipboard!", "default": "Default", "custom": "Custom",
         "oauth2Data": "OAuth2 data:"
       },
@@ -383,7 +388,7 @@
         "placeholder": "你的 Google 用戶端 ID",
         "startAuth": "開始授權",
         "refreshToken": "Refresh Token（更新權杖）",
-        "copy": "複製 OAuth2 資料",
+        "copy": "複製",
         "toast": "已複製到剪貼簿！", "default": "預設", "custom": "自訂",
         "oauth2Data": "OAuth2 資料："
       }
@@ -410,7 +415,7 @@
       document.querySelector('[data-i18n="title"]').innerText = dict.title;
       document.querySelector('[data-i18n="clientId"]').innerText = dict.clientId;
       document.getElementById('customClientId').placeholder = dict.placeholder;
-      document.querySelector('button').innerText = dict.startAuth;
+      document.querySelector('span[data-i18n="startAuth"]').innerText = dict.startAuth;
       document.querySelector('h3').innerText = dict.refreshToken;
       document.querySelector('[data-i18n="copy"]').innerText = dict.copy;
       document.getElementById('toast').innerText = dict.toast;

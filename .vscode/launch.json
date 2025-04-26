@@ -1,0 +1,15 @@
+{
+    "version": "1.0.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "AapsCiKeystoreApplication",
+            "request": "launch",
+            "mainClass": "com.angus.aaps.ci.keystore.AapsCiKeystoreApplication",
+            "projectName": "aaps-ci-preparation",
+            "env": {
+                "GOOGLE_SITE_VERIFICATION": "zLXsC-oTPO2OHT9lOgAuDYO2H4y0tptWtR891jMrToM"
+            }
+        }
+    ]
+}

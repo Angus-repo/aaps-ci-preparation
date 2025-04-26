@@ -47,6 +47,7 @@
         flex-direction: row;
         align-items: center;
         gap: 0;
+        margin-top: 30px;
         margin-bottom: 16px;
       }
       .logo-divider {
@@ -178,10 +179,32 @@
           margin-bottom: 0;
         }
       }
+      .version-badge {
+        position: absolute;
+        top: 12px;
+        left: 18px;
+        background: #e3eafc;
+        color: #1a73e8;
+        font-size: 0.95rem;
+        font-weight: 500;
+        padding: 2px 10px;
+        border-radius: 6px;
+        z-index: 10;
+        box-shadow: 0 1px 4px rgba(26,115,232,0.07);
+        letter-spacing: 0.03em;
+      }
+      @media (min-width: 769px) {
+        .version-badge {
+          position: absolute;
+          top: 20px;
+          left: 48px;
+        }
+      }
     </style>
 </head>
 <body onload="setLanguageFromBrowser(); toggleClientInput();">
-    <div class="container">
+  <div class="container">
+      <div class="version-badge">v1.0.0</div>
       <div class="lang-switcher">
         <select id="langSelector" onchange="switchLanguage(this.value)">
           <option value="en">English</option>

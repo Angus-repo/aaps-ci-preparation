@@ -3,14 +3,10 @@ permissions:
   contents: write
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  workflow_dispatch:
 
 jobs:
   pre-release-auth-html:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,12 +16,18 @@ jobs:
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+      - name: Extract version from HTML
+        id: version
+        run: |
+          VERSION=$(grep -oP '<div class="version-badge">v\K[0-9.]+(?=</div>)' src/main/resources/static/aaps-ci-auth.html)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Create pre-release
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: pre-release-${{ steps.vars.outputs.sha_short }}
-          name: Pre-release ${{ steps.vars.outputs.sha_short }}
+          tag_name: pre-release-${{ steps.version.outputs.version }}
+          name: Pre-release ${{ steps.version.outputs.version }}
           body: |
             Automated pre-release for aaps-ci-auth.html
           prerelease: true

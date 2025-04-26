@@ -1,0 +1,9 @@
+
+/target
+/logs
+/db
+/certs
+
+.DS_Store
+.env
+.vscode/settings.json

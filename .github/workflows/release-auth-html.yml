@@ -12,7 +12,7 @@ on:
         type: boolean
 
 jobs:
-  pre-release-auth-html:
+  release-auth-html:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -29,14 +29,29 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create pre-release
-        id: create_release
+        if: ${{ inputs.prerelease == true }}
+        id: create_pre_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: pre-release-${{ steps.version.outputs.version }}
           name: Pre-release ${{ steps.version.outputs.version }}
           body: |
             Automated pre-release for aaps-ci-auth.html
-          prerelease: ${{ inputs.prerelease }}
+          prerelease: true
+          files: src/main/resources/static/aaps-ci-auth.html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        if: ${{ inputs.prerelease == false }}
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: release-${{ steps.version.outputs.version }}
+          name: release ${{ steps.version.outputs.version }}
+          body: |
+            Automated release for aaps-ci-auth.html
+          prerelease: false
           files: src/main/resources/static/aaps-ci-auth.html
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

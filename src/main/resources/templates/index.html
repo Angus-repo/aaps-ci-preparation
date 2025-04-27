@@ -776,6 +776,34 @@
                 <div id="convertMessage" class="message"></div>
             </div>
         </div>
+
+        <div class="step" id="step3">
+            <div class="step-header" onclick="toggleStep(3)">
+                <div class="step-title">
+                    <div class="step-number">3</div>
+                    <h2 th:text="#{index.step3.title}">授權 Google Drive 上傳</h2>
+                </div>
+                <i class="fas fa-chevron-down step-icon"></i>
+            </div>
+            <div class="step-content hidden-on-load">
+                <div class="step-description">
+                    <div style="margin-bottom: 12px;">
+                        <strong>3.1</strong>
+                        <span th:text="#{index.step3.1}"></span>
+                        <a href="https://play.google.com/store/apps/details?id=com.alphainventor.filemanager" target="_blank" style="color: #1a73e8; text-decoration: underline;">檔案管理器 (File Manager)</a>
+                    </div>
+                    <div>
+                        <strong>3.2</strong>
+                        <span th:text="#{index.step3.2}"></span>
+                        <a href="https://github.com/Angus-repo/aaps-ci-preparation/releases/latest" target="_blank" style="color: #1a73e8; text-decoration: underline;">GitHub Releases</a>
+                        下載 <code>aaps-ci-auth.html</code>
+                        <span th:text="#{index.step3.2.suffix}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- step4 or other steps here -->
     </div>
 
     <div class="toast toast-success" id="copySuccess" th:text="#{auth.copied}">已複製到剪貼簿</div>

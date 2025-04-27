@@ -8,7 +8,7 @@
             "mainClass": "com.angus.aaps.ci.keystore.AapsCiKeystoreApplication",
             "projectName": "aaps-ci-preparation",
             "env": {
-                "GOOGLE_SITE_VERIFICATION": "zLXsC-oTPO2OHT9lOgAuDYO2H4y0tptWtR891jMrToM"
+                "GOOGLE_SITE_VERIFICATION": "your_google_site_verification_here"
             }
         }
     ]

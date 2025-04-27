@@ -1,4 +1,4 @@
-name: Pre-release aaps-ci-auth.html
+name: release aaps-ci-auth.html
 permissions:
   contents: write
 
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: 'Is this a pre-release?'
+        description: 'pre-release?'
         required: true
         default: true
         type: boolean

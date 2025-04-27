@@ -4,6 +4,12 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: true
+        default: true
+        type: boolean
 
 jobs:
   pre-release-auth-html:
@@ -30,7 +36,7 @@ jobs:
           name: Pre-release ${{ steps.version.outputs.version }}
           body: |
             Automated pre-release for aaps-ci-auth.html
-          prerelease: true
+          prerelease: ${{ inputs.prerelease }}
           files: src/main/resources/static/aaps-ci-auth.html
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

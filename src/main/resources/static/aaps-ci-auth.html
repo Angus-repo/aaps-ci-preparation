@@ -785,8 +785,13 @@
     };
 
     function setLanguageFromBrowser() {
-      let lang = (navigator.language || navigator.userLanguage || 'en').replace('-', '_');
-      // 先嘗試完整語系（如 zh_TW），再 fallback 到前兩碼（如 zh）
+      let lang = (navigator.language || navigator.userLanguage || 'en').replace(/-/g, '_');
+
+      let langSet = lang.split('_');
+      if(langSet.length > 2){
+        lang = langSet[0] + '_' + langSet[langSet.length - 1].toUpperCase();
+      }
+
       let selectedLang = null;
       if (i18nStrings[lang]) {
         selectedLang = lang;

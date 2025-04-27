@@ -47,8 +47,8 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: release-${{ steps.version.outputs.version }}
-          name: release ${{ steps.version.outputs.version }}
+          tag_name: release-v${{ steps.version.outputs.version }}
+          name: release v${{ steps.version.outputs.version }}
           body: |
             Automated release for aaps-ci-auth.html
           prerelease: false

@@ -370,15 +370,6 @@
       }
     }
 
-    function copyRefreshToken() {
-      const textArea = document.getElementById('refreshToken');
-      textArea.select();
-      document.execCommand('copy');
-
-      const toast = document.getElementById('toast');
-      toast.className = "toast show";
-      setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
-    }
     function updateOauth2Base64() {
         let clientId = defaultClientId;
         const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
@@ -410,13 +401,22 @@
           textarea.value = msg;
           return;
         }
-        input.select();
-        input.setSelectionRange(0, 99999);
-        document.execCommand('copy');
-        window.getSelection().removeAllRanges();
-        const toast = document.getElementById('toast');
-        toast.className = "toast show";
-        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(textarea.value).then(function() {
+            // 顯示 toast
+            const toast = document.getElementById('toast');
+            toast.className = "toast show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+          });
+        } else {
+          textarea.select();
+          textarea.setSelectionRange(0, 99999);
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges();
+          const toast = document.getElementById('toast');
+          toast.className = "toast show";
+          setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
       }
       // 當 refreshToken 由 exchangeCodeForToken 產生時自動更新 oauth2
       const origExchangeCodeForToken = exchangeCodeForToken;

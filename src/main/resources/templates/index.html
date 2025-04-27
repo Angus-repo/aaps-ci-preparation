@@ -707,42 +707,12 @@
                         重要提示：這些金鑰值在頁面重新載入後將不會被保存。請務必將所有值複製到安全的地方後再繼續。
                     </div>
                     <div class="field-group">
-                        <label id="KEYSTORE_BASE64_LABEL">KEYSTORE_BASE64:</label>
-                        <button onclick="copyToClipboardText('KEYSTORE_BASE64')" class="copy-btn" title="copy">
+                        <label>KEYSTORE_SET:</label>
+                        <button onclick="copyToClipboardText(document.getElementById('keystoreSet').value)" class="copy-btn" title="copy">
                             <i class="fas fa-copy"></i>
                         </button>
-                        <input type="text" id="keystoreBase64" readonly>
-                        <button onclick="copyToClipboard('keystoreBase64')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                    <div class="field-group">
-                        <label>KEYSTORE_PASSWORD:</label>
-                        <button onclick="copyToClipboardText('KEYSTORE_PASSWORD')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <input type="text" id="keystorePassword" readonly>
-                        <button onclick="copyToClipboard('keystorePassword')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                    <div class="field-group">
-                        <label>KEY_ALIAS:</label>
-                        <button onclick="copyToClipboardText('KEY_ALIAS')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <input type="text" id="keyAlias" readonly>
-                        <button onclick="copyToClipboard('keyAlias')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                    <div class="field-group">
-                        <label>KEY_PASSWORD:</label>
-                        <button onclick="copyToClipboardText('KEY_PASSWORD')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <input type="text" id="keyPassword" readonly>
-                        <button onclick="copyToClipboard('keyPassword')" class="copy-btn" title="copy">
+                        <input type="text" id="keystoreSet" readonly>
+                        <button onclick="copyToClipboard('keystoreSet')" class="copy-btn" title="copy">
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>
@@ -773,7 +743,7 @@
                 </div>
                 <div class="field-group">
                     <label>KEYSTORE_BASE64:</label>
-                    <button onclick="copyToClipboardText('KEYSTORE_BASE64')" class="copy-btn" title="copy">
+                    <button onclick="copyToClipboardText(document.getElementById('convertedBase64').value)" class="copy-btn" title="copy">
                         <i class="fas fa-copy"></i>
                     </button>
                     <input type="text" id="convertedBase64" readonly>
@@ -781,6 +751,28 @@
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
+                <div class="field-group">
+                    <label>KEYSTORE_PASSWORD:</label>
+                    <button onclick="copyToClipboardText(document.getElementById('step2KeystorePassword').value)" class="copy-btn" title="copy">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="field-group">
+                    <label>KEY_ALIAS:</label>
+                    <button onclick="copyToClipboardText(document.getElementById('step2KeyAlias').value)" class="copy-btn" title="copy">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    
+                </div>
+                <div class="field-group">
+                    <label>KEY_PASSWORD:</label>
+                    <button onclick="copyToClipboardText(document.getElementById('step2KeyPassword').value)" class="copy-btn" title="copy">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <input type="hidden" id="step2KeystorePassword" readonly>
+                <input type="hidden" id="step2KeyAlias" readonly>
+                <input type="hidden" id="step2KeyPassword" readonly>
                 <div id="convertMessage" class="message"></div>
             </div>
         </div>
@@ -815,11 +807,15 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('keystoreBase64').value = data.keystoreBase64;
-                document.getElementById('keystorePassword').value = data.keystorePassword;
-                document.getElementById('keyAlias').value = data.keyAlias;
-                document.getElementById('keyPassword').value = data.keyPassword;
-                
+                // 將 4 個欄位組合成 KEYSTORE_SET
+                const joined = `${data.keystoreBase64}|${data.keystorePassword}|${data.keyAlias}|${data.keyPassword}`;
+                const keystoreSet = btoa(unescape(encodeURIComponent(joined)));
+                document.getElementById('keystoreSet').value = keystoreSet;
+                // step2 欄位也同步顯示
+                document.getElementById('convertedBase64').value = data.keystoreBase64;
+                document.getElementById('step2KeystorePassword').value = data.keystorePassword;
+                document.getElementById('step2KeyAlias').value = data.keyAlias;
+                document.getElementById('step2KeyPassword').value = data.keyPassword;
                 const successMessage = document.getElementById('i18n-step1-success').textContent;
                 showVerifyMessage(successMessage, true);
             })
@@ -863,25 +859,35 @@
         }
 
         function verifyCurrentJks() {
-            const data = {
-                keystoreBase64: document.getElementById('keystoreBase64').value,
-                keystorePassword: document.getElementById('keystorePassword').value,
-                keyAlias: document.getElementById('keyAlias').value,
-                keyPassword: document.getElementById('keyPassword').value
-            };
-
-            if (!data.keystoreBase64 || !data.keystorePassword || !data.keyAlias || !data.keyPassword) {
+            const keystoreSet = document.getElementById('keystoreSet').value;
+            if (!keystoreSet) {
                 const verifyRequiredMessage = document.getElementById('i18n-step1-verify-required').textContent;
                 showToast('testError', verifyRequiredMessage);
                 return;
             }
-            
+            let decoded = '';
+            try {
+                decoded = decodeURIComponent(escape(atob(keystoreSet)));
+            } catch (e) {
+                showToast('testError', 'KEYSTORE_SET 格式錯誤');
+                return;
+            }
+            const parts = decoded.split('|');
+            if (parts.length !== 4) {
+                showToast('testError', 'KEYSTORE_SET 內容不正確');
+                return;
+            }
+            const data = {
+                keystoreBase64: parts[0],
+                keystorePassword: parts[1],
+                keyAlias: parts[2],
+                keyPassword: parts[3]
+            };
             const button = document.querySelector('#step1 .button-success');
             const originalText = button.innerHTML;
             const verifyingMessage = document.getElementById('i18n-step1-verifying').textContent;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + verifyingMessage;
             button.disabled = true;
-
             fetch('/verify-jks', {
                 method: 'POST',
                 headers: {
@@ -979,19 +985,17 @@
                 el.classList.remove('hidden-on-load');
             });
             toggleStep(1);
-            
-            document.getElementById('keystoreBase64').value = '';
-            document.getElementById('keystorePassword').value = '';
-            document.getElementById('keyAlias').value = '';
-            document.getElementById('keyPassword').value = '';
+            document.getElementById('keystoreSet').value = '';
             document.getElementById('convertedBase64').value = '';
-            
+            document.getElementById('step2KeystorePassword').value = '';
+            document.getElementById('step2KeyAlias').value = '';
+            document.getElementById('step2KeyPassword').value = '';
             window.addEventListener('beforeunload', function() {
-                document.getElementById('keystoreBase64').value = '';
-                document.getElementById('keystorePassword').value = '';
-                document.getElementById('keyAlias').value = '';
-                document.getElementById('keyPassword').value = '';
+                document.getElementById('keystoreSet').value = '';
                 document.getElementById('convertedBase64').value = '';
+                document.getElementById('step2KeystorePassword').value = '';
+                document.getElementById('step2KeyAlias').value = '';
+                document.getElementById('step2KeyPassword').value = '';
             });
         });
 

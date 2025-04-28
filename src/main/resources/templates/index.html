@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="google-site-verification" content="zLXsC-oTPO2OHT9lOgAuDYO2H4y0tptWtR891jMrToM" />
     <meta name="google-site-verification" th:attr="content=${googleSiteVerification}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -663,7 +664,7 @@
             </form>
         </div>
         <div class="header">
-            <img src="/androidaps-logo.png" alt="AndroidAPS Logo" class="logo">
+            <img src="/images/logo.png" alt="AAPS-CI Logo" class="logo">
             <h1 th:text="#{index.title}">AAPS CI Keystore tool</h1>
         </div>
 
@@ -717,6 +718,10 @@
                         </button>
                     </div>
                     <div id="verifyMessage" class="message"></div>
+                </div>
+                <div id="step1RepositorySecret" style="margin-top: 20px;">
+                    <p th:text="#{github.repository.secret}">Settings => Secrets and Variables => Actions => New repository secrets</p>
+                    <img src="/images/secrets_step1.png" alt="secrets_step1" style="max-width: 100%; height: auto; margin-top: 10px;">
                 </div>
             </div>
         </div>
@@ -774,6 +779,10 @@
                 <input type="hidden" id="step2KeyAlias" readonly>
                 <input type="hidden" id="step2KeyPassword" readonly>
                 <div id="convertMessage" class="message"></div>
+                <div id="step1RepositorySecret" style="margin-top: 20px;">
+                    <p th:text="#{github.repository.secret}">Settings => Secrets and Variables => Actions => New repository secrets</p>
+                    <img src="/images/secrets_step2.png" alt="secrets_step2" style="max-width: 100%; height: auto; margin-top: 10px;">
+                </div>
             </div>
         </div>
 
@@ -790,7 +799,7 @@
                     <div style="margin-bottom: 12px;">
                         <strong>3.1</strong>
                         <span th:text="#{index.step3.1}"></span>
-                        <a href="https://play.google.com/store/apps/details?id=com.alphainventor.filemanager" target="_blank" style="color: #1a73e8; text-decoration: underline;">檔案管理器 (File Manager)</a>
+                        <a href="https://play.google.com/store/apps/details?id=com.alphainventor.filemanager" target="_blank" style="color: #1a73e8; text-decoration: underline;">File Manager</a>
                     </div>
                     <div>
                         <strong>3.2</strong>
@@ -798,6 +807,7 @@
                         <a href="https://github.com/Angus-repo/aaps-ci-preparation/releases/latest" target="_blank" style="color: #1a73e8; text-decoration: underline;">GitHub Releases</a>
                         下載 <code>aaps-ci-auth.html</code>
                         <span th:text="#{index.step3.2.suffix}"></span>
+                        <img src="/images/download_aaps-ci_auth.png" alt="download_aaps-ci_auth.png" style="max-width: 100%; height: auto; margin-top: 10px;">
                     </div>
                 </div>
             </div>

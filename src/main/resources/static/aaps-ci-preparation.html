@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AAPS-CI Auth + Keystore</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; color: #333; margin: 0; padding: 1rem; }
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { color: #1a73e8; display: flex; align-items: center; gap: 0.5rem; }
+    input[type=text], textarea { width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.5rem 1rem; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #005fa3; }
+    .field-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .field-group .right-button { margin-left: auto; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .button-group button { flex: 1 1 100%; }
+    .full-width-btn { width: 100%; margin-top: 0.5rem; }
+    .auth-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
+    .auth-controls .custom-client { flex-basis: 100%; display: none; }
+    @media (min-width: 600px) {
+      .auth-controls .custom-client { flex-basis: auto; display: inline-block; }
+    }
+    .copy-right { text-align: right; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Option 1: 產生 JKS (純前端)</h2>
+    <button onclick="generateJks()">🔐 產生 JKS</button>
+    <div class="field-group">
+      <label for="keystoreSet">KEYSTORE_SET:</label>
+      <input id="keystoreSet" readonly style="flex: 1 1 auto; min-width: 200px;">
+      <button class="right-button" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
+    </div>
+
+    <h2>Option 2: 上傳並轉換 JKS</h2>
+    <input type="file" id="jksFile" accept=".jks">
+    <button onclick="convertJks()">📂 匯入並轉換</button>
+    <textarea id="keystoreBase64" rows="5" readonly></textarea>
+    <button class="full-width-btn" onclick="copyToClipboard('keystoreBase64')">📋 複製 Base64</button>
+    <div class="button-group">
+      <button onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製 KEYSTORE_PASSWORD</button>
+      <button onclick="copyToClipboardText('KEY_ALIAS')">📋 複製 KEY_ALIAS</button>
+      <button onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製 KEY_PASSWORD</button>
+    </div>
+
+    <h2><img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" style="height:24px;vertical-align:middle;margin-right:6px">Google OAuth2 驗證</h2>
+    <div class="auth-controls">
+      <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> 預設</label>
+      <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> 自訂</label>
+      <button onclick="startAuth()">🚀 開始授權</button>
+      <input type="text" class="custom-client" id="customClientId" placeholder="Your Google Client ID">
+    </div>
+
+    <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly></p>
+    <p><label for="oauth2Base64">GDRIVE_OAUTH2:</label><textarea id="oauth2Base64" rows="3" readonly></textarea></p>
+    <div class="copy-right">
+      <button onclick="copyOauth2Base64()">📋 複製</button>
+    </div>
+  </div>
+
+  <script>
+    function generateJks() {
+      const forge = window.forge;
+      forge.pki.rsa.generateKeyPair({ bits: 2048, workers: -1 }, function (err, keys) {
+        const cert = forge.pki.createCertificate();
+        cert.publicKey = keys.publicKey;
+        cert.serialNumber = '01';
+        cert.validity.notBefore = new Date();
+        cert.validity.notAfter = new Date();
+        cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 20);
+        const attrs = [{ name: 'commonName', value: 'aaps.app' }];
+        cert.setSubject(attrs);
+        cert.setIssuer(attrs);
+        cert.sign(keys.privateKey, forge.md.sha256.create());
+
+        const password = 'changeit';
+        const alias = 'aapskey';
+        const p12Asn1 = forge.pkcs12.toPkcs12Asn1(keys.privateKey, [cert], password, { algorithm: '3des' });
+        const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
+        const base64 = forge.util.encode64(p12Der);
+
+        const keystoreSet = btoa(`${base64}|${password}|${alias}|${password}`);
+        document.getElementById('keystoreSet').value = keystoreSet;
+      });
+    }
+
+    function convertJks() {
+      const fileInput = document.getElementById('jksFile');
+      const reader = new FileReader();
+      if (!fileInput.files.length) return;
+      reader.onload = function () {
+        const binary = new Uint8Array(reader.result);
+        const base64 = forge.util.encode64(forge.util.binary.raw.encode(binary));
+        document.getElementById('keystoreBase64').value = base64;
+      };
+      reader.readAsArrayBuffer(fileInput.files[0]);
+    }
+
+    function copyToClipboard(id) {
+      const el = document.getElementById(id);
+      el.select();
+      el.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+    }
+
+    function copyToClipboardText(text) {
+      navigator.clipboard.writeText(text);
+    }
+
+    const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
+    const redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
+
+    function toggleClientInput() {
+      const input = document.getElementById('customClientId');
+      const isCustom = document.querySelector('input[name="clientMode"]:checked').value === 'custom';
+      input.style.display = isCustom ? 'block' : 'none';
+    }
+
+    async function startAuth() {
+      let clientId = defaultClientId;
+      if (document.querySelector('input[name="clientMode"]:checked').value === 'custom') {
+        clientId = document.getElementById('customClientId').value;
+      }
+      const codeVerifier = [...crypto.getRandomValues(new Uint8Array(32))].map(b => ('0' + b.toString(16)).slice(-2)).join('');
+      const encoder = new TextEncoder();
+      const data = encoder.encode(codeVerifier);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+      sessionStorage.setItem("pkce_code_verifier", codeVerifier);
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file&access_type=offline&code_challenge_method=S256&code_challenge=${codeChallenge}`;
+      window.location.href = authUrl;
+    }
+
+    async function exchangeCodeForToken(code) {
+      const codeVerifier = sessionStorage.getItem("pkce_code_verifier");
+      const clientId = document.querySelector('input[name="clientMode"]:checked').value === 'custom' ? document.getElementById('customClientId').value : defaultClientId;
+      const res = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: clientId,
+          code: code,
+          code_verifier: codeVerifier,
+          grant_type: 'authorization_code',
+          redirect_uri: redirectUri
+        }).toString()
+      });
+      const data = await res.json();
+      if (data.refresh_token) {
+        document.getElementById('refreshToken').value = data.refresh_token;
+        document.getElementById('oauth2Base64').value = btoa(clientId + '|' + data.refresh_token);
+      }
+    }
+
+    function copyOauth2Base64() {
+      const text = document.getElementById('oauth2Base64');
+      text.select();
+      document.execCommand('copy');
+    }
+
+    window.onload = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('code')) {
+        const code = urlParams.get('code');
+        exchangeCodeForToken(code);
+      }
+    };
+  </script>
+</body>
+</html>

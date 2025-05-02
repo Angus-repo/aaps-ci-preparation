@@ -5,6 +5,17 @@
   <title>AAPS-CI Auth + Keystore</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+  <script>
+
+    function showToast(message) {
+        const toast = document.getElementById('copyToast');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 2000);
+    }
+  </script>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; color: #333; margin: 0; padding: 1rem; }
     .container { max-width: 800px; margin: auto; background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -23,12 +34,45 @@
       .auth-controls .custom-client { flex-basis: auto; display: inline-block; }
     }
     .copy-right { text-align: right; margin-top: 0.5rem; }
+
+    @media (min-width: 768px) {
+      .version-badge {
+        margin-left: 1rem;
+      }
+    }
+    .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #34a853;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        font-weight: 500;
+        display: none;
+        z-index: 1000;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="version-badge" style="position:absolute; top:12px; left:16px; background:#e3eafc; color:#1a73e8; font-size:0.9rem; font-weight:500; padding:4px 12px; border-radius:6px; z-index:10; box-shadow:0 1px 4px rgba(26,115,232,0.07); max-width: calc(100% - 32px);">v1.0.0</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/logo.png" alt="AndroidAPS Logo" style="height:80px;">
+      <select id="langSelector" onchange="switchLanguage(this.value)" style="padding:0.3rem 0.5rem; border-radius:4px; border:1px solid #ccc; font-size:1rem;">
+        <option value="en">English</option>
+        <option value="zh_TW">繁體中文</option>
+        <option value="zh_CN">简体中文</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+        <option value="ko">한국어</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
     <h2>Option 1: 產生 JKS (純前端)</h2>
-    <button onclick="generateJks()">🔐 產生 JKS</button>
+    <button id="generateJksBtn" onclick="generateJks()">🔐 產生 JKS</button>
     <div class="field-group">
       <label for="keystoreSet">KEYSTORE_SET:</label>
       <input id="keystoreSet" readonly style="flex: 1 1 auto; min-width: 200px;">
@@ -63,29 +107,38 @@
 
   <script>
     function generateJks() {
-      const forge = window.forge;
-      forge.pki.rsa.generateKeyPair({ bits: 2048, workers: -1 }, function (err, keys) {
-        const cert = forge.pki.createCertificate();
-        cert.publicKey = keys.publicKey;
-        cert.serialNumber = '01';
-        cert.validity.notBefore = new Date();
-        cert.validity.notAfter = new Date();
-        cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 20);
-        const attrs = [{ name: 'commonName', value: 'aaps.app' }];
-        cert.setSubject(attrs);
-        cert.setIssuer(attrs);
-        cert.sign(keys.privateKey, forge.md.sha256.create());
+  const btn = document.getElementById('generateJksBtn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '🔄 產生中...';
+  btn.disabled = true;
 
-        const password = 'changeit';
-        const alias = 'aapskey';
-        const p12Asn1 = forge.pkcs12.toPkcs12Asn1(keys.privateKey, [cert], password, { algorithm: '3des' });
-        const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
-        const base64 = forge.util.encode64(p12Der);
+  const forge = window.forge;
+  forge.pki.rsa.generateKeyPair({ bits: 2048, workers: -1 }, function (err, keys) {
+    const cert = forge.pki.createCertificate();
+    cert.publicKey = keys.publicKey;
+    cert.serialNumber = '01';
+    cert.validity.notBefore = new Date();
+    cert.validity.notAfter = new Date();
+    cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 20);
+    const attrs = [{ name: 'commonName', value: 'aaps.app' }];
+    cert.setSubject(attrs);
+    cert.setIssuer(attrs);
+    cert.sign(keys.privateKey, forge.md.sha256.create());
 
-        const keystoreSet = btoa(`${base64}|${password}|${alias}|${password}`);
-        document.getElementById('keystoreSet').value = keystoreSet;
-      });
-    }
+    const password = 'changeit';
+    const alias = 'aapskey';
+    const p12Asn1 = forge.pkcs12.toPkcs12Asn1(keys.privateKey, [cert], password, { algorithm: '3des' });
+    const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
+    const base64 = forge.util.encode64(p12Der);
+
+    const keystoreSet = btoa(`${base64}|${password}|${alias}|${password}`);
+    document.getElementById('keystoreSet').value = keystoreSet;
+
+    // 還原按鈕
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  });
+}
 
     function convertJks() {
       const fileInput = document.getElementById('jksFile');
@@ -104,10 +157,12 @@
       el.select();
       el.setSelectionRange(0, 99999);
       document.execCommand("copy");
+      showToast("已複製到剪貼簿");
     }
 
     function copyToClipboardText(text) {
       navigator.clipboard.writeText(text);
+      showToast("已複製到剪貼簿");
     }
 
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
@@ -160,6 +215,7 @@
       const text = document.getElementById('oauth2Base64');
       text.select();
       document.execCommand('copy');
+      showToast("已複製到剪貼簿");
     }
 
     window.onload = () => {
@@ -170,5 +226,6 @@
       }
     };
   </script>
+  <div class="toast toast-success" id="copyToast">已複製到剪貼簿</div>
 </body>
 </html>

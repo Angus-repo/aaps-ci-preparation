@@ -43,6 +43,7 @@
     .container { max-width: 800px; margin: auto; background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
     h2 { color: #1a73e8; display: flex; align-items: center; gap: 0.5rem; }
     input[type=text], textarea { width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px; }
+    .styled-input { width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; font-size: 0.9rem; }
     button { padding: 0.5rem 1rem; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
     button:hover { background: #005fa3; }
     .field-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -152,9 +153,10 @@
     
     .header-container {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-top: 20px;
+        gap: 20px;
     }
     
     .logo {
@@ -165,35 +167,43 @@
         flex: 1 1 auto;
         min-width: 200px;
     }
+    
+    .main-title {
+        font-size: 1.5rem;
+        color: #1a73e8;
+        margin: 0;
+        margin-left: -10px;
+    }
 
     .icon-drive {
         height: 24px;
         vertical-align: middle;
         margin-right: 6px;
     }
-    
+
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="version-badge">v1.0.0</div>
+    <div class="version-badge">v1.1.0</div>
     <select id="langSelector" onchange="switchLanguage(this.value)">
         <option value="en">English</option>
         <option value="zh_TW">繁體中文</option>
     </select>
     <div class="header-container">
       <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/logo.png" alt="AndroidAPS Logo" class="logo">
+      <h1 class="main-title">AAPS-CI 準備</h1>
     </div>
     <div class="option active" id="option1">
       <div class="option-header" onclick="toggleOption(1)">
-        <h2>Option 1: 產生 JKS (純前端)</h2>
+        <h2>Option 1: 產生 JKS</h2>
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
         <button id="generateJksBtn" onclick="generateJks()">🔐 產生 JKS</button>
         <div class="field-group">
           <label for="keystoreSet">KEYSTORE_SET:</label>
-          <input id="keystoreSet" readonly class="keystore-input">
+          <input id="keystoreSet" readonly class="keystore-input styled-input">
           <button class="right-button" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
         </div>
       </div>
@@ -201,15 +211,15 @@
 
     <div class="option" id="option2">
       <div class="option-header" onclick="toggleOption(2)">
-        <h2>Option 2: 上傳並轉換 JKS</h2>
+        <h2>Option 2: 上傳現有的 JKS</h2>
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
-        <input type="file" id="jksFile" accept=".jks">
-        <button onclick="convertJks()">📂 匯入並轉換</button>
-        <textarea id="keystoreBase64" rows="5" readonly></textarea>
-        <button class="full-width-btn" onclick="copyToClipboard('keystoreBase64')">📋 複製 Base64</button>
+        <input type="file" id="jksFile" accept=".jks" onchange="convertJks()">
+        <textarea id="keystoreBase64" rows="5" readonly class="styled-input"></textarea>
+        <button class="full-width-btn" onclick="copyToClipboard('keystoreBase64')">📋 複製 JKS Base64</button>
         <div class="button-group">
+          <button onclick="copyToClipboardText('KEYSTORE_BASE64')">📋 複製 KEYSTORE_BASE64</button>
           <button onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製 KEYSTORE_PASSWORD</button>
           <button onclick="copyToClipboardText('KEY_ALIAS')">📋 複製 KEY_ALIAS</button>
           <button onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製 KEY_PASSWORD</button>
@@ -222,11 +232,11 @@
       <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> 預設</label>
       <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> 自訂</label>
       <button onclick="startAuth()">🚀 開始授權</button>
-      <input type="text" class="custom-client" id="customClientId" placeholder="Your Google Client ID">
+      <input type="text" class="custom-client styled-input" id="customClientId" placeholder="Your Google Client ID">
     </div>
 
-    <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly></p>
-    <p><label for="oauth2Base64">GDRIVE_OAUTH2:</label><textarea id="oauth2Base64" rows="3" readonly></textarea></p>
+    <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly class="styled-input"></p>
+    <p><label for="oauth2Base64">GDRIVE_OAUTH2:</label><textarea id="oauth2Base64" rows="3" readonly class="styled-input"></textarea></p>
     <div class="copy-right">
       <button onclick="copyToClipboard('oauth2Base64')">📋 複製</button>
     </div>
@@ -252,8 +262,18 @@
     cert.setIssuer(attrs);
     cert.sign(keys.privateKey, forge.md.sha256.create());
 
-    const password = 'changeit';
-    const alias = 'aapskey';
+    // 產生10位英數字元的亂數密碼
+    const generateRandomPassword = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < 10; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    };
+    
+    const password = generateRandomPassword();
+    const alias = 'key0';
     const p12Asn1 = forge.pkcs12.toPkcs12Asn1(keys.privateKey, [cert], password, { algorithm: '3des' });
     const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
     const base64 = forge.util.encode64(p12Der);

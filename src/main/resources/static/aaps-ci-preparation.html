@@ -32,10 +32,24 @@
         if (urlParams.has('code')) {
             const code = urlParams.get('code');
             exchangeCodeForToken(code);
+            
+            const clientMode = sessionStorage.getItem('clientMode');
+            const customClientId = sessionStorage.getItem('customClientId');
+            if (clientMode) {
+              const radio = document.querySelector(`input[name="clientMode"][value="${clientMode}"]`);
+              if (radio) radio.checked = true;
+
+              if (clientMode === 'custom') {
+                const input = document.getElementById('customClientId');
+                input.value = customClientId;
+                input.style.display = 'block';
+              }
+              sessionStorage.removeItem('clientMode');
+              sessionStorage.removeItem('customClientId');
+            }
+            return;
         }
-        // 預設開啟 Option 1
         toggleOption(1);
-        // 預設隱藏 customClientId
         var customClientInput = document.getElementById('customClientId');
         if (customClientInput) customClientInput.style.display = 'none';
     };
@@ -374,8 +388,11 @@
 
     async function startAuth() {
       let clientId = defaultClientId;
+      const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
       if (document.querySelector('input[name="clientMode"]:checked').value === 'custom') {
         clientId = document.getElementById('customClientId').value;
+        sessionStorage.setItem('clientMode', clientMode);
+        sessionStorage.setItem('customClientId', clientId);
       }
       const codeVerifier = [...crypto.getRandomValues(new Uint8Array(32))].map(b => ('0' + b.toString(16)).slice(-2)).join('');
       const encoder = new TextEncoder();

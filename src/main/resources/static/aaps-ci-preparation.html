@@ -39,6 +39,19 @@
     };
   </script>
   <style>
+    .flex-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 0.5rem;
+    }
+    .right-button {
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .label-no-margin {
+      margin-bottom: 0;
+    }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; color: #333; margin: 0; padding: 1rem; }
     .container { max-width: 800px; margin: auto; background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
     h2 { color: #1a73e8; display: flex; align-items: center; gap: 0.5rem; }
@@ -48,15 +61,18 @@
     button:hover { background: #005fa3; }
     .field-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .field-group .right-button { margin-left: auto; }
-    .button-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
-    .button-group button { flex: 1 1 100%; }
+    .button-group { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
     .full-width-btn { width: 100%; margin-top: 0.5rem; }
     .auth-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
     .auth-controls .custom-client { flex-basis: 100%; display: none; }
     @media (min-width: 600px) {
       .auth-controls .custom-client { flex-basis: auto; display: inline-block; }
     }
-    .copy-right { text-align: right; margin-top: 0.5rem; }
+    .copy-right {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: flex-end;
+    }
 
     .toast {
         position: fixed;
@@ -205,13 +221,13 @@
       <div class="option-content">
         <button id="generateJksBtn" onclick="generateJks()">🔐 產生 JKS</button>
         <div class="field-group">
-          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-            <label for="keystoreSet" style="margin-bottom: 0;">KEYSTORE_SET:</label>
-            <button style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEYSTORE_SET')">📋 複製</button>
+          <div class="flex-row">
+            <label for="keystoreSet" class="label-no-margin">KEYSTORE_SET:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_SET')">📋 複製</button>
           </div>
-          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-            <input id="keystoreSet" readonly class="keystore-input styled-input" style="margin-bottom: 0;">
-            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
+          <div class="flex-row">
+            <input id="keystoreSet" readonly class="keystore-input styled-input label-no-margin">
+            <button class="right-button" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
           </div>
         </div>
       </div>
@@ -223,25 +239,27 @@
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
-        <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-          <label for="keystoreBase64" style="margin-bottom: 0;">KEYSTORE_BASE64:</label>
-          <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEYSTORE_BASE64')">📋 複製</button>
+        <div class="flex-row">
+          <label for="keystoreBase64" class="label-no-margin">KEYSTORE_BASE64:</label>
+          <button class="right-button" onclick="copyToClipboardText('KEYSTORE_BASE64')">📋 複製</button>
         </div>
         <input type="file" id="jksFile" accept=".jks" onchange="convertJks()">
-        <textarea id="keystoreBase64" rows="5" readonly class="styled-input"></textarea>
-        <button class="right-button" onclick="copyToClipboard('keystoreBase64')">📋 複製 JKS BAES64</button>
+        <div class="flex-row">
+          <input id="keystoreBase64" readonly class="keystore-input styled-input label-no-margin">
+          <button class="right-button" onclick="copyToClipboard('keystoreBase64')">📋 複製</button>
+        </div>
         <div class="button-group">
-          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-            <label for="keystorePassword" style="margin-bottom: 0;">KEYSTORE_PASSWORD:</label>
-            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製</button>
+          <div class="flex-row">
+            <label for="keystorePassword" class="label-no-margin">KEYSTORE_PASSWORD:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製</button>
           </div>
-          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-            <label for="keystoreAlias" style="margin-bottom: 0;">KEY_ALIAS:</label>
-            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEY_ALIAS')">📋 複製</button>
+          <div class="flex-row">
+            <label for="keystoreAlias" class="label-no-margin">KEY_ALIAS:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEY_ALIAS')">📋 複製</button>
           </div>
-          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-            <label for="keystoreAlias" style="margin-bottom: 0;">KEY_PASSWORD:</label>
-            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製</button>
+          <div class="flex-row">
+            <label for="keystoreAlias" class="label-no-margin">KEY_PASSWORD:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製</button>
           </div>
         </div>
       </div>
@@ -257,13 +275,13 @@
 
     <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly class="styled-input"></p>
     <!-- <label for="oauth2Base64">GDRIVE_OAUTH2:</label> -->
-    <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
-      <label for="oauth2Base64" style="margin-bottom: 0;">GDRIVE_OAUTH2:</label>
-      <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('GDRIVE_OAUTH2')">📋 複製</button>
+    <div class="flex-row">
+      <label for="oauth2Base64" class="label-no-margin">GDRIVE_OAUTH2:</label>
+      <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')">📋 複製</button>
     </div>
     <textarea id="oauth2Base64" rows="3" readonly class="styled-input"></textarea>
     <div class="copy-right">
-      <button onclick="copyToClipboard('oauth2Base64')">📋 複製</button>
+      <button class="right-button" onclick="copyToClipboard('oauth2Base64')">📋 複製</button>
     </div>
   </div>
 

@@ -180,7 +180,10 @@
         vertical-align: middle;
         margin-right: 6px;
     }
-
+    #jksFile{
+      margin-top: 10px;
+      padding-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -202,9 +205,14 @@
       <div class="option-content">
         <button id="generateJksBtn" onclick="generateJks()">🔐 產生 JKS</button>
         <div class="field-group">
-          <label for="keystoreSet">KEYSTORE_SET:</label>
-          <input id="keystoreSet" readonly class="keystore-input styled-input">
-          <button class="right-button" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
+          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+            <label for="keystoreSet" style="margin-bottom: 0;">KEYSTORE_SET:</label>
+            <button style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEYSTORE_SET')">📋 複製</button>
+          </div>
+          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+            <input id="keystoreSet" readonly class="keystore-input styled-input" style="margin-bottom: 0;">
+            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
+          </div>
         </div>
       </div>
     </div>
@@ -215,14 +223,26 @@
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
+        <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+          <label for="keystoreBase64" style="margin-bottom: 0;">KEYSTORE_BASE64:</label>
+          <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEYSTORE_BASE64')">📋 複製</button>
+        </div>
         <input type="file" id="jksFile" accept=".jks" onchange="convertJks()">
         <textarea id="keystoreBase64" rows="5" readonly class="styled-input"></textarea>
-        <button class="full-width-btn" onclick="copyToClipboard('keystoreBase64')">📋 複製 JKS Base64</button>
+        <button class="right-button" onclick="copyToClipboard('keystoreBase64')">📋 複製 JKS BAES64</button>
         <div class="button-group">
-          <button onclick="copyToClipboardText('KEYSTORE_BASE64')">📋 複製 KEYSTORE_BASE64</button>
-          <button onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製 KEYSTORE_PASSWORD</button>
-          <button onclick="copyToClipboardText('KEY_ALIAS')">📋 複製 KEY_ALIAS</button>
-          <button onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製 KEY_PASSWORD</button>
+          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+            <label for="keystorePassword" style="margin-bottom: 0;">KEYSTORE_PASSWORD:</label>
+            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製</button>
+          </div>
+          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+            <label for="keystoreAlias" style="margin-bottom: 0;">KEY_ALIAS:</label>
+            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEY_ALIAS')">📋 複製</button>
+          </div>
+          <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+            <label for="keystoreAlias" style="margin-bottom: 0;">KEY_PASSWORD:</label>
+            <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製</button>
+          </div>
         </div>
       </div>
     </div>
@@ -236,7 +256,12 @@
     </div>
 
     <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly class="styled-input"></p>
-    <p><label for="oauth2Base64">GDRIVE_OAUTH2:</label><textarea id="oauth2Base64" rows="3" readonly class="styled-input"></textarea></p>
+    <!-- <label for="oauth2Base64">GDRIVE_OAUTH2:</label> -->
+    <div style="display: flex; align-items: center; width: 100%; gap: 0.5rem;">
+      <label for="oauth2Base64" style="margin-bottom: 0;">GDRIVE_OAUTH2:</label>
+      <button class="right-button" style="margin-left: 8px; white-space: nowrap;" onclick="copyToClipboardText('GDRIVE_OAUTH2')">📋 複製</button>
+    </div>
+    <textarea id="oauth2Base64" rows="3" readonly class="styled-input"></textarea>
     <div class="copy-right">
       <button onclick="copyToClipboard('oauth2Base64')">📋 複製</button>
     </div>

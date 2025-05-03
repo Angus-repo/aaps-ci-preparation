@@ -273,14 +273,14 @@
       <input type="text" class="custom-client styled-input" id="customClientId" placeholder="Your Google Client ID">
     </div>
 
-    <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly class="styled-input"></p>
+    <!-- <p><label for="refreshToken">Refresh Token:</label><input id="refreshToken" readonly class="styled-input"></p> -->
     <!-- <label for="oauth2Base64">GDRIVE_OAUTH2:</label> -->
     <div class="flex-row">
       <label for="oauth2Base64" class="label-no-margin">GDRIVE_OAUTH2:</label>
       <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')">📋 複製</button>
     </div>
-    <textarea id="oauth2Base64" rows="3" readonly class="styled-input"></textarea>
-    <div class="copy-right">
+    <div class="flex-row">
+      <input id="oauth2Base64" readonly class="keystore-input styled-input label-no-margin">
       <button class="right-button" onclick="copyToClipboard('oauth2Base64')">📋 複製</button>
     </div>
   </div>
@@ -397,7 +397,7 @@
       });
       const data = await res.json();
       if (data.refresh_token) {
-        document.getElementById('refreshToken').value = data.refresh_token;
+        // document.getElementById('refreshToken').value = data.refresh_token;
         document.getElementById('oauth2Base64').value = btoa(clientId + '|' + data.refresh_token);
       }
     }

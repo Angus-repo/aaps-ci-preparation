@@ -25,7 +25,7 @@ jobs:
       - name: Extract version from HTML
         id: version
         run: |
-          VERSION=$(grep -oP '<div class="version-badge">v\K[0-9.]+(?=</div>)' src/main/resources/static/aaps-ci-preparation.html)
+          VERSION=$(grep -Eo '<div class="version-badge">v[0-9.]+' src/main/resources/static/aaps-ci-preparation.html | sed 's/.*v//')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create pre-release

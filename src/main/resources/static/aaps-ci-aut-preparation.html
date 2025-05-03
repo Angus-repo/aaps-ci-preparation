@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AAPS-CI</title>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9f9f9;
+        color: #333;
+        margin: 10;
+        min-height: 100vh;
+        padding: 10;
+      }
+      .container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        /* width: 100%; */
+        width: 95%;
+        max-width: 100vw;
+        padding: 8px;
+        margin: 10px auto;
+        position: relative;
+      }
+      @media (min-width: 769px) {
+        body {
+          background: #f5f5f5;
+          background-image: linear-gradient(to bottom right, #f5f9ff, #f5f5f5);
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 2rem;
+        }
+        .container {
+          max-width: 700px;
+          padding: 32px;
+          margin: 40px auto;
+          border-radius: 12px;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+      }
+      .header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        margin-top: 30px;
+        margin-bottom: 16px;
+      }
+      .logo-divider {
+        width: 100%;
+        border-bottom: 2px solid #e8f0fe;
+        margin: 8px 0 12px 0;
+      }
+      h1[data-i18n="title"] {
+        color: #1a73e8;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        text-align: left;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin: 1rem 0 0.5rem 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      input[type="text"], textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: none;
+        background-color: #0077cc;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #005fa3;
+      }
+      .copy-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        width: 100%;
+      }
+      .copy-container.copy-right {
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 0.5rem;
+      }
+      .copy-container:last-of-type {
+        /* 保留原本的相容性，未來可移除 */
+      }
+      .toast {
+        visibility: hidden;
+        min-width: 160px;
+        background-color: #323232;
+        color: #fff;
+        text-align: center;
+        border-radius: 4px;
+        padding: 10px;
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+        font-size: 1rem;
+      }
+      .toast.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+      @keyframes fadein {
+        from { bottom: 0; opacity: 0; }
+        to { bottom: 24px; opacity: 1; }
+      }
+      @keyframes fadeout {
+        from { bottom: 24px; opacity: 1; }
+        to { bottom: 0; opacity: 0; }
+      }
+      #langSelector {
+        margin-left: auto;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        background: #f5f5f5;
+      }
+      #clientModeGroup {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        margin: 0.5rem 0 1.5rem 0;
+      }
+      #clientModeGroup label {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0;
+      }
+      #clientIdRow {
+        display: none;
+        margin-bottom: 0.5rem;
+      }
+      img[alt="AndroidAPS Logo"] {
+        height: 64px;
+        margin-right: 0;
+        margin-bottom: 8px;
+      }
+      .lang-switcher {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 8px;
+
+      }
+      @media (min-width: 769px) {
+        .lang-switcher {
+          position: absolute;
+          top: 20px;
+          right: 28px;
+          width: auto;
+          margin-bottom: 0;
+        }
+      }
+      .version-badge {
+        position: absolute;
+        top: 12px;
+        left: 18px;
+        background: #e3eafc;
+        color: #1a73e8;
+        font-size: 0.95rem;
+        font-weight: 500;
+        padding: 2px 10px;
+        border-radius: 6px;
+        z-index: 10;
+        box-shadow: 0 1px 4px rgba(26,115,232,0.07);
+        letter-spacing: 0.03em;
+      }
+      @media (min-width: 769px) {
+        .version-badge {
+          position: absolute;
+          top: 20px;
+          left: 48px;
+        }
+      }
+      /* ===== JKS STEP1/STEP2 STYLES (前綴 jks-step-) ===== */
+.jks-step {
+    margin-bottom: 24px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.jks-step-active {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-color: #1a73e8;
+}
+.jks-step-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    background-color: white;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid transparent;
+}
+.jks-step-active .jks-step-header {
+    border-bottom-color: #dadce0;
+    background-color: #e8f0fe;
+}
+.jks-step-header:hover {
+    background-color: #f8f9fa;
+}
+.jks-step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-weight: 600;
+    margin-right: 12px;
+    transition: all 0.3s ease;
+}
+.jks-step-active .jks-step-number {
+    background-color: #1a73e8;
+    color: white;
+}
+.jks-step-title {
+    display: flex;
+    align-items: center;
+}
+.jks-step-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #202124;
+}
+.jks-step-active .jks-step-header h2 {
+    color: #1a73e8;
+    font-weight: 600;
+}
+.jks-step-icon {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+.jks-step-active .jks-step-icon {
+    transform: rotate(180deg);
+}
+.jks-step-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 20px;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+.jks-step-active .jks-step-content {
+    max-height: 2000px;
+    padding: 24px 20px;
+    opacity: 1;
+    transform: translateY(0);
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.5s ease, transform 0.5s ease;
+}
+.jks-field-group {
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.jks-field-group label {
+    font-weight: 500;
+    color: #202124;
+    flex: 0 0 180px;
+}
+.jks-field-group input[type="text"],
+.jks-field-group input[type="file"] {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    min-width: 0;
+    transition: all 0.2s ease;
+}
+.jks-field-group input[type="text"]:focus,
+.jks-field-group input[type="file"]:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
+    background-color: white;
+}
+.jks-field-group input[type="text"][readonly] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+.jks-button-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.jks-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    min-height: 44px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.jks-button-success {
+    background-color: #34a853;
+}
+.jks-button-success:hover {
+    background-color: #2d9247;
+}
+.jks-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background-color: #34a853;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    min-height: 36px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.jks-copy-btn:hover {
+    background-color: #2d9247;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.jks-copy-btn:active {
+    transform: translateY(-1px);
+}
+.jks-message {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    display: none;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
+.jks-success {
+    background-color: #e6f4ea;
+    color: #34a853;
+    border: 1px solid #b7dfb9;
+}
+.jks-error {
+    background-color: #fce8e6;
+    color: #ea4335;
+    border: 1px solid #f5c2c0;
+}
+.jks-step-description {
+    margin-bottom: 16px;
+    color: #5f6368;
+}
+.jks-warning-box {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border-left: 4px solid #ffeeba;
+}
+.jks-hidden-on-load {
+    display: none !important;
+}
+/* RWD for jks-step */
+@media (max-width: 768px) {
+    .jks-step-header h2 { font-size: 1rem; }
+    .jks-field-group { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .jks-field-group label { width: 100%; min-width: unset; margin: 0; flex: none; }
+    .jks-field-group input[type="text"], .jks-field-group input[type="file"] { width: 100%; box-sizing: border-box; }
+    .jks-button-container { flex-direction: column; gap: 8px; }
+    .jks-button, .jks-copy-btn { width: 100%; }
+}
+/* ===== END JKS STEP1/STEP2 STYLES ===== */
+      .jks-step {
+        margin-bottom: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      .jks-step-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: #f7f7f9;
+        cursor: pointer;
+      }
+      .jks-step-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .jks-step-number {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1.5rem;
+        text-align: center;
+        background: #0077cc;
+        color: white;
+        border-radius: 50%;
+        font-weight: 500;
+      }
+      .jks-step-icon {
+        font-size: 1rem;
+        color: #0077cc;
+      }
+      .jks-step-content {
+        padding: 1rem;
+        border-top: 1px solid #ddd;
+      }
+      .jks-hidden-on-load {
+        display: none;
+      }
+      .jks-warning-box {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        border-left: 4px solid #ffeeba;
+      }
+      .jks-field-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .jks-field-group label {
+        flex: 0 0 40%;
+        margin-bottom: 0;
+      }
+      .jks-field-group button {
+        flex: 0 0 20%;
+        margin-left: 0.5rem;
+      }
+      .jks-message {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #666;
+      }
+      .jks-button-container {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      .jks-button {
+        flex: 1;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .jks-button-success {
+        background-color: #28a745;
+        color: white;
+      }
+      .jks-button-success:hover {
+        background-color: #218838;
+      }
+      .jks-copy-btn {
+        background: none;
+        border: none;
+        color: #0077cc;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 0.5rem;
+      }
+      .jks-copy-btn:hover {
+        text-decoration: underline;
+      }
+      .jks-field-group.keystore-set-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+.jks-field-group.keystore-set-group label {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+  font-weight: 500;
+  color: #202124;
+}
+.jks-field-group.keystore-set-group .jks-copy-btn {
+  flex: 0 0 40px;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+.jks-field-group.keystore-set-group input[type="text"] {
+  flex: 1 1 0%;
+  min-width: 80px;
+  max-width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f8f9fa;
+  height: 40px;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .jks-field-group.keystore-set-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .jks-field-group.keystore-set-group label {
+    margin-bottom: 0;
+  }
+  .jks-field-group.keystore-set-group input[type="text"] {
+    width: 100%;
+    min-width: 0;
+  }
+  .jks-field-group.keystore-set-group .jks-copy-btn {
+    width: 100%;
+    min-width: unset;
+    height: 36px;
+  }
+}
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+</head>
+<body onload="setLanguageFromBrowser(); toggleClientInput();">
+  <div class="container">
+      <div class="header" style="margin-top: 0; margin-bottom: 16px;">
+        <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/logo.png" alt="AndroidAPS Logo" style="height: 96px; margin-right: 0;">
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+          <h1 data-i18n="title" style="margin-bottom: 0.5em;">AAPS-CI 授權工具</h1>
+          <span style="font-size: 1.05em; color: #5f6368;">AndroidAPS CI 授權與金鑰管理工具</span>
+        </div>
+      </div>
+      <div class="logo-divider"></div>
+    <div class="jks-step jks-step-active" id="jks-step1">
+      <div class="jks-step-header" onclick="jksToggleStep(1)">
+          <div class="jks-step-title">
+              <div class="jks-step-number">1</div>
+              <h2>產生 JKS 金鑰庫</h2>
+          </div>
+          <i class="fas fa-chevron-down jks-step-icon"></i>
+      </div>
+      <div class="jks-step-content jks-hidden-on-load">
+          <p class="jks-step-description">如果您是第一次使用 AAPS，需要產生新的 JKS 金鑰庫：</p>
+          <div class="jks-button-container">
+              <button onclick="jksGenerateJks()" class="gdrive-copy-btn" style="margin-bottom: 8px;">
+    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="white" style="vertical-align: middle;"><path d="M502.6 233.4l-192-192C304.2 36.7 296.1 32 288 32s-16.2 4.7-22.6 10.9l-192 192c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L224 173.3V448c0 17.7 14.3 32 32 32s32-14.3 32-32V173.3l105.4 105.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3z"/></svg>
+    <span>產生 JKS</span>
+  </button>
+          </div>
+          <div id="jksFields">
+              <div class="jks-warning-box" style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #ffeeba;">
+                  重要提示：這些金鑰值在頁面重新載入後將不會被保存。請務必將所有值複製到安全的地方後再繼續。
+              </div>
+              <div class="jks-field-group keystore-set-group">
+        <label>KEYSTORE_SET:</label>
+        <button onclick="jksCopyToClipboardText('KEYSTORE_SET')" class="gdrive-copy-btn" title="copy">
+          <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white" style="vertical-align: middle;"><path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67 0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 32-32V128c0-17.67-14.33-32-32-32z"/></svg>
+            <span data-i18n="copy">Copy</span>
+        </button>
+        <input type="text" id="jks-keystoreSet" readonly>
+        <button onclick="jksCopyToClipboard('jks-keystoreSet')" class="gdrive-copy-btn" title="copy">
+          <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white" style="vertical-align: middle;"><path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67 0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 32-32V128c0-17.67-14.33-32-32-32z"/></svg>
+            <span data-i18n="copy">Copy</span>
+        </button>
+              </div>
+              <div id="jks-verifyMessage" class="jks-message"></div>
+          </div>
+          <div id="jks-step1RepositorySecret" style="margin-top: 20px;">
+              <p>Settings => Secrets and Variables => Actions => New repository secrets</p>
+              <img src="/images/secrets_step1.png" alt="secrets_step1" style="max-width: 100%; height: auto; margin-top: 10px;">
+          </div>
+      </div>
+    </div>
+    <div class="jks-step" id="jks-step2">
+      <div class="jks-step-header" onclick="jksToggleStep(2)">
+          <div class="jks-step-title">
+              <div class="jks-step-number">2</div>
+              <h2>上傳及轉換 JKS</h2>
+          </div>
+          <i class="fas fa-chevron-down jks-step-icon"></i>
+      </div>
+      <div class="jks-step-content jks-hidden-on-load">
+          <p class="jks-step-description">請選擇要上傳的 JKS 檔案：</p>
+          <div class="jks-button-container">
+              <input type="file" id="jks-jksFile" accept=".jks">
+              <button onclick="jksConvertJks()" class="jks-button">
+                  <i class="fas fa-exchange-alt"></i>
+                  <span>轉換為 Base64</span>
+              </button>
+          </div>
+          <div class="jks-warning-box" style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #ffeeba;">
+              重要提示：此 Base64 值在頁面重新載入後將不會被保存。請務必將其複製到安全的地方。
+          </div>
+          <div class="jks-field-group">
+              <label>KEYSTORE_BASE64:</label>
+              <button onclick="jksCopyToClipboardText('KEYSTORE_BASE64')" class="jks-copy-btn" title="copy">
+                  <i class="fas fa-copy"></i>
+              </button>
+              <input type="text" id="jks-convertedBase64" readonly>
+              <button onclick="jksCopyConvertedBase64()" class="jks-copy-btn" title="copy">
+                  <i class="fas fa-copy"></i>
+              </button>
+          </div>
+          <div class="jks-field-group">
+              <label>KEYSTORE_PASSWORD:</label>
+              <button onclick="jksCopyToClipboardText('KEYSTORE_PASSWORD')" class="jks-copy-btn" title="copy">
+                  <i class="fas fa-copy"></i>
+              </button>
+          </div>
+          <div class="jks-field-group">
+              <label>KEY_ALIAS:</label>
+              <button onclick="jksCopyToClipboardText('KEY_ALIAS')" class="jks-copy-btn" title="copy">
+                  <i class="fas fa-copy"></i>
+              </button>
+          </div>
+          <div class="jks-field-group">
+              <label>KEY_PASSWORD:</label>
+              <button onclick="jksCopyToClipboardText('KEY_PASSWORD')" class="jks-copy-btn" title="copy">
+                  <i class="fas fa-copy"></i>
+              </button>
+          </div>
+          <input type="hidden" id="jks-step2KeystorePassword" readonly>
+          <input type="hidden" id="jks-step2KeyAlias" readonly>
+          <input type="hidden" id="jks-step2KeyPassword" readonly>
+          <div id="jks-convertMessage" class="jks-message"></div>
+          <div id="jks-step2RepositorySecret" style="margin-top: 20px;">
+              <p>Settings => Secrets and Variables => Actions => New repository secrets</p>
+              <img src="/images/secrets_step2.png" alt="secrets_step2" style="max-width: 100%; height: auto; margin-top: 10px;">
+          </div>
+      </div>
+    </div>
+    <div class="version-badge">v1.0.0</div>
+      <div class="lang-switcher">
+        <select id="langSelector" onchange="switchLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+          <option value="bg">Български</option>
+          <option value="ca">Català</option>
+          <option value="cs">Čeština</option>
+          <option value="da">Dansk</option>
+          <option value="de">Deutsch</option>
+          <option value="el">Ελληνικά</option>
+          <option value="es">Español</option>
+          <option value="fi">Suomi</option>
+          <option value="fr">Français</option>
+          <option value="he">עברית</option>
+          <option value="hr">Hrvatski</option>
+          <option value="hu">Magyar</option>
+          <option value="it">Italiano</option>
+          <option value="ko">한국어</option>
+          <option value="nb">Norsk Bokmål</option>
+          <option value="nl">Nederlands</option>
+          <option value="nn">Norsk Nynorsk</option>
+          <option value="no_NO">Norsk (Norge)</option>
+          <option value="no">Norsk</option>
+          <option value="pl_PL">Polski (Polska)</option>
+          <option value="pl">Polski</option>
+          <option value="pt_BR">Português (Brasil)</option>
+          <option value="pt_PT">Português (Portugal)</option>
+          <option value="ro">Română</option>
+          <option value="ru">Русский</option>
+          <option value="sk">Slovenčina</option>
+          <option value="sl">Slovenščina</option>
+          <option value="sr">Српски</option>
+          <option value="sv">Svenska</option>
+          <option value="tr">Türkçe</option>
+          <option value="uk">Українська</option>
+          <option value="zh_CN">简体中文</option>
+          <option value="zh_TW">繁體中文</option>
+        </select>
+      </div>
+      <div id="clientModeGroup">
+        <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" alt="Google Drive Logo" style="height:2em;vertical-align:middle;margin-left:0.5em;">
+        <label>
+          <input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()">
+          <span data-i18n="default">Default</span>
+        </label>
+        <label>
+          <input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()">
+          <span data-i18n="custom">Custom</span>
+        </label>
+        <button onclick="startAuth()">
+          <span data-i18n="startAuth">Start Auth</span>
+        </button>
+      </div>
+      <div id="clientIdRow">
+        <label>
+          <span data-i18n="clientId">Client ID:</span>
+          <input type="text" id="customClientId" placeholder="Your Google Client ID">
+        </label>
+      </div>
+      <h3 data-i18n="refreshToken">Refresh Token</h3>
+      <input type="text" id="refreshToken" style="width:100%;box-sizing:border-box;margin-bottom:0.5rem;" readonly>
+      <div class="copy-container">
+        <h3 style="display: flex; align-items: center; gap: 0.5em;">GDRIVE_OAUTH2
+          <button onclick="copyGdriveOauthLabel()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white" style="vertical-align: middle;"><path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67 0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 32-32V128c0-17.67-14.33-32-32-32z"/></svg>
+            <span data-i18n="copy">Copy</span>
+          </button>
+        </h3>
+        <textarea id="oauth2Base64" rows="4" readonly style="width:100%;box-sizing:border-box;resize:vertical; margin-bottom: 0.5rem;"></textarea>
+      </div>
+      <div class="copy-container copy-right">
+        <button onclick="copyOauth2Base64()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill="white">
+            <path d="M320 448H48V128h64V64H48C21.49 64 0 85.49 0 112v336c0 
+            26.51 21.49 48 48 48h272c26.51 0 48-21.49 48-48v-64h-64v64zm128-352h-80V0H192c-17.67
+            0-32 14.33-32 32v320c0 17.67 14.33 32 32 32h256c17.67 0 32-14.33 
+            32-32V128c0-17.67-14.33-32-32-32z"/>
+          </svg> <span data-i18n="copy">Copy</span></button>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 1rem; color: #333;" data-i18n="githubSecrets">your github fork Settings => Secrets and Variables => Actions => New repository secrets</p>
+        <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/gdrive_oauth2.png" alt="GDrive OAuth2" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+      </div>
+      <span id="toast" class="toast">Copied to clipboard!</span>
+    </div>
+
+      <script>
+    const redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
+    const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
+
+    function base64URLEncode(str) {
+      return btoa(String.fromCharCode.apply(null, new Uint8Array(str)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    async function generateCodeChallenge(verifier) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(verifier);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return base64URLEncode(digest);
+    }
+
+    async function startAuth() {
+      let clientId = defaultClientId;
+      const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
+      if (clientMode === 'custom') {
+        clientId = document.getElementById('customClientId').value;
+      }
+      // 儲存 clientMode 與 customClientId 到 sessionStorage
+      sessionStorage.setItem('clientMode', clientMode);
+      sessionStorage.setItem('customClientId', document.getElementById('customClientId').value);
+      if (!clientId) {
+        document.getElementById('oauth2Base64').value = '❌ Missing client ID.';
+        return;
+      }
+
+      const codeVerifier = [...crypto.getRandomValues(new Uint8Array(32))].map(b => ('0' + b.toString(16)).slice(-2)).join('');
+      const codeChallenge = await generateCodeChallenge(codeVerifier);
+      sessionStorage.setItem("pkce_code_verifier", codeVerifier);
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${encodeURIComponent(clientId)}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&response_type=code` +
+        `&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file` +
+        `&access_type=offline` +
+        `&code_challenge_method=S256` +
+        `&code_challenge=${codeChallenge}`;
+      window.location.href = authUrl;
+    }
+
+    async function exchangeCodeForToken(code) {
+      let clientId = defaultClientId;
+      const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
+      if (clientMode === 'custom') {
+        clientId = document.getElementById('customClientId').value;
+      }
+      const codeVerifier = sessionStorage.getItem("pkce_code_verifier");
+      if (!codeVerifier) {
+        document.getElementById('oauth2Base64').value = '❌ Missing code_verifier.';
+        return;
+      }
+
+      const body = new URLSearchParams({
+        client_id: clientId,
+        code: code,
+        code_verifier: codeVerifier,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri
+      });
+
+      const res = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+      });
+
+      const data = await res.json();
+      if (data.refresh_token) {
+        document.getElementById('refreshToken').value = data.refresh_token;
+      } else {
+        document.getElementById('oauth2Base64').value = '❌ No refresh token returned.\n' + JSON.stringify(data, null, 2);
+      }
+    }
+
+    function updateOauth2Base64() {
+        let clientId = defaultClientId;
+        const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
+        if (clientMode === 'custom') {
+          clientId = document.getElementById('customClientId').value;
+        }
+        const refreshToken = document.getElementById('refreshToken').value;
+        let result = '';
+        if (clientId && refreshToken) {
+          result = btoa(clientId + '|' + refreshToken);
+        }
+        document.getElementById('oauth2Base64').value = result;
+        document.getElementById('oauth2Base64Button').disabled = false;
+      }
+      document.getElementById('refreshToken').addEventListener('input', updateOauth2Base64);
+      document.addEventListener('DOMContentLoaded', function() {
+        // 監聽 clientMode 與 customClientId 變動
+        document.querySelectorAll('input[name="clientMode"]').forEach(input => input.addEventListener('change', updateOauth2Base64));
+        const customClientId = document.getElementById('customClientId');
+        if (customClientId) customClientId.addEventListener('input', updateOauth2Base64);
+      });
+      function copyOauth2Base64() {
+        const input = document.getElementById('refreshToken');
+        const textarea = document.getElementById('oauth2Base64');
+        if(input.value === ''){
+          // 多國語系提示
+          const lang = document.getElementById('langSelector').value;
+          const msg = i18nStrings[lang]?.needAuthMsg || '❌ Please use the Start Auth button to get a refreshToken first';
+          textarea.value = msg;
+          return;
+        }
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(textarea.value).then(function() {
+            // 顯示 toast
+            const toast = document.getElementById('toast');
+            toast.className = "toast show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+          });
+        } else {
+          textarea.select();
+          textarea.setSelectionRange(0, 99999);
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges();
+          const toast = document.getElementById('toast');
+          toast.className = "toast show";
+          setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+      }
+      // 當 refreshToken 由 exchangeCodeForToken 產生時自動更新 oauth2
+      const origExchangeCodeForToken = exchangeCodeForToken;
+      exchangeCodeForToken = async function(code) {
+        await origExchangeCodeForToken.apply(this, arguments);
+        updateOauth2Base64();
+      }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('code')) {
+      // 讀回 clientMode 與 customClientId 並還原到畫面
+      const savedClientMode = sessionStorage.getItem('clientMode') || 'default';
+      const savedCustomClientId = sessionStorage.getItem('customClientId') || '';
+      // 設定 radio
+      const radios = document.getElementsByName('clientMode');
+      radios.forEach(r => { r.checked = (r.value === savedClientMode); });
+      // 設定 input
+      document.getElementById('customClientId').value = savedCustomClientId;
+      // 觸發顯示/隱藏
+      toggleClientInput();
+      const code = urlParams.get('code');
+      exchangeCodeForToken(code);
+    }
+  
+    const i18nStrings = {
+      "en": {
+        "title": "AAPS-CI Auth",
+        "clientId": "Client ID:",
+        "placeholder": "Your Google Client ID",
+        "startAuth": "Start Auth",
+        "refreshToken": "Refresh Token",
+        "copy": "Copy",
+        "toast": "Copied to clipboard!", "default": "Default", "custom": "Custom",
+        "needAuthMsg": "❌ Please use the Start Auth button to get a refreshToken first",
+        "githubSecrets": "your github fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "zh_TW": {
+        "title": "AAPS-CI 授權",
+        "clientId": "用戶端 ID：",
+        "placeholder": "你的 Google 用戶端 ID",
+        "startAuth": "開始授權",
+        "refreshToken": "Refresh Token（更新權杖）",
+        "copy": "複製",
+        "toast": "已複製到剪貼簿！", "default": "預設", "custom": "自訂",
+        "needAuthMsg": "❌ 請先使用「開始授權」按鈕取得 refreshToken",
+        "githubSecrets": "你的 GitHub 分支 Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "zh_CN": {
+        "title": "AAPS-CI 授权",
+        "clientId": "客户端 ID：",
+        "placeholder": "你的 Google 客户端 ID",
+        "startAuth": "开始授权",
+        "refreshToken": "Refresh Token（更新令牌）",
+        "copy": "复制",
+        "toast": "已复制到剪贴板！", "default": "默认", "custom": "自定义",
+        "needAuthMsg": "❌ 请先使用“开始授权”按钮获取 refreshToken",
+        "githubSecrets": "你的 GitHub 分支 Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "ko": {
+        "title": "AAPS-CI 인증",
+        "clientId": "클라이언트 ID:",
+        "placeholder": "Google 클라이언트 ID",
+        "startAuth": "인증 시작",
+        "refreshToken": "Refresh Token(갱신 토큰)",
+        "copy": "복사",
+        "toast": "클립보드에 복사됨!", "default": "기본값", "custom": "사용자 지정",
+        "needAuthMsg": "❌ 먼저 '인증 시작' 버튼을 사용해 refreshToken을 받아주세요",
+        "githubSecrets": "GitHub 포크 Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "de": {
+        "title": "AAPS-CI Authentifizierung",
+        "clientId": "Client-ID:",
+        "placeholder": "Ihre Google Client-ID",
+        "startAuth": "Authentifizierung starten",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopieren",
+        "toast": "In die Zwischenablage kopiert!", "default": "Standard", "custom": "Benutzerdefiniert",
+        "needAuthMsg": "❌ Bitte zuerst auf 'Authentifizierung starten' klicken, um ein Refresh Token zu erhalten",
+        "githubSecrets": "Dein GitHub-Fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "fr": {
+        "title": "AAPS-CI Auth",
+        "clientId": "ID client :",
+        "placeholder": "Votre ID client Google",
+        "startAuth": "Démarrer l'authentification",
+        "refreshToken": "Jeton d'actualisation",
+        "copy": "Copier",
+        "toast": "Copié dans le presse-papiers !", "default": "Par défaut", "custom": "Personnalisé",
+        "needAuthMsg": "❌ Veuillez d'abord utiliser le bouton Démarrer l'authentification pour obtenir un refreshToken",
+        "githubSecrets": "Votre fork GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "ar": {
+        "title": "مصادقة AAPS-CI",
+        "clientId": "معرّف العميل:",
+        "placeholder": "معرّف عميل Google الخاص بك",
+        "startAuth": "بدء المصادقة",
+        "refreshToken": "رمز التحديث",
+        "copy": "نسخ",
+        "toast": "تم النسخ إلى الحافظة!", "default": "افتراضي", "custom": "مخصص",
+        "needAuthMsg": "❌ يرجى استخدام زر بدء المصادقة للحصول على رمز التحديث أولاً",
+        "githubSecrets": "إعدادات شوكة GitHub الخاصة بك => Secrets and Variables => Actions => New repository secrets"
+      },
+      "bg": {
+        "title": "AAPS-CI Удостоверяване",
+        "clientId": "Клиентски ID:",
+        "placeholder": "Вашият Google Client ID",
+        "startAuth": "Стартиране на удостоверяване",
+        "refreshToken": "Refresh Token",
+        "copy": "Копирай",
+        "toast": "Копирано в клипборда!", "default": "По подразбиране", "custom": "Потребителски",
+        "needAuthMsg": "❌ Моля, използвайте бутона за стартиране на удостоверяване, за да получите refreshToken",
+        "githubSecrets": "вашето GitHub разклонение Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "ca": {
+        "title": "AAPS-CI Autenticació",
+        "clientId": "ID de client:",
+        "placeholder": "El teu ID de client de Google",
+        "startAuth": "Inicia l'autenticació",
+        "refreshToken": "Token d'actualització",
+        "copy": "Copia",
+        "toast": "Copiat al porta-retalls!", "default": "Per defecte", "custom": "Personalitzat",
+        "needAuthMsg": "❌ Utilitza primer el botó Inicia l'autenticació per obtenir un refreshToken",
+        "githubSecrets": "La teva bifurcació de GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "cs": {
+        "title": "AAPS-CI Ověření",
+        "clientId": "ID klienta:",
+        "placeholder": "Váš Google Client ID",
+        "startAuth": "Spustit ověření",
+        "refreshToken": "Obnovovací token",
+        "copy": "Kopírovat",
+        "toast": "Zkopírováno do schránky!", "default": "Výchozí", "custom": "Vlastní",
+        "needAuthMsg": "❌ Nejprve použijte tlačítko Spustit ověření pro získání refreshToken",
+        "githubSecrets": "Vaše GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "da": {
+        "title": "AAPS-CI Godkendelse",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start godkendelse",
+        "refreshToken": "Opdateringstoken",
+        "copy": "Kopiér",
+        "toast": "Kopieret til udklipsholder!", "default": "Standard", "custom": "Brugerdefineret",
+        "needAuthMsg": "❌ Brug først knappen Start godkendelse for at få en refreshToken",
+        "githubSecrets": "Din GitHub-fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "el": {
+        "title": "AAPS-CI Επαλήθευση",
+        "clientId": "ID πελάτη:",
+        "placeholder": "Το Google Client ID σας",
+        "startAuth": "Έναρξη επαλήθευσης",
+        "refreshToken": "Διακριτικό ανανέωσης",
+        "copy": "Αντιγραφή",
+        "toast": "Αντιγράφηκε στο πρόχειρο!", "default": "Προεπιλογή", "custom": "Προσαρμοσμένο",
+        "needAuthMsg": "❌ Χρησιμοποιήστε πρώτα το κουμπί Έναρξη επαλήθευσης για να λάβετε refreshToken",
+        "githubSecrets": "Οι ρυθμίσεις του GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "es": {
+        "title": "AAPS-CI Autenticación",
+        "clientId": "ID de cliente:",
+        "placeholder": "Tu ID de cliente de Google",
+        "startAuth": "Iniciar autenticación",
+        "refreshToken": "Refresh Token",
+        "copy": "Copiar",
+        "toast": "¡Copiado al portapapeles!", "default": "Predeterminado", "custom": "Personalizado",
+        "needAuthMsg": "❌ Por favor, usa primero el botón Iniciar autenticación para obtener un refreshToken",
+        "githubSecrets": "Tu fork de GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "fi": {
+        "title": "AAPS-CI Todennus",
+        "clientId": "Asiakastunnus:",
+        "placeholder": "Google Client ID",
+        "startAuth": "Aloita todennus",
+        "refreshToken": "Virkistystunnus",
+        "copy": "Kopioi",
+        "toast": "Kopioitu leikepöydälle!", "default": "Oletus", "custom": "Mukautettu",
+        "needAuthMsg": "❌ Käytä ensin Aloita todennus -painiketta saadaksesi refreshToken",
+        "githubSecrets": "GitHub-haarasi Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "he": {
+        "title": "אימות AAPS-CI",
+        "clientId": "מזהה לקוח:",
+        "placeholder": "מזהה הלקוח שלך ב-Google",
+        "startAuth": "התחל אימות",
+        "refreshToken": "רענן אסימון",
+        "copy": "העתק",
+        "toast": "הועתק ללוח!", "default": "ברירת מחדל", "custom": "מותאם אישית",
+        "needAuthMsg": "❌ השתמש תחילה בכפתור התחל אימות כדי לקבל refreshToken",
+        "githubSecrets": "המזלג שלך ב-GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "hr": {
+        "title": "AAPS-CI Autentikacija",
+        "clientId": "ID klijenta:",
+        "placeholder": "Vaš Google Client ID",
+        "startAuth": "Pokreni autentikaciju",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopiraj",
+        "toast": "Kopirano u međuspremnik!", "default": "Zadano", "custom": "Prilagođeno",
+        "needAuthMsg": "❌ Prvo koristite gumb Pokreni autentikaciju za dobivanje refreshToken",
+        "githubSecrets": "Vaš GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "hu": {
+        "title": "AAPS-CI Hitelesítés",
+        "clientId": "Ügyfélazonosító:",
+        "placeholder": "Google Client ID",
+        "startAuth": "Hitelesítés indítása",
+        "refreshToken": "Frissítő token",
+        "copy": "Másolás",
+        "toast": "Vágólapra másolva!", "default": "Alapértelmezett", "custom": "Egyedi",
+        "needAuthMsg": "❌ Először használja a Hitelesítés indítása gombot a refreshToken megszerzéséhez",
+        "githubSecrets": "az Ön GitHub-forkja Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "it": {
+        "title": "AAPS-CI Autenticazione",
+        "clientId": "ID client:",
+        "placeholder": "Il tuo ID client Google",
+        "startAuth": "Avvia autenticazione",
+        "refreshToken": "Refresh Token",
+        "copy": "Copia",
+        "toast": "Copiato negli appunti!", "default": "Predefinito", "custom": "Personalizzato",
+        "needAuthMsg": "❌ Usa prima il pulsante Avvia autenticazione per ottenere un refreshToken",
+        "githubSecrets": "il tuo fork di GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "nb": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken",
+        "githubSecrets": "Din GitHub-fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "nl": {
+        "title": "AAPS-CI Authenticatie",
+        "clientId": "Client-ID:",
+        "placeholder": "Je Google Client ID",
+        "startAuth": "Start authenticatie",
+        "refreshToken": "Vernieuwtoken",
+        "copy": "Kopiëren",
+        "toast": "Gekopieerd naar klembord!", "default": "Standaard", "custom": "Aangepast",
+        "needAuthMsg": "❌ Gebruik eerst de knop Start authenticatie om een refreshToken te krijgen",
+        "githubSecrets": "Je GitHub-fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "nn": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken",
+        "githubSecrets": "Din GitHub-fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "no_NO": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken",
+        "githubSecrets": "Din GitHub-fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "no": {
+        "title": "AAPS-CI Autentisering",
+        "clientId": "Klient-ID:",
+        "placeholder": "Din Google Client ID",
+        "startAuth": "Start autentisering",
+        "refreshToken": "Oppdateringstoken",
+        "copy": "Kopier",
+        "toast": "Kopiert til utklippstavlen!", "default": "Standard", "custom": "Egendefinert",
+        "needAuthMsg": "❌ Bruk først Start autentisering-knappen for å få en refreshToken",
+        "githubSecrets": "Din GitHub-fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "pl_PL": {
+        "title": "AAPS-CI Uwierzytelnianie",
+        "clientId": "ID klienta:",
+        "placeholder": "Twój Google Client ID",
+        "startAuth": "Rozpocznij uwierzytelnianie",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopiuj",
+        "toast": "Skopiowano do schowka!", "default": "Domyślny", "custom": "Niestandardowy",
+        "needAuthMsg": "❌ Najpierw użyj przycisku Rozpocznij uwierzytelnianie, aby uzyskać refreshToken",
+        "githubSecrets": "Twój fork GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "pl": {
+        "title": "AAPS-CI Uwierzytelnianie",
+        "clientId": "ID klienta:",
+        "placeholder": "Twój Google Client ID",
+        "startAuth": "Rozpocznij uwierzytelnianie",
+        "refreshToken": "Refresh Token",
+        "copy": "Kopiuj",
+        "toast": "Skopiowano do schowka!", "default": "Domyślny", "custom": "Niestandardowy",
+        "needAuthMsg": "❌ Najpierw użyj przycisku Rozpocznij uwierzytelnianie, aby uzyskać refreshToken",
+        "githubSecrets": "Twój fork GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "pt_BR": {
+        "title": "AAPS-CI Autenticação",
+        "clientId": "ID do cliente:",
+        "placeholder": "Seu ID de cliente do Google",
+        "startAuth": "Iniciar autenticação",
+        "refreshToken": "Refresh Token",
+        "copy": "Copiar",
+        "toast": "Copiado para a área de transferência!", "default": "Padrão", "custom": "Personalizado",
+        "needAuthMsg": "❌ Use primeiro o botão Iniciar autenticação para obter um refreshToken",
+        "githubSecrets": "Seu fork do GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "pt_PT": {
+        "title": "AAPS-CI Autenticação",
+        "clientId": "ID do cliente:",
+        "placeholder": "O seu ID de cliente Google",
+        "startAuth": "Iniciar autenticação",
+        "refreshToken": "Refresh Token",
+        "copy": "Copiar",
+        "toast": "Copiado para a área de transferência!", "default": "Padrão", "custom": "Personalizado",
+        "needAuthMsg": "❌ Use primeiro o botão Iniciar autenticação para obter um refreshToken",
+        "githubSecrets": "O seu fork do GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "ro": {
+        "title": "AAPS-CI Autentificare",
+        "clientId": "ID client:",
+        "placeholder": "ID-ul dvs. de client Google",
+        "startAuth": "Începe autentificarea",
+        "refreshToken": "Token de reîmprospătare",
+        "copy": "Copiază",
+        "toast": "Copiat în clipboard!", "default": "Implicit", "custom": "Personalizat",
+        "needAuthMsg": "❌ Folosiți mai întâi butonul Începe autentificarea pentru a obține un refreshToken",
+        "githubSecrets": "Fork-ul tău GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "ru": {
+        "title": "AAPS-CI Авторизация",
+        "clientId": "ID клиента:",
+        "placeholder": "Ваш Google Client ID",
+        "startAuth": "Начать авторизацию",
+        "refreshToken": "Refresh Token (токен обновления)",
+        "copy": "Копировать",
+        "toast": "Скопировано в буфер обмена!", "default": "По умолчанию", "custom": "Пользовательский",
+        "needAuthMsg": "❌ Сначала используйте кнопку 'Начать авторизацию', чтобы получить refreshToken",
+        "githubSecrets": "Ваш форк GitHub Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "sk": {
+        "title": "AAPS-CI Overenie",
+        "clientId": "ID klienta:",
+        "placeholder": "Váš Google Client ID",
+        "startAuth": "Spustiť overenie",
+        "refreshToken": "Obnovovací token",
+        "copy": "Kopírovať",
+        "toast": "Skopírováno do schránky!", "default": "Predvolené", "custom": "Vlastné",
+        "needAuthMsg": "❌ Najprv použite tlačidlo Spustiť overenie na získanie refreshToken",
+        "githubSecrets": "Váš GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "sl": {
+        "title": "AAPS-CI Avtentikacija",
+        "clientId": "ID odjemalca:",
+        "placeholder": "Vaš Google Client ID",
+        "startAuth": "Začni avtentikacijo",
+        "refreshToken": "Obnovitveni žeton",
+        "copy": "Kopiraj",
+        "toast": "Kopirano v odložišče!", "default": "Privzeto", "custom": "Prilagojeno",
+        "needAuthMsg": "❌ Najprej uporabite gumb Začni avtentikacijo za pridobitev refreshToken",
+        "githubSecrets": "Vaš GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "sr": {
+        "title": "AAPS-CI Аутентификација",
+        "clientId": "ID клијента:",
+        "placeholder": "Ваш Google Client ID",
+        "startAuth": "Покрени аутентификацију",
+        "refreshToken": "Refresh Token",
+        "copy": "Копирај",
+        "toast": "Копирано у клипборд!", "default": "Подразумевано", "custom": "Прилагођено",
+        "needAuthMsg": "❌ Прво користите дугме Покрени аутентификацију да бисте добили refreshToken",
+        "githubSecrets": "Ваш GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "lt": {
+        "title": "AAPS-CI autorizacija",
+        "clientId": "Kliento ID:",
+        "placeholder": "Jūsų Google Client ID",
+        "startAuth": "Pradėti autorizaciją",
+        "refreshToken": "Atnaujinimo raktas",
+        "copy": "Kopijuoti",
+        "toast": "Nukopijuota į iškarpinę!", "default": "Numatytasis", "custom": "Tinkintas",
+        "needAuthMsg": "❌ Pirmiausia naudokite Pradėti autorizaciją mygtuką, kad gautumėte refreshToken",
+        "githubSecrets": "Jūsų GitHub šakos Settings => Secrets and Variables => Actions => New repository secrets"
+      },
+      "sr_Latn": {
+        "title": "AAPS-CI Autentifikacija",
+        "clientId": "ID klijenta:",
+        "placeholder": "Vaš Google Client ID",
+        "startAuth": "Pokreni autentifikaciju",
+        "refreshToken": "Token za osvežavanje",
+        "copy": "Kopiraj",
+        "toast": "Kopirano u klipbord!", "default": "Podrazumevano", "custom": "Prilagođeno",
+        "needAuthMsg": "❌ Prvo koristite dugme Pokreni autentifikaciju da biste dobili refreshToken",
+        "githubSecrets": "Vaš GitHub fork Settings => Secrets and Variables => Actions => New repository secrets"
+      }
+    };
+
+    function setLanguageFromBrowser() {
+      let lang = (navigator.language || navigator.userLanguage || 'en').replace(/-/g, '_');
+
+      let langSet = lang.split('_');
+      if(langSet.length > 2){
+        lang = langSet[0] + '_' + langSet[langSet.length - 1].toUpperCase();
+      }
+
+      let selectedLang = null;
+      if (i18nStrings[lang]) {
+        selectedLang = lang;
+      } else if (i18nStrings[lang.split('_')[0]]) {
+        selectedLang = lang.split('_')[0];
+      } else {
+        selectedLang = 'en';
+      }
+      document.getElementById('langSelector').value = selectedLang;
+      switchLanguage(selectedLang);
+    }
+
+
+
+    function toggleClientInput() {
+      const useCustom = document.querySelector('input[name="clientMode"]:checked').value === 'custom';
+      const row = document.getElementById('clientIdRow');
+      row.style.display = useCustom ? 'block' : 'none';
+    }
+
+    function switchLanguage(lang) {
+      const dict = i18nStrings[lang];
+      document.getElementById('langSelector').value = lang;
+      document.querySelector('[data-i18n="title"]').innerText = dict.title;
+      document.querySelector('[data-i18n="clientId"]').innerText = dict.clientId;
+      document.getElementById('customClientId').placeholder = dict.placeholder;
+      document.querySelector('span[data-i18n="startAuth"]').innerText = dict.startAuth;
+      document.querySelector('h3').innerText = dict.refreshToken;
+      document.querySelectorAll('[data-i18n="copy"]').forEach(el => el.innerText = dict.copy);
+      document.getElementById('toast').innerText = dict.toast;
+      document.querySelector('[data-i18n="default"]').innerText = dict.default;
+      document.querySelector('[data-i18n="custom"]').innerText = dict.custom;
+      document.querySelector('[data-i18n="githubSecrets"]').innerText = dict.githubSecrets;
+    }
+    function copyGdriveOauthLabel() {
+      const text = 'GDRIVE_OAUTH2';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      } else {
+        // fallback for old browsers
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+      const toast = document.getElementById('toast');
+      toast.className = "toast show";
+      setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+</script>
+<script>
+// ===== JKS STEP1/STEP2 JS (前綴 jks-) =====
+function jksToggleStep(stepNumber) {
+    const steps = document.querySelectorAll('.jks-step');
+    steps.forEach((step, index) => {
+        if (index + 1 === stepNumber) {
+            step.classList.toggle('jks-step-active');
+        } else {
+            step.classList.remove('jks-step-active');
+        }
+    });
+}
+function jksGenerateJks() {
+    const button = document.querySelector('#jks-step1 .jks-button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 產生中...';
+    button.disabled = true;
+    setTimeout(async () => {
+        try {
+            const forge = window.forge;
+            // 產生金鑰對
+            const keys = forge.pki.rsa.generateKeyPair(2048);
+            // 產生自簽憑證
+            const cert = forge.pki.createCertificate();
+            cert.publicKey = keys.publicKey;
+            cert.serialNumber = '01';
+            cert.validity.notBefore = new Date();
+            cert.validity.notAfter = new Date();
+            cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 20);
+            const attrs = [{ name: 'commonName', value: 'aaps.app' }];
+            cert.setSubject(attrs);
+            cert.setIssuer(attrs);
+            cert.sign(keys.privateKey, forge.md.sha256.create());
+            // 產生隨機密碼
+            const password = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => (b % 10).toString()).join('');
+            // 產生 alias
+            const alias = 'key0';
+            // 產生 key password
+            const keyPassword = password; // This line remains unchanged
+            // 產生 PKCS#12 (PFX)
+            const p12Asn1 = forge.pkcs12.toPkcs12Asn1(
+                keys.privateKey, [cert], password,
+                { algorithm: '3des', friendlyName: alias, generateLocalKeyId: true, keyPassword: keyPassword }
+            );
+            const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
+            // base64 encode
+            const base64 = forge.util.encode64(p12Der);
+            // 組合 keystoreSet
+            const joined = `${base64}|${password}|${alias}|${keyPassword}`;
+            const keystoreSet = btoa(unescape(encodeURIComponent(joined)));
+            // 顯示到欄位
+            document.getElementById('jks-keystoreSet').value = keystoreSet;
+            document.getElementById('jks-keystoreSet').focus();
+            jksShowVerifyMessage('JKS 已成功產生！請複製這些值並保存在安全的地方。', true);
+        } catch (e) {
+            jksShowVerifyMessage('產生 JKS 時發生錯誤', false);
+        } finally {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }, 100);
+}
+function jksShowToast(message) {
+    let toast = document.getElementById('jks-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'jks-toast';
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.className = 'toast show';
+    setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 2000);
+}
+function jksCopyToClipboardText(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            jksShowToast('已複製到剪貼簿');
+        });
+    }
+}
+function jksCopyToClipboard(elementId) {
+    const input = document.getElementById(elementId);
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    jksShowToast('已複製到剪貼簿');
+}
+function jksVerifyCurrentJks() {
+    const keystoreSet = document.getElementById('jks-keystoreSet').value;
+    if (!keystoreSet) {
+        jksShowToast('請先產生 JKS');
+        return;
+    }
+    let decoded = '';
+    try {
+        decoded = decodeURIComponent(escape(atob(keystoreSet)));
+    } catch (e) {
+        jksShowToast('KEYSTORE_SET 格式錯誤');
+        return;
+    }
+    const parts = decoded.split('|');
+    if (parts.length !== 4) {
+        jksShowToast('KEYSTORE_SET 內容不正確');
+        return;
+    }
+    const data = {
+        keystoreBase64: parts[0],
+        keystorePassword: parts[1],
+        keyAlias: parts[2],
+        keyPassword: parts[3]
+    };
+    const button = document.querySelector('#jks-step1 .jks-button-success');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 驗證中...';
+    button.disabled = true;
+    fetch('/verify-jks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            jksShowToast(result.message || '驗證成功');
+        } else {
+            jksShowToast(result.message || '驗證失敗');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        jksShowToast('驗證過程發生錯誤');
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+function jksShowVerifyMessage(message, isSuccess) {
+    const messageDiv = document.getElementById('jks-verifyMessage');
+    messageDiv.textContent = message;
+    messageDiv.style.display = 'block';
+    messageDiv.className = 'jks-message ' + (isSuccess ? 'jks-success' : 'jks-error');
+}
+function jksConvertJks() {
+    const fileInput = document.getElementById('jks-jksFile');
+    if (!fileInput.files || fileInput.files.length === 0) {
+        jksShowConvertMessage('請先選擇 JKS 檔案', false);
+        return;
+    }
+    const button = document.querySelector('#jks-step2 .jks-button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 轉換中...';
+    button.disabled = true;
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    fetch('/convert-jks', { method: 'POST', body: formData })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            document.getElementById('jks-convertedBase64').value = result.base64Content;
+            jksShowConvertMessage(result.message, true);
+        } else {
+            jksShowConvertMessage(result.message, false);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        jksShowConvertMessage('轉換過程發生錯誤', false);
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+function jksCopyConvertedBase64() {
+    const input = document.getElementById('jks-convertedBase64');
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    jksShowToast('已複製到剪貼簿');
+}
+function jksShowConvertMessage(message, isSuccess) {
+    const messageDiv = document.getElementById('jks-convertMessage');
+    messageDiv.textContent = message;
+    messageDiv.style.display = 'block';
+    messageDiv.className = 'jks-message ' + (isSuccess ? 'jks-success' : 'jks-error');
+}
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.jks-step-content.jks-hidden-on-load').forEach(function(el) {
+        el.classList.remove('jks-hidden-on-load');
+    });
+    jksToggleStep(1);
+    document.getElementById('jks-keystoreSet').value = '';
+    document.getElementById('jks-convertedBase64').value = '';
+    document.getElementById('jks-step2KeystorePassword').value = '';
+    document.getElementById('jks-step2KeyAlias').value = '';
+    document.getElementById('jks-step2KeyPassword').value = '';
+    window.addEventListener('beforeunload', function() {
+        document.getElementById('jks-keystoreSet').value = '';
+        document.getElementById('jks-convertedBase64').value = '';
+        document.getElementById('jks-step2KeystorePassword').value = '';
+        document.getElementById('jks-step2KeyAlias').value = '';
+        document.getElementById('jks-step2KeyPassword').value = '';
+    });
+});
+// ===== END JKS STEP1/STEP2 JS =====
+</script>
+</body>
+</html>

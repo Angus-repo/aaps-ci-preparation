@@ -1284,7 +1284,13 @@
     
     const password = generateRandomPassword();
     const alias = 'key0';
-    const p12Asn1 = forge.pkcs12.toPkcs12Asn1(keys.privateKey, [cert], password, { algorithm: '3des' });
+    // 產生 PKCS#12 時，alias 要用 options.friendlyName，cert 直接傳入
+    const p12Asn1 = forge.pkcs12.toPkcs12Asn1(
+      keys.privateKey,
+      cert,
+      password,
+      { algorithm: '3des', friendlyName: alias }
+    );
     const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
     const base64 = forge.util.encode64(p12Der);
 

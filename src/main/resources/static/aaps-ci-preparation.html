@@ -7,8 +7,49 @@
   <title>AAPS-CI Auth + Keystore</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
-  <script src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/js/i18n.js"></script>
-  <!-- <script src="js/i18n.js"></script> -->
+  <script>
+    // i18n 多國語系字典
+    const i18nStrings = {
+      en: {
+        mainTitle: "AAPS-CI Preparation",
+        option1Title: "Option 1: Generate JKS",
+        generateJksBtn: "Generate JKS",
+        keystoreSetLabel: "KEYSTORE_SET:",
+        copyBtn: "Copy",
+        option2Title: "Option 2: Upload Existing JKS",
+        keystoreBase64Label: "KEYSTORE_BASE64:",
+        keystorePasswordLabel: "KEYSTORE_PASSWORD:",
+        keystoreAliasLabel: "KEY_ALIAS:",
+        keyPasswordLabel: "KEY_PASSWORD:",
+        oauth2Title: "Google OAuth2 Auth",
+        defaultRadio: "Default",
+        customRadio: "Custom",
+        startAuthBtn: "Start Auth",
+        customClientIdPlaceholder: "Your Google Client ID",
+        gdriveOauth2Label: "GDRIVE_OAUTH2:",
+        toastCopied: "Copied to clipboard!"
+      },
+      zh_TW: {
+        mainTitle: "AAPS-CI 準備",
+        option1Title: "選項 1：產生 JKS",
+        generateJksBtn: "產生 JKS",
+        keystoreSetLabel: "KEYSTORE_SET：",
+        copyBtn: "複製",
+        option2Title: "選項 2：上傳現有的 JKS",
+        keystoreBase64Label: "KEYSTORE_BASE64：",
+        keystorePasswordLabel: "KEYSTORE_PASSWORD：",
+        keystoreAliasLabel: "KEY_ALIAS：",
+        keyPasswordLabel: "KEY_PASSWORD：",
+        oauth2Title: "Google OAuth2 驗證",
+        defaultRadio: "預設",
+        customRadio: "自訂",
+        startAuthBtn: "開始授權",
+        customClientIdPlaceholder: "你的 Google 用戶端 ID",
+        gdriveOauth2Label: "GDRIVE_OAUTH2：",
+        toastCopied: "已複製到剪貼簿"
+      }
+    };
+  </script>
   <script>
     // i18nStrings 已由 js/i18n.js 提供為 window.i18nStrings
 
@@ -324,15 +365,15 @@
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
-        <button id="generateJksBtn" class="btn-green" onclick="generateJks()" data-i18n="generateJksBtn"><i class="fa-solid fa-key"></i> <span data-i18n="generateJksBtn">Generate JKS</span></button>
+        <button id="generateJksBtn" class="btn-green" onclick="generateJks()"><i class="fa-solid fa-key"></i> <span data-i18n="generateJksBtn">Generate JKS</span></button>
         <div class="field-group">
           <div class="flex-row">
             <label for="keystoreSet" class="label-no-margin" data-i18n="keystoreSetLabel">KEYSTORE_SET:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_SET')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_SET')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
           </div>
           <div class="flex-row">
             <input id="keystoreSet" readonly class="keystore-input styled-input label-no-margin">
-            <button class="right-button" onclick="copyToClipboard('keystoreSet')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+            <button class="right-button" onclick="copyToClipboard('keystoreSet')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
           </div>
         </div>
       </div>
@@ -346,44 +387,44 @@
       <div class="option-content">
         <div class="flex-row">
           <label for="keystoreBase64" class="label-no-margin" data-i18n="keystoreBase64Label">KEYSTORE_BASE64:</label>
-          <button class="right-button" onclick="copyToClipboardText('KEYSTORE_BASE64')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+          <button class="right-button" onclick="copyToClipboardText('KEYSTORE_BASE64')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
         </div>
         <input type="file" id="jksFile" accept=".jks" onchange="convertJks()" class="btn-green" style="background: #34a853; color: #fff; padding: 0.5rem 1rem; border-radius: 4px; border: none; cursor: pointer; width: auto;">
         <div class="flex-row">
           <input id="keystoreBase64" readonly class="keystore-input styled-input label-no-margin">
-          <button class="right-button" onclick="copyToClipboard('keystoreBase64')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+          <button class="right-button" onclick="copyToClipboard('keystoreBase64')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
         </div>
         <div class="button-group">
           <div class="flex-row">
             <label for="keystorePassword" class="label-no-margin" data-i18n="keystorePasswordLabel">KEYSTORE_PASSWORD:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_PASSWORD')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_PASSWORD')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
           </div>
           <div class="flex-row">
             <label for="keystoreAlias" class="label-no-margin" data-i18n="keystoreAliasLabel">KEY_ALIAS:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEY_ALIAS')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+            <button class="right-button" onclick="copyToClipboardText('KEY_ALIAS')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
           </div>
           <div class="flex-row">
             <label for="keystoreAlias" class="label-no-margin" data-i18n="keyPasswordLabel">KEY_PASSWORD:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEY_PASSWORD')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+            <button class="right-button" onclick="copyToClipboardText('KEY_PASSWORD')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
           </div>
         </div>
       </div>
     </div>
 
-    <h2><i class="fa-brands fa-google-drive icon-drive" style="color:#1a73e8;"></i><span data-i18n="oauth2Title">Google OAuth2 Auth</span></h2>
+    <h2><img src="images/google-drive.png" alt="Google Drive" class="icon-drive" style="height:24px;vertical-align:middle;margin-right:6px;" /><span data-i18n="oauth2Title">Google OAuth2 Auth</span></h2>
     <div class="auth-controls">
       <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> <span data-i18n="defaultRadio">Default</span></label>
       <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> <span data-i18n="customRadio">Custom</span></label>
-      <button class="btn-green" onclick="startAuth()" data-i18n="startAuthBtn"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="startAuthBtn">Start Auth</span></button>
+      <button class="btn-green" onclick="startAuth()"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="startAuthBtn">Start Auth</span></button>
       <input type="text" class="custom-client styled-input" id="customClientId" data-i18n-placeholder="customClientIdPlaceholder" placeholder="Your Google Client ID">
     </div>
     <div class="flex-row">
       <label for="oauth2Base64" class="label-no-margin" data-i18n="gdriveOauth2Label">GDRIVE_OAUTH2:</label>
-      <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+      <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
     </div>
     <div class="flex-row">
       <input id="oauth2Base64" readonly class="keystore-input styled-input label-no-margin">
-      <button class="right-button" onclick="copyToClipboard('oauth2Base64')" data-i18n="copyBtn"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+      <button class="right-button" onclick="copyToClipboard('oauth2Base64')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
     </div>
   </div>
 

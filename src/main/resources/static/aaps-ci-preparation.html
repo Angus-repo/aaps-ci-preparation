@@ -11,6 +11,7 @@
     // i18n 多國語系字典
     const i18nStrings = {
       en: {
+        fileManagerAlert: "Please open this page with a file manager (File Manager)",
         mainTitle: "AAPS-CI Preparation",
         option1Title: "Option 1: Generate JKS",
         generateJksBtn: "Generate JKS",
@@ -33,6 +34,7 @@
         githubSecretTip: "Please copy to your Github branch Settings => Secrets and Variables => Actions => New repository secrets"
       },
       zh_TW: {
+        fileManagerAlert: "請改用Google Play上的「檔案管理員」App 開啟本頁",
         mainTitle: "AAPS-CI 準備",
         option1Title: "選項 1：產生 JKS",
         generateJksBtn: "產生 JKS",
@@ -116,37 +118,45 @@
         document.getElementById('option' + optionNumber).classList.add('active');
     }
     
-    // 頁面載入時初始化
+    // page init
     window.onload = function() {
-        // 語言下拉選單事件：切換時加上 lang 參數
-        document.getElementById('langSelector').addEventListener('change', function(e) {
-          switchLanguage(e.target.value, true);
-        });
-        const urlParams = new URLSearchParams(window.location.search);
-        // 保留原始的 code 處理
-        if (urlParams.has('code')) {
-            const code = urlParams.get('code');
-            exchangeCodeForToken(code);
-            
-            const clientMode = sessionStorage.getItem('clientMode');
-            const customClientId = sessionStorage.getItem('customClientId');
-            if (clientMode) {
-              const radio = document.querySelector(`input[name="clientMode"][value="${clientMode}"]`);
-              if (radio) radio.checked = true;
 
-              if (clientMode === 'custom') {
-                const input = document.getElementById('customClientId');
-                input.value = customClientId;
-                input.style.display = 'block';
-              }
-              sessionStorage.removeItem('clientMode');
-              sessionStorage.removeItem('customClientId');
+      const lang = document.getElementById('langSelector').value;
+      document.getElementById('langSelector').addEventListener('change', function(e) {
+        switchLanguage(e.target.value, true);
+      });
+
+      if (window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost') {
+        var msg = (i18nStrings && i18nStrings[lang] && i18nStrings[lang].fileManagerAlert);
+        alert(msg);
+        window.location.href = 'https://play.google.com/store/apps/details?id=com.alphainventor.filemanager';
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      // 保留原始的 code 處理
+      if (urlParams.has('code')) {
+          const code = urlParams.get('code');
+          exchangeCodeForToken(code);
+          
+          const clientMode = sessionStorage.getItem('clientMode');
+          const customClientId = sessionStorage.getItem('customClientId');
+          if (clientMode) {
+            const radio = document.querySelector(`input[name="clientMode"][value="${clientMode}"]`);
+            if (radio) radio.checked = true;
+
+            if (clientMode === 'custom') {
+              const input = document.getElementById('customClientId');
+              input.value = customClientId;
+              input.style.display = 'block';
             }
-            return;
-        }
-        toggleOption(1);
-        var customClientInput = document.getElementById('customClientId');
-        if (customClientInput) customClientInput.style.display = 'none';
+            sessionStorage.removeItem('clientMode');
+            sessionStorage.removeItem('customClientId');
+          }
+          return;
+      }
+      toggleOption(1);
+      var customClientInput = document.getElementById('customClientId');
+      if (customClientInput) customClientInput.style.display = 'none';
     };
   </script>
   <style>

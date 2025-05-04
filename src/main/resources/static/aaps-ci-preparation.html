@@ -5,10 +5,40 @@
   <title>AAPS-CI Auth + Keystore</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+  <script src="js/i18n.js"></script>
   <script>
+    // i18nStrings 已由 js/i18n.js 提供為 window.i18nStrings
+
+    // 切換語言函式
+    function switchLanguage(lang) {
+      const dict = i18nStrings[lang] || i18nStrings['en'];
+      document.getElementById('langSelector').value = lang;
+      // 依據 data-i18n 屬性批次替換
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+      });
+      // 處理 placeholder
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (dict[key]) el.placeholder = dict[key];
+      });
+      // 更新 toast 內容
+      document.getElementById('copyToast').innerText = dict.toastCopied;
+    }
+
+    // 頁面載入時自動偵測語言
+    window.addEventListener('DOMContentLoaded', function() {
+      let lang = (navigator.language || navigator.userLanguage || 'en').replace(/-/g, '_');
+      lang = lang.toLowerCase();
+      if (lang === 'zh_tw' || lang === 'zh-hant' || lang === 'zh_hant') lang = 'zh_TW';
+      else if (lang.startsWith('zh')) lang = 'zh_TW';
+      else if (!i18nStrings[lang]) lang = 'en';
+      switchLanguage(lang);
+    });
     function showToast(message) {
         const toast = document.getElementById('copyToast');
-        toast.textContent = message;
+        toast.textContent = message || (i18nStrings[document.getElementById('langSelector').value] || i18nStrings['en']).toastCopied;
         toast.style.display = 'block';
         setTimeout(() => {
             toast.style.display = 'none';
@@ -267,24 +297,24 @@
     </select>
     <div class="header-container">
       <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/logo.png" alt="AndroidAPS Logo" class="logo">
-      <h1 class="main-title">AAPS-CI 準備</h1>
+      <h1 class="main-title" data-i18n="mainTitle">AAPS-CI Preparation</h1>
     </div>
     <hr style="margin: 24px 0; border: none; border-top: 1.5px solid #e0e0e0;">
     <div class="option active" id="option1">
       <div class="option-header" onclick="toggleOption(1)">
-        <h2>Option 1: 產生 JKS</h2>
+        <h2 data-i18n="option1Title">Option 1: Generate JKS</h2>
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
-        <button id="generateJksBtn" class="btn-green" onclick="generateJks()">🔐 產生 JKS</button>
+        <button id="generateJksBtn" class="btn-green" onclick="generateJks()" data-i18n="generateJksBtn">🔐 Generate JKS</button>
         <div class="field-group">
           <div class="flex-row">
-            <label for="keystoreSet" class="label-no-margin">KEYSTORE_SET:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_SET')">📋 複製</button>
+            <label for="keystoreSet" class="label-no-margin" data-i18n="keystoreSetLabel">KEYSTORE_SET:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_SET')" data-i18n="copyBtn">📋 Copy</button>
           </div>
           <div class="flex-row">
             <input id="keystoreSet" readonly class="keystore-input styled-input label-no-margin">
-            <button class="right-button" onclick="copyToClipboard('keystoreSet')">📋 複製</button>
+            <button class="right-button" onclick="copyToClipboard('keystoreSet')" data-i18n="copyBtn">📋 Copy</button>
           </div>
         </div>
       </div>
@@ -292,50 +322,50 @@
 
     <div class="option" id="option2">
       <div class="option-header" onclick="toggleOption(2)">
-        <h2>Option 2: 上傳現有的 JKS</h2>
+        <h2 data-i18n="option2Title">Option 2: Upload Existing JKS</h2>
         <i class="fas fa-chevron-down option-icon"></i>
       </div>
       <div class="option-content">
         <div class="flex-row">
-          <label for="keystoreBase64" class="label-no-margin">KEYSTORE_BASE64:</label>
-          <button class="right-button" onclick="copyToClipboardText('KEYSTORE_BASE64')">📋 複製</button>
+          <label for="keystoreBase64" class="label-no-margin" data-i18n="keystoreBase64Label">KEYSTORE_BASE64:</label>
+          <button class="right-button" onclick="copyToClipboardText('KEYSTORE_BASE64')" data-i18n="copyBtn">📋 Copy</button>
         </div>
         <input type="file" id="jksFile" accept=".jks" onchange="convertJks()" class="btn-green" style="background: #34a853; color: #fff; padding: 0.5rem 1rem; border-radius: 4px; border: none; cursor: pointer; width: auto;">
         <div class="flex-row">
           <input id="keystoreBase64" readonly class="keystore-input styled-input label-no-margin">
-          <button class="right-button" onclick="copyToClipboard('keystoreBase64')">📋 複製</button>
+          <button class="right-button" onclick="copyToClipboard('keystoreBase64')" data-i18n="copyBtn">📋 Copy</button>
         </div>
         <div class="button-group">
           <div class="flex-row">
-            <label for="keystorePassword" class="label-no-margin">KEYSTORE_PASSWORD:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_PASSWORD')">📋 複製</button>
+            <label for="keystorePassword" class="label-no-margin" data-i18n="keystorePasswordLabel">KEYSTORE_PASSWORD:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEYSTORE_PASSWORD')" data-i18n="copyBtn">📋 Copy</button>
           </div>
           <div class="flex-row">
-            <label for="keystoreAlias" class="label-no-margin">KEY_ALIAS:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEY_ALIAS')">📋 複製</button>
+            <label for="keystoreAlias" class="label-no-margin" data-i18n="keystoreAliasLabel">KEY_ALIAS:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEY_ALIAS')" data-i18n="copyBtn">📋 Copy</button>
           </div>
           <div class="flex-row">
-            <label for="keystoreAlias" class="label-no-margin">KEY_PASSWORD:</label>
-            <button class="right-button" onclick="copyToClipboardText('KEY_PASSWORD')">📋 複製</button>
+            <label for="keystoreAlias" class="label-no-margin" data-i18n="keyPasswordLabel">KEY_PASSWORD:</label>
+            <button class="right-button" onclick="copyToClipboardText('KEY_PASSWORD')" data-i18n="copyBtn">📋 Copy</button>
           </div>
         </div>
       </div>
     </div>
 
-    <h2><img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" class="icon-drive">Google OAuth2 驗證</h2>
+    <h2><img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" class="icon-drive"><span data-i18n="oauth2Title">Google OAuth2 Auth</span></h2>
     <div class="auth-controls">
-      <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> 預設</label>
-      <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> 自訂</label>
-      <button class="btn-green" onclick="startAuth()">🚀 開始授權</button>
-      <input type="text" class="custom-client styled-input" id="customClientId" placeholder="Your Google Client ID">
+      <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> <span data-i18n="defaultRadio">Default</span></label>
+      <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> <span data-i18n="customRadio">Custom</span></label>
+      <button class="btn-green" onclick="startAuth()" data-i18n="startAuthBtn">🚀 Start Auth</button>
+      <input type="text" class="custom-client styled-input" id="customClientId" data-i18n-placeholder="customClientIdPlaceholder" placeholder="Your Google Client ID">
     </div>
     <div class="flex-row">
-      <label for="oauth2Base64" class="label-no-margin">GDRIVE_OAUTH2:</label>
-      <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')">📋 複製</button>
+      <label for="oauth2Base64" class="label-no-margin" data-i18n="gdriveOauth2Label">GDRIVE_OAUTH2:</label>
+      <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')" data-i18n="copyBtn">📋 Copy</button>
     </div>
     <div class="flex-row">
       <input id="oauth2Base64" readonly class="keystore-input styled-input label-no-margin">
-      <button class="right-button" onclick="copyToClipboard('oauth2Base64')">📋 複製</button>
+      <button class="right-button" onclick="copyToClipboard('oauth2Base64')" data-i18n="copyBtn">📋 Copy</button>
     </div>
   </div>
 

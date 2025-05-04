@@ -22,7 +22,7 @@
         keystorePasswordLabel: "KEYSTORE_PASSWORD:",
         keystoreAliasLabel: "KEY_ALIAS:",
         keyPasswordLabel: "KEY_PASSWORD:",
-        oauth2Title: "Google OAuth2 Auth",
+        oauth2Title: "Google Drive Auth",
         defaultRadio: "Default",
         customRadio: "Custom",
         startAuthBtn: "Start Auth",
@@ -31,7 +31,10 @@
         toastCopied: "Copied to clipboard!",
         importantTipTitle: "Important",
         importantTipContent: "This page will not save the generated keys. Please make sure to copy and save them in a safe place.",
-        githubSecretTip: "Please copy to your Github branch Settings => Secrets and Variables => Actions => New repository secrets"
+        githubSecretTip: "Please copy to your Github branch Settings => Secrets and Variables => Actions => New repository secrets",
+        aiTranslateNotice: "This page uses AI translation. If you find any translation errors, please report them at",
+        aiTranslateIssues: "issues",
+        aiTranslateSuggest: "or submit a PR to help improve."
       },
       zh_TW: {
         fileManagerAlert: "請改用Google Play上的「檔案管理員」App 開啟本頁",
@@ -45,7 +48,7 @@
         keystorePasswordLabel: "KEYSTORE_PASSWORD：",
         keystoreAliasLabel: "KEY_ALIAS：",
         keyPasswordLabel: "KEY_PASSWORD：",
-        oauth2Title: "Google OAuth2 驗證",
+        oauth2Title: "Google 雲端硬碟授權",
         defaultRadio: "預設",
         customRadio: "自訂",
         startAuthBtn: "開始授權",
@@ -54,7 +57,10 @@
         toastCopied: "已複製到剪貼簿",
         importantTipTitle: "重要提示",
         importantTipContent: "本頁面不會保存產生出的金鑰。請務必將金鑰複製到安全的地方保存。",
-        githubSecretTip: "請複製到你的 Github 分支 Settings => Secrets and Variables => Actions => New repository secrets"
+        githubSecretTip: "請複製到你的 Github 分支 Settings => Secrets and Variables => Actions => New repository secrets",
+        aiTranslateNotice: "本網頁使用AI翻譯，如有翻譯錯誤需要修正，請至",
+        aiTranslateIssues: "問題回報",
+        aiTranslateSuggest: "反應，或提PR給我"
       }
     };
   </script>
@@ -375,6 +381,11 @@
       <h1 class="main-title" data-i18n="mainTitle">AAPS-CI Preparation</h1>
     </div>
     <hr style="margin: 24px 0; border: none; border-top: 1.5px solid #e0e0e0;">
+    <div class="ai-translate-notice" style="background: #fffbe6; color: #856404; border-left: 4px solid #ffe58f; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.98rem;">
+        <span data-i18n="aiTranslateNotice">本網頁使用AI翻譯，如有翻譯錯誤需要修正，請至</span>
+        <a href="https://github.com/Angus-repo/aaps-ci-preparation/issues" target="_blank" data-i18n="aiTranslateIssues">問題回報</a>
+        <span data-i18n="aiTranslateSuggest">反應，或提PR給我</span>
+    </div>
     <div class="option active" id="option1">
       <div class="option-header" onclick="toggleOption(1)">
         <h2 data-i18n="option1Title">Option 1: Generate JKS</h2>

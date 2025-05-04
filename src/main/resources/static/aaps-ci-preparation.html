@@ -411,7 +411,7 @@
       </div>
     </div>
 
-    <h2><img src="images/google-drive.png" alt="Google Drive" class="icon-drive" style="height:24px;vertical-align:middle;margin-right:6px;" /><span data-i18n="oauth2Title">Google OAuth2 Auth</span></h2>
+    <h2><img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" alt="Google Drive" class="icon-drive" style="height:24px;vertical-align:middle;margin-right:6px;" /><span data-i18n="oauth2Title">Google OAuth2 Auth</span></h2>
     <div class="auth-controls">
       <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> <span data-i18n="defaultRadio">Default</span></label>
       <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> <span data-i18n="customRadio">Custom</span></label>
@@ -487,16 +487,13 @@
 
     function copyToClipboard(id) {
       const el = document.getElementById(id);
-    //   el.select();
-    //   el.setSelectionRange(0, 99999);
-    //   document.execCommand("copy");
       navigator.clipboard.writeText(el.value);
-      showToast("已複製到剪貼簿");
+      showToast();
     }
 
     function copyToClipboardText(text) {
       navigator.clipboard.writeText(text);
-      showToast("已複製到剪貼簿");
+      showToast();
     }
 
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
@@ -558,6 +555,6 @@
 
 
   </script>
-  <div class="toast toast-success" id="copyToast">已複製到剪貼簿</div>
+  <div class="toast toast-success" id="copyToast" data-i18n="toastCopied">已複製到剪貼簿</div>
 </body>
 </html>

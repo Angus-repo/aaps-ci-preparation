@@ -27,7 +27,9 @@
         startAuthBtn: "Start Auth",
         customClientIdPlaceholder: "Your Google Client ID",
         gdriveOauth2Label: "GDRIVE_OAUTH2:",
-        toastCopied: "Copied to clipboard!"
+        toastCopied: "Copied to clipboard!",
+        importantTip: "Important: This page will not save the generated keys. Please make sure to copy and save them in a safe place.",
+        githubSecretTip: "Please copy to your Github branch Settings => Secrets and Variables => Actions => New repository secrets"
       },
       zh_TW: {
         mainTitle: "AAPS-CI 準備",
@@ -46,7 +48,9 @@
         startAuthBtn: "開始授權",
         customClientIdPlaceholder: "你的 Google 用戶端 ID",
         gdriveOauth2Label: "GDRIVE_OAUTH2：",
-        toastCopied: "已複製到剪貼簿"
+        toastCopied: "已複製到剪貼簿",
+        importantTip: "重要提示：本頁面不會保存產生出的金鑰。請務必將金鑰複製到安全的地方保存。",
+        githubSecretTip: "請複製到你的 Github 分支 Settings => Secrets and Variables => Actions => New repository secrets"
       }
     };
   </script>
@@ -379,10 +383,10 @@
       </div>
       <div class="option1-tip" style="margin-top: 20px; border-radius: 6px; padding: 16px;">
         <div style="background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; padding: 12px 16px; margin-bottom: 10px;">
-          <span style="color: #d48806;"><strong style="color: #d48806;">重要提示：</strong>本頁面不會保存產生出的金鑰。請務必將金鑰複製到安全的地方保存。</span>
+          <span style="color: #d48806;" data-i18n="importantTip">重要提示：本頁面不會保存產生出的金鑰。請務必將金鑰複製到安全的地方保存。</span>
         </div>
         <div style="background: #f9f9f9; border-radius: 6px; padding: 12px 16px;">
-          請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets
+          <span data-i18n="githubSecretTip">請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets</span>
           <div style="margin-top: 12px; text-align: left;">
             <img src="images/secrets_option1.png" alt="secrets_option1" style="max-width:100%;border:1px solid #eee;border-radius:4px;">
           </div>
@@ -421,7 +425,7 @@
         </div>
         <div class="option2-tip" style="margin-top: 20px; border-radius: 6px; padding: 16px;">
         <div style="background: #f9f9f9; border-radius: 6px; padding: 12px 16px;">
-          請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets
+          <span data-i18n="githubSecretTip">請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets</span>
           <div style="margin-top: 12px; text-align: left;">
             <img src="images/secrets_option2.png" alt="secrets_option2" style="max-width:100%;border:1px solid #eee;border-radius:4px;">
           </div>
@@ -446,7 +450,7 @@
       <button class="right-button" onclick="copyToClipboard('oauth2Base64')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
     </div>
     <div style="background: #f9f9f9; border-radius: 6px; padding: 12px 16px;">
-      請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets
+      <span data-i18n="githubSecretTip">請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets</span>
       <div style="margin-top: 12px; text-align: left;">
         <img src="images/gdrive_oauth2.png" alt="secrets_option2" style="max-width:100%;border:1px solid #eee;border-radius:4px;">
       </div>

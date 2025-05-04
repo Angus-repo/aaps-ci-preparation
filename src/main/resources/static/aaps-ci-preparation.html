@@ -7,13 +7,13 @@
   <title>AAPS-CI Auth + Keystore</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
-  <!-- <script src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/js/i18n.js"></script> -->
-      <script src="js/i18n.js"></script>
+  <script src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/js/i18n.js"></script>
+  <!-- <script src="js/i18n.js"></script> -->
   <script>
     // i18nStrings 已由 js/i18n.js 提供為 window.i18nStrings
 
     // 切換語言函式
-    function switchLanguage(lang) {
+    function switchLanguage(lang, updateUrl = true) {
       const dict = i18nStrings[lang] || i18nStrings['en'];
       document.getElementById('langSelector').value = lang;
       // 依據 data-i18n 屬性批次替換
@@ -28,16 +28,27 @@
       });
       // 更新 toast 內容
       document.getElementById('copyToast').innerText = dict.toastCopied;
+      // 語言切換時更新網址參數
+      if (updateUrl) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', lang);
+        window.location.href = url.toString();
+      }
     }
 
     // 頁面載入時自動偵測語言
     window.addEventListener('DOMContentLoaded', function() {
-      let lang = (navigator.language || navigator.userLanguage || 'en').replace(/-/g, '_');
-      lang = lang.toLowerCase();
-      if (lang === 'zh_tw' || lang === 'zh-hant' || lang === 'zh_hant') lang = 'zh_TW';
-      else if (lang.startsWith('zh')) lang = 'zh_TW';
-      else if (!i18nStrings[lang]) lang = 'en';
-      switchLanguage(lang);
+      // 先檢查 URL 是否有 lang 參數
+      const urlParams = new URLSearchParams(window.location.search);
+      let lang = urlParams.get('lang');
+      if (!lang) {
+        lang = (navigator.language || navigator.userLanguage || 'en').replace(/-/g, '_');
+        lang = lang.toLowerCase();
+        if (lang === 'zh_tw' || lang === 'zh-hant' || lang === 'zh_hant') lang = 'zh_TW';
+        else if (lang.startsWith('zh')) lang = 'zh_TW';
+        else if (!i18nStrings[lang]) lang = 'en';
+      }
+      switchLanguage(lang, false);
     });
     function showToast(message) {
         const toast = document.getElementById('copyToast');
@@ -60,6 +71,10 @@
     
     // 頁面載入時初始化
     window.onload = function() {
+        // 語言下拉選單事件：切換時加上 lang 參數
+        document.getElementById('langSelector').addEventListener('change', function(e) {
+          switchLanguage(e.target.value, true);
+        });
         const urlParams = new URLSearchParams(window.location.search);
         // 保留原始的 code 處理
         if (urlParams.has('code')) {
@@ -444,8 +459,16 @@
     }
 
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
-    const redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
-
+    let redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
+    // 若 URL 有 lang 參數，redirectUri 也加上 lang
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const lang = urlParams.get('lang');
+      if (lang) {
+        redirectUri += (redirectUri.includes('?') ? '&' : '?') + 'lang=' + encodeURIComponent(lang);
+      }
+    })();
+    
     function toggleClientInput() {
       const input = document.getElementById('customClientId');
       const isCustom = document.querySelector('input[name="clientMode"]:checked').value === 'custom';

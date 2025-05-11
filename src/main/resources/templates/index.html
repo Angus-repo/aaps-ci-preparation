@@ -672,6 +672,10 @@
 
         <div class="info-box">
             <p th:text="#{index.description}">本網頁為AAPS CI前置設定，目地在於每個AAPS github fork可以透過github actions來建置apk，並將apk上傳到google drive，方便後續使用。</p>
+            <p style="margin-top: 12px; color: #666; font-size: 0.98rem;">
+                <span th:text="#{index.usage.guide}">使用說明請參考</span><br>
+                <a href="https://aaps-ci-preview.readthedocs.io/en/latest/SettingUpAaps/BuildingAaps.html#general-users" target="_blank" style="color: #1a73e8; text-decoration: underline; word-break: break-all;">AndroidAPSDocs => BuildingAaps => general-users</a>
+            </p>
             <p style="margin-top: 12px;">
                 <span th:text="#{index.privacy.notice}">使用本工具前，請詳閱我們的</span>
                 <a href="/docs/privacy.md" th:text="#{index.privacy.link}">隱私政策</a>
@@ -679,137 +683,7 @@
             </p>
         </div>
         
-        <div class="step active" id="step1">
-            <div class="step-header" onclick="toggleStep(1)">
-                <div class="step-title">
-                    <div class="step-number">1</div>
-                    <h2 th:text="#{index.step1.title}">產生 JKS 金鑰庫</h2>
-                </div>
-                <i class="fas fa-chevron-down step-icon"></i>
-            </div>
-            <div class="step-content hidden-on-load">
-                <p class="step-description" th:text="#{index.step1.description}">如果您是第一次使用 AAPS，需要產生新的 JKS 金鑰庫：</p>
-                <div class="button-container">
-                    <button onclick="generateJks()" class="button">
-                        <i class="fas fa-key"></i>
-                        <span th:text="#{index.step1.generate}">產生 JKS</span>
-                    </button>
-                    <button onclick="verifyCurrentJks()" class="button button-success">
-                        <i class="fas fa-check-circle"></i>
-                        <span th:text="#{index.step1.verify}">立即驗證</span>
-                    </button>
-                </div>
-                <div id="jksFields">
-                    <div class="warning-box" style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #ffeeba;" th:text="#{index.step1.save.warning}">
-                        重要提示：這些金鑰值在頁面重新載入後將不會被保存。請務必將所有值複製到安全的地方後再繼續。
-                    </div>
-                    <div class="field-group">
-                        <label>KEYSTORE_SET:</label>
-                        <button onclick="copyToClipboardText('KEYSTORE_SET')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <input type="text" id="keystoreSet" readonly>
-                        <button onclick="copyToClipboard('keystoreSet')" class="copy-btn" title="copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                    <div id="verifyMessage" class="message"></div>
-                </div>
-                <div id="step1RepositorySecret" style="margin-top: 20px;">
-                    <p th:text="#{github.repository.secret}">Settings => Secrets and Variables => Actions => New repository secrets</p>
-                    <img src="/images/secrets_step1.png" alt="secrets_step1" style="max-width: 100%; height: auto; margin-top: 10px;">
-                </div>
-            </div>
-        </div>
-
-        <div class="step" id="step2">
-            <div class="step-header" onclick="toggleStep(2)">
-                <div class="step-title">
-                    <div class="step-number">2</div>
-                    <h2 th:text="#{index.step2.title}">上傳及轉換 JKS</h2>
-                </div>
-                <i class="fas fa-chevron-down step-icon"></i>
-            </div>
-            <div class="step-content hidden-on-load">
-                <p class="step-description" th:text="#{index.step2.description}">請選擇要上傳的 JKS 檔案：</p>
-                <div class="button-container">
-                    <input type="file" id="jksFile" accept=".jks">
-                    <button onclick="convertJks()" class="button">
-                        <i class="fas fa-exchange-alt"></i>
-                        <span th:text="#{index.step2.convert}">轉換為 Base64</span>
-                    </button>
-                </div>
-                <div class="warning-box" style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #ffeeba;" th:text="#{index.step2.save.warning}">
-                    重要提示：此 Base64 值在頁面重新載入後將不會被保存。請務必將其複製到安全的地方。
-                </div>
-                <div class="field-group">
-                    <label>KEYSTORE_BASE64:</label>
-                    <button onclick="copyToClipboardText('KEYSTORE_BASE64')" class="copy-btn" title="copy">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    <input type="text" id="convertedBase64" readonly>
-                    <button onclick="copyConvertedBase64()" class="copy-btn" title="copy">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-                <div class="field-group">
-                    <label>KEYSTORE_PASSWORD:</label>
-                    <button onclick="copyToClipboardText('KEYSTORE_PASSWORD')" class="copy-btn" title="copy">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-                <div class="field-group">
-                    <label>KEY_ALIAS:</label>
-                    <button onclick="copyToClipboardText('KEY_ALIAS')" class="copy-btn" title="copy">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    
-                </div>
-                <div class="field-group">
-                    <label>KEY_PASSWORD:</label>
-                    <button onclick="copyToClipboardText('KEY_PASSWORD')" class="copy-btn" title="copy">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-                <input type="hidden" id="step2KeystorePassword" readonly>
-                <input type="hidden" id="step2KeyAlias" readonly>
-                <input type="hidden" id="step2KeyPassword" readonly>
-                <div id="convertMessage" class="message"></div>
-                <div id="step1RepositorySecret" style="margin-top: 20px;">
-                    <p th:text="#{github.repository.secret}">Settings => Secrets and Variables => Actions => New repository secrets</p>
-                    <img src="/images/secrets_step2.png" alt="secrets_step2" style="max-width: 100%; height: auto; margin-top: 10px;">
-                </div>
-            </div>
-        </div>
-
-        <div class="step" id="step3">
-            <div class="step-header" onclick="toggleStep(3)">
-                <div class="step-title">
-                    <div class="step-number">3</div>
-                    <h2 th:text="#{index.step3.title}">授權 Google Drive 上傳</h2>
-                </div>
-                <i class="fas fa-chevron-down step-icon"></i>
-            </div>
-            <div class="step-content hidden-on-load">
-                <div class="step-description">
-                    <div style="margin-bottom: 12px;">
-                        <strong>3.1</strong>
-                        <span th:text="#{index.step3.1}"></span>
-                        <a href="https://play.google.com/store/apps/details?id=com.alphainventor.filemanager" target="_blank" style="color: #1a73e8; text-decoration: underline;">File Manager</a>
-                    </div>
-                    <div>
-                        <strong>3.2</strong>
-                        <span th:text="#{index.step3.2}"></span>
-                        <a href="https://github.com/Angus-repo/aaps-ci-preparation/releases/latest" target="_blank" style="color: #1a73e8; text-decoration: underline;">GitHub Releases</a>
-                        Download <code>aaps-ci-auth.html</code>
-                        <span th:text="#{index.step3.2.suffix}"></span>
-                        <img src="/images/download_aaps-ci_auth.png" alt="download_aaps-ci_auth.png" style="max-width: 100%; height: auto; margin-top: 10px;">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- step4 or other steps here -->
+        
     </div>
 
     <div class="toast toast-success" id="copySuccess" th:text="#{auth.copied}">已複製到剪貼簿</div>

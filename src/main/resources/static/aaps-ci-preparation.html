@@ -1256,7 +1256,7 @@
     function generateJks() {
   const btn = document.getElementById('generateJksBtn');
   const originalText = btn.innerHTML;
-  btn.innerHTML = '🔄 產生中...';
+  btn.innerHTML = '🔄 .........';
   btn.disabled = true;
 
   const forge = window.forge;
@@ -1327,7 +1327,7 @@
     }
 
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
-    let redirectUri = "http://127.0.0.1:" + window.location.port + window.location.pathname;
+    let redirectUri = "http://" + window.location.hostname + ":" + window.location.port + window.location.pathname;
     // 若 URL 有 lang 參數，redirectUri 也加上 lang
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -1380,6 +1380,13 @@
       if (data.refresh_token) {
         // document.getElementById('refreshToken').value = data.refresh_token;
         document.getElementById('oauth2Base64').value = btoa(clientId + '|' + data.refresh_token);
+        // 清除 URL 上的 code 參數，避免重複觸發
+        window.history.replaceState({}, document.title, window.location.pathname);
+        // 平滑卷動到 class="icon-drive" 的元素
+        const iconDrive = document.querySelector('.icon-drive');
+        if (iconDrive) {
+          iconDrive.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }
     }
 

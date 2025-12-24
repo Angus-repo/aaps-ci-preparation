@@ -886,8 +886,8 @@
       // 保留原始的 code 處理
       if (urlParams.has('code')) {
           const code = urlParams.get('code');
-          exchangeCodeForToken(code);
           
+          // 先從 sessionStorage 恢復 clientMode 和 customClientId，再呼叫 exchangeCodeForToken
           const clientMode = sessionStorage.getItem('clientMode');
           const customClientId = sessionStorage.getItem('customClientId');
           if (clientMode) {
@@ -902,6 +902,8 @@
             sessionStorage.removeItem('clientMode');
             sessionStorage.removeItem('customClientId');
           }
+          
+          exchangeCodeForToken(code);
           return;
       }
       toggleOption(1);
@@ -1115,7 +1117,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="version-badge">v1.1.2</div>
+    <div class="version-badge">v1.1.3</div>
     <select id="langSelector" onchange="switchLanguage(this.value)">
         <option value="en">English</option>
         <option value="ar">العربية</option>

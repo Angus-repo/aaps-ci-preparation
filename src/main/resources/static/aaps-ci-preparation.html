@@ -1005,7 +1005,7 @@
       }
       toggleOption(1);
       updateCloudProviderUi();
-      handleOAuthCallback();
+      if (!resumeOneDriveOnLocalhost()) handleOAuthCallback();
     };
   </script>
   <style>
@@ -1234,7 +1234,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="version-badge">v1.2.2</div>
+    <div class="version-badge">v1.2.3</div>
     <select id="langSelector" onchange="switchLanguage(this.value)">
         <option value="en">English</option>
         <option value="ar">العربية</option>
@@ -1624,12 +1624,45 @@
       const url = new URL(window.location.href);
       url.search = '';
       url.hash = '';
+      if (provider === 'onedrive' && url.hostname === '127.0.0.1') {
+        url.hostname = 'localhost';
+      }
       // Entra redirect registration must not depend on the selected UI language.
       if (provider === 'google') {
         const lang = new URLSearchParams(window.location.search).get('lang');
         if (lang) url.searchParams.set('lang', lang);
       }
       return url.toString();
+    }
+
+    function resumeOneDriveOnLocalhost() {
+      const url = new URL(window.location.href);
+      const handoff = new URLSearchParams(url.hash.slice(1)).get('aaps_onedrive_start');
+      if (handoff === null) return false;
+      url.hash = '';
+      window.history.replaceState({}, document.title, url.toString());
+      if (url.searchParams.has('code') || url.searchParams.has('error')) return false;
+      try {
+        const settings = JSON.parse(handoff);
+        if (url.hostname !== 'localhost' || !settings || !['default', 'custom'].includes(settings.mode)
+            || !Object.hasOwn(oneDriveAuthorities, settings.accountType)
+            || (settings.mode === 'custom' && (typeof settings.customClientId !== 'string'
+              || !/^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/i.test(settings.customClientId)))) {
+          throw new Error('Invalid OneDrive start settings');
+        }
+        activeProvider = 'onedrive';
+        providerSettings.onedrive.mode = settings.mode;
+        providerSettings.onedrive.accountType = settings.accountType;
+        providerSettings.onedrive.customClientId = settings.mode === 'custom' ? settings.customClientId : '';
+        document.querySelector('input[name="cloudProvider"][value="onedrive"]').checked = true;
+        document.querySelector('input[name="clientMode"][value="' + settings.mode + '"]').checked = true;
+        document.getElementById('customClientId').value = providerSettings.onedrive.customClientId;
+        updateCloudProviderUi();
+        startAuth();
+      } catch (error) {
+        setAuthStatus('authSessionInvalid', 'error');
+      }
+      return true;
     }
 
     async function startAuth() {
@@ -1652,6 +1685,19 @@
       setAuthBusy(true);
       setAuthStatus('');
       try {
+        if (activeProvider === 'onedrive' && window.location.hostname === '127.0.0.1') {
+          // Establish the callback origin before creating PKCE/state in origin-scoped sessionStorage.
+          // Only public UI settings cross origins; never transfer codes, verifiers or tokens.
+          const localUrl = new URL(getRedirectUri('onedrive'));
+          localUrl.searchParams.set('lang', currentLanguage);
+          localUrl.hash = new URLSearchParams({ aaps_onedrive_start: JSON.stringify({
+            mode: settings.mode, accountType: settings.accountType,
+            customClientId: settings.mode === 'custom' ? clientId : ''
+          }) }).toString();
+          sessionStorage.removeItem(authStorageKey);
+          window.location.replace(localUrl.toString());
+          return;
+        }
         const codeVerifier = base64Url(crypto.getRandomValues(new Uint8Array(32)));
         const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
         const transaction = {
@@ -1703,7 +1749,8 @@
           || !Number.isFinite(transaction.createdAt) || Date.now() - transaction.createdAt > authMaxAgeMs
           || transaction.createdAt > Date.now() || !transaction.clientId || !transaction.codeVerifier
           || !['default', 'custom'].includes(transaction.mode)
-          || (transaction.provider === 'onedrive' && !Object.hasOwn(oneDriveAuthorities, transaction.accountType))
+          || (transaction.provider === 'onedrive' && (window.location.hostname !== 'localhost'
+            || !Object.hasOwn(oneDriveAuthorities, transaction.accountType)))
           || transaction.redirectUri !== getRedirectUri(transaction.provider)) {
         setAuthStatus('authSessionInvalid', 'error');
         return;

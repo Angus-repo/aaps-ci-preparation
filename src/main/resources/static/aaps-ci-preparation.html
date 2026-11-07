@@ -794,7 +794,71 @@
     };
   </script>
   <script>
-    // i18nStrings 已由 js/i18n.js 提供為 window.i18nStrings
+
+    // New provider messages fall back to English when a translation is unavailable.
+    Object.assign(i18nStrings.en, {
+      "cloudAuthTitle": "Cloud storage authorization",
+      "cloudProviderLabel": "Choose cloud storage",
+      "googleDriveName": "Google Drive",
+      "oneDriveAuthTitle": "Microsoft OneDrive authorization",
+      "oneDriveClientPlaceholder": "Your Microsoft Entra application (client) ID",
+      "oneDriveNotConfigured": "The default OneDrive client is not configured yet. Select Custom to enter your Client ID.",
+      "oneDriveRelayNotice": "OneDrive authorization exchanges tokens through this tool’s HTTPS service. The service does not store tokens.",
+      "oneDriveCiNotice": "Use ONEDRIVE_OAUTH2 with a CI workflow that supports OneDrive.",
+      "clientIdRequired": "Please enter a Client ID before starting authorization.",
+      "invalidMicrosoftClientId": "Please enter a valid Microsoft Entra application (client) ID.",
+      "authWorking": "Completing authorization…",
+      "authSuccess": "Authorization completed. Copy the secret below.",
+      "authFailed": "Authorization failed. Please try again.",
+      "authSessionInvalid": "This authorization has expired or does not match this browser session. Please start again.",
+      "authNoRefreshToken": "No refresh token was returned. Please authorize again and grant offline access.",
+      "authNetworkError": "Unable to exchange tokens. Check your connection and the authorization service, then start again.",
+      "authStorageError": "Unable to save the authorization session. Please allow session storage and try again.",
+      "oneDriveSetupLink": "OneDrive setup instructions",
+      "secretNameLabel": "Secret name"
+    });
+    Object.assign(i18nStrings.zh_TW, {
+      "cloudAuthTitle": "雲端硬碟授權",
+      "cloudProviderLabel": "選擇雲端硬碟",
+      "googleDriveName": "Google 雲端硬碟",
+      "oneDriveAuthTitle": "Microsoft OneDrive 授權",
+      "oneDriveClientPlaceholder": "你的 Microsoft Entra 應用程式（用戶端）ID",
+      "oneDriveNotConfigured": "OneDrive 預設授權尚未設定，請選擇「自訂」輸入 Client ID。",
+      "oneDriveRelayNotice": "OneDrive 授權會透過本工具的 HTTPS 服務交換權杖，服務不會保存權杖。",
+      "oneDriveCiNotice": "請將 ONEDRIVE_OAUTH2 用於支援 OneDrive 的 CI 工作流程。",
+      "clientIdRequired": "請先輸入 Client ID，再開始授權。",
+      "invalidMicrosoftClientId": "請輸入有效的 Microsoft Entra 應用程式（用戶端）ID。",
+      "authWorking": "正在完成授權⋯",
+      "authSuccess": "授權完成，請複製下方的 Secret。",
+      "authFailed": "授權失敗，請重新嘗試。",
+      "authSessionInvalid": "此次授權已逾時，或與目前瀏覽器的授權工作階段不符，請重新開始授權。",
+      "authNoRefreshToken": "未取得 refresh token，請重新授權並允許離線存取。",
+      "authNetworkError": "無法交換權杖，請確認網路及授權服務後重新授權。",
+      "authStorageError": "無法保存授權工作階段，請允許瀏覽器使用工作階段儲存空間後重試。",
+      "oneDriveSetupLink": "OneDrive 設定說明",
+      "secretNameLabel": "Secret 名稱"
+    });
+    Object.assign(i18nStrings.zh_CN, {
+      "cloudAuthTitle": "云端硬盘授权",
+      "cloudProviderLabel": "选择云端硬盘",
+      "googleDriveName": "Google 云端硬盘",
+      "oneDriveAuthTitle": "Microsoft OneDrive 授权",
+      "oneDriveClientPlaceholder": "你的 Microsoft Entra 应用程序（客户端）ID",
+      "oneDriveNotConfigured": "OneDrive 默认授权尚未设置，请选择“自定义”输入 Client ID。",
+      "oneDriveRelayNotice": "OneDrive 授权会通过本工具的 HTTPS 服务交换令牌，服务不会保存令牌。",
+      "oneDriveCiNotice": "请将 ONEDRIVE_OAUTH2 用于支持 OneDrive 的 CI 工作流程。",
+      "clientIdRequired": "请先输入 Client ID，再开始授权。",
+      "invalidMicrosoftClientId": "请输入有效的 Microsoft Entra 应用程序（客户端）ID。",
+      "authWorking": "正在完成授权…",
+      "authSuccess": "授权完成，请复制下方的 Secret。",
+      "authFailed": "授权失败，请重试。",
+      "authSessionInvalid": "此次授权已超时，或与当前浏览器的授权会话不符，请重新开始授权。",
+      "authNoRefreshToken": "未获取 refresh token，请重新授权并允许离线访问。",
+      "authNetworkError": "无法交换令牌，请确认网络及授权服务后重新授权。",
+      "authStorageError": "无法保存授权会话，请允许浏览器使用会话存储空间后重试。",
+      "oneDriveSetupLink": "OneDrive 设置说明",
+      "secretNameLabel": "Secret 名称"
+    });
 
     // 切換語言函式
     function switchLanguage(lang, updateUrl = true) {
@@ -804,9 +868,12 @@
       else if (key === 'zh-TW' || key === 'zh_tw' || key === 'zh_Hant') key = 'zh_TW';
       else if (key === 'pt-BR' || key === 'pt_br') key = 'pt_BR';
       else if (key === 'pt-PT' || key === 'pt_pt') key = 'pt_PT';
+      else if (key === 'sr-Latn') key = 'sr_Latn';
       
-      const dict = i18nStrings[key] || i18nStrings['en'];
-      document.getElementById('langSelector').value = lang;
+      currentLanguage = i18nStrings[key] ? key : 'en';
+      const dict = { ...i18nStrings.en, ...i18nStrings[currentLanguage] };
+      document.documentElement.lang = currentLanguage.replace('_', '-');
+      document.getElementById('langSelector').value = currentLanguage;
       // 依據 data-i18n 屬性批次替換
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const k = el.getAttribute('data-i18n');
@@ -819,11 +886,12 @@
       });
       // 更新 toast 內容
       document.getElementById('copyToast').innerText = dict.toastCopied;
-      // 語言切換時更新網址參數
+      updateCloudProviderUi();
+      // 語言切換時保留已產生的金鑰與授權資料
       if (updateUrl) {
         const url = new URL(window.location.href);
         url.searchParams.set('lang', lang);
-        window.location.href = url.toString();
+        window.history.replaceState({}, document.title, url.toString());
       }
     }
 
@@ -868,50 +936,36 @@
         document.getElementById('option' + optionNumber).classList.add('active');
     }
     
-    // page init
+    // This downloadable page uses a loopback callback provided by the local file server.
     window.onload = function() {
-
-      const lang = document.getElementById('langSelector').value;
-      document.getElementById('langSelector').addEventListener('change', function(e) {
-        switchLanguage(e.target.value, true);
-      });
-
       if (window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost') {
-        var msg = (i18nStrings && i18nStrings[lang] && i18nStrings[lang].fileManagerAlert);
-        alert(msg);
+        alert(authText('fileManagerAlert'));
         window.location.href = 'https://play.google.com/store/apps/details?id=com.alphainventor.filemanager';
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      // 保留原始的 code 處理
-      if (urlParams.has('code')) {
-          const code = urlParams.get('code');
-          
-          // 先從 sessionStorage 恢復 clientMode 和 customClientId，再呼叫 exchangeCodeForToken
-          const clientMode = sessionStorage.getItem('clientMode');
-          const customClientId = sessionStorage.getItem('customClientId');
-          if (clientMode) {
-            const radio = document.querySelector(`input[name="clientMode"][value="${clientMode}"]`);
-            if (radio) radio.checked = true;
-
-            if (clientMode === 'custom') {
-              const input = document.getElementById('customClientId');
-              input.value = customClientId;
-              input.style.display = 'block';
-            }
-            sessionStorage.removeItem('clientMode');
-            sessionStorage.removeItem('customClientId');
-          }
-          
-          exchangeCodeForToken(code);
-          return;
+        return;
       }
       toggleOption(1);
-      var customClientInput = document.getElementById('customClientId');
-      if (customClientInput) customClientInput.style.display = 'none';
+      updateCloudProviderUi();
+      handleOAuthCallback();
     };
   </script>
   <style>
+    [hidden] { display: none !important; }
+    .cloud-auth { margin-bottom: 28px; }
+    .cloud-providers { display: flex; flex-wrap: wrap; gap: 12px; border: 0; padding: 0; margin: 0 0 20px; min-width: 0; }
+    .cloud-providers legend { margin-bottom: 10px; }
+    .provider-choice { display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; cursor: pointer; flex: 1 1 220px; }
+    .provider-choice:has(input:checked) { border-color: #1a73e8; background: #eef5ff; }
+    .provider-icon { width: 24px; height: 24px; flex-shrink: 0; }
+    .auth-hint { color: #555; font-size: 0.9rem; line-height: 1.6; overflow-wrap: anywhere; }
+    .auth-hint p { margin: 6px 0; }
+    .auth-status { padding: 12px; border-radius: 6px; background: #eef5ff; overflow-wrap: anywhere; }
+    .auth-status.error { color: #a61b1b; background: #fff0f0; }
+    .auth-status.success { color: #176b35; background: #edf8f0; }
+    .secret-tip { background: #f9f9f9; border-radius: 6px; padding: 12px 16px; overflow-wrap: anywhere; }
+    .cloud-auth .styled-input { box-sizing: border-box; min-width: 0; }
+    .cloud-auth .right-button { flex-shrink: 0; }
+    button:disabled { cursor: wait; opacity: 0.6; }
+
     .flex-row {
       display: flex;
       align-items: center;
@@ -1117,7 +1171,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="version-badge">v1.1.3</div>
+    <div class="version-badge">v1.2.0</div>
     <select id="langSelector" onchange="switchLanguage(this.value)">
         <option value="en">English</option>
         <option value="ar">العربية</option>
@@ -1160,6 +1214,52 @@
         <a href="https://github.com/Angus-repo/aaps-ci-preparation/issues" target="_blank" data-i18n="aiTranslateIssues">問題回報</a>
         <span data-i18n="aiTranslateSuggest">反應，或提PR給我</span>
     </div>
+    <section id="cloudAuth" class="cloud-auth" aria-labelledby="cloudAuthTitle">
+      <h2 id="cloudAuthTitle" data-i18n="cloudAuthTitle">Cloud storage authorization</h2>
+      <fieldset class="cloud-providers">
+        <legend data-i18n="cloudProviderLabel">Choose cloud storage</legend>
+        <label class="provider-choice">
+          <input type="radio" name="cloudProvider" value="google" checked onchange="changeCloudProvider()">
+          <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" alt="" class="provider-icon">
+          <span data-i18n="googleDriveName">Google Drive</span>
+        </label>
+        <label class="provider-choice">
+          <input type="radio" name="cloudProvider" value="onedrive" onchange="changeCloudProvider()">
+          <svg class="provider-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0078d4" d="M18.5 10a5.5 5.5 0 0 0-10.8-1.4A4.5 4.5 0 0 0 6 8.3a4.7 4.7 0 1 0 0 9.4h12.5a3.9 3.9 0 0 0 0-7.7Z"/></svg>
+          <span>Microsoft OneDrive</span>
+        </label>
+      </fieldset>
+      <h3 id="providerAuthTitle">Google Drive Auth</h3>
+      <div class="auth-controls">
+        <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> <span data-i18n="defaultRadio">Default</span></label>
+        <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> <span data-i18n="customRadio">Custom</span></label>
+        <button id="startAuthBtn" class="btn-green" onclick="startAuth()"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="startAuthBtn">Start Auth</span></button>
+        <input type="text" class="custom-client styled-input" id="customClientId" placeholder="Your Google Client ID" autocomplete="off" spellcheck="false">
+      </div>
+      <p id="oneDriveNotConfigured" class="auth-hint" data-i18n="oneDriveNotConfigured" hidden></p>
+      <div id="oneDriveNotice" class="auth-hint" hidden>
+        <p data-i18n="oneDriveRelayNotice"></p>
+        <p data-i18n="oneDriveCiNotice"></p>
+        <a href="https://github.com/Angus-repo/aaps-ci-preparation/blob/main/docs/onedrive-setup.md" target="_blank" rel="noopener noreferrer" data-i18n="oneDriveSetupLink">OneDrive setup instructions</a>
+      </div>
+      <p id="authStatus" class="auth-status" role="status" aria-live="polite" hidden></p>
+      <div class="flex-row">
+        <label for="oauth2Base64" id="oauth2SecretLabel" class="label-no-margin">GDRIVE_OAUTH2:</label>
+        <button class="right-button" onclick="copyToClipboardText(cloudProviders[activeProvider].secretName)"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+      </div>
+      <div class="flex-row">
+        <input id="oauth2Base64" readonly class="keystore-input styled-input label-no-margin" autocomplete="off">
+        <button class="right-button" onclick="copyToClipboard('oauth2Base64')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
+      </div>
+      <div class="secret-tip">
+        <span data-i18n="githubSecretTip">Please copy to your GitHub repository Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets</span>
+        <div id="googleSecretExample" style="margin-top: 12px; text-align: left;">
+          <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/gdrive_oauth2.png" alt="GDRIVE_OAUTH2" style="max-width:100%;border:1px solid #eee;border-radius:4px;">
+        </div>
+        <p id="oneDriveSecretExample" hidden><span data-i18n="secretNameLabel">Secret name</span>: <code>ONEDRIVE_OAUTH2</code></p>
+      </div>
+    </section>
+
     <div class="option active" id="option1">
       <div class="option-header" onclick="toggleOption(1)">
         <h2 data-i18n="option1Title">Option 1: Generate JKS</h2>
@@ -1231,27 +1331,7 @@
       </div>
     </div>
 
-    <h2><img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/google-drive.png" alt="Google Drive" class="icon-drive" style="height:24px;vertical-align:middle;margin-right:6px;" /><span data-i18n="oauth2Title">Google OAuth2 Auth</span></h2>
-    <div class="auth-controls">
-      <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> <span data-i18n="defaultRadio">Default</span></label>
-      <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> <span data-i18n="customRadio">Custom</span></label>
-      <button class="btn-green" onclick="startAuth()"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="startAuthBtn">Start Auth</span></button>
-      <input type="text" class="custom-client styled-input" id="customClientId" data-i18n-placeholder="customClientIdPlaceholder" placeholder="Your Google Client ID">
-    </div>
-    <div class="flex-row">
-      <label for="oauth2Base64" class="label-no-margin" data-i18n="gdriveOauth2Label">GDRIVE_OAUTH2:</label>
-      <button class="right-button" onclick="copyToClipboardText('GDRIVE_OAUTH2')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
-    </div>
-    <div class="flex-row">
-      <input id="oauth2Base64" readonly class="keystore-input styled-input label-no-margin">
-      <button class="right-button" onclick="copyToClipboard('oauth2Base64')"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
-    </div>
-    <div style="background: #f9f9f9; border-radius: 6px; padding: 12px 16px;">
-      <span data-i18n="githubSecretTip">請複製到你的 Github 分支 Settings =&gt; Secrets and Variables =&gt; Actions =&gt; New repository secrets</span>
-      <div style="margin-top: 12px; text-align: left;">
-        <img src="https://raw.githubusercontent.com/Angus-repo/aaps-ci-preparation/main/src/main/resources/static/images/gdrive_oauth2.png" alt="secrets_option2" style="max-width:100%;border:1px solid #eee;border-radius:4px;">
-      </div>
-    </div>
+
   </div>
 
   <script>
@@ -1329,69 +1409,238 @@
     }
 
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
-    let redirectUri = "http://" + window.location.hostname + ":" + window.location.port + window.location.pathname;
-    // 若 URL 有 lang 參數，redirectUri 也加上 lang
-    (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const lang = urlParams.get('lang');
-      if (lang) {
-        redirectUri += (redirectUri.includes('?') ? '&' : '?') + 'lang=' + encodeURIComponent(lang);
+    // Public application identifier only. Set this after registering the Entra native application.
+    const defaultOneDriveClientId = "";
+    // Native-client code redemption needs a server-side request without a browser Origin header.
+    // Deploy OneDriveOAuthController at this HTTPS endpoint before distributing this HTML.
+    const oneDriveTokenExchangeUrl = "https://aaps-ci-preparation.duckdns.org/api/onedrive/token";
+    const cloudProviders = {
+      google: {
+        defaultClientId,
+        authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+        scope: 'https://www.googleapis.com/auth/drive.file',
+        secretName: 'GDRIVE_OAUTH2',
+        titleKey: 'oauth2Title',
+        placeholderKey: 'customClientIdPlaceholder'
+      },
+      onedrive: {
+        defaultClientId: defaultOneDriveClientId,
+        authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+        scope: 'offline_access https://graph.microsoft.com/Files.ReadWrite.AppFolder',
+        secretName: 'ONEDRIVE_OAUTH2',
+        titleKey: 'oneDriveAuthTitle',
+        placeholderKey: 'oneDriveClientPlaceholder'
       }
-    })();
-    
-    function toggleClientInput() {
-      const input = document.getElementById('customClientId');
+    };
+    const authStorageKey = 'aaps_ci_oauth_transaction';
+    const authMaxAgeMs = 10 * 60 * 1000;
+    const providerSettings = {
+      google: { mode: 'default', customClientId: '', result: '' },
+      onedrive: { mode: 'default', customClientId: '', result: '' }
+    };
+    let activeProvider = 'google';
+    let currentLanguage = 'en';
+    let authBusy = false;
+
+    function authText(key) {
+      return (i18nStrings[currentLanguage] || {})[key] || i18nStrings.en[key] || key;
+    }
+
+    function setAuthStatus(key, type = '', detail = '') {
+      const status = document.getElementById('authStatus');
+      status.textContent = key ? authText(key) + (detail ? ' (' + detail + ')' : '') : '';
+      status.className = 'auth-status' + (type ? ' ' + type : '');
+      status.hidden = !key;
+    }
+
+    function setAuthBusy(busy) {
+      authBusy = busy;
+      document.querySelectorAll('input[name="cloudProvider"], input[name="clientMode"], #customClientId, #startAuthBtn')
+        .forEach(element => { element.disabled = busy; });
+    }
+
+    function updateCloudProviderUi() {
+      const provider = cloudProviders[activeProvider];
+      const isOneDrive = activeProvider === 'onedrive';
       const isCustom = document.querySelector('input[name="clientMode"]:checked').value === 'custom';
+      const input = document.getElementById('customClientId');
       input.style.display = isCustom ? 'block' : 'none';
+      input.placeholder = authText(provider.placeholderKey);
+      input.setAttribute('aria-label', authText(provider.placeholderKey));
+      document.getElementById('providerAuthTitle').textContent = authText(provider.titleKey);
+      document.getElementById('oauth2SecretLabel').textContent = provider.secretName + ':';
+      document.getElementById('oauth2Base64').value = providerSettings[activeProvider].result;
+      document.getElementById('oneDriveNotConfigured').hidden = !isOneDrive || !!provider.defaultClientId || isCustom;
+      document.getElementById('oneDriveNotice').hidden = !isOneDrive;
+      document.getElementById('googleSecretExample').hidden = isOneDrive;
+      document.getElementById('oneDriveSecretExample').hidden = !isOneDrive;
+    }
+
+    function saveProviderSettings() {
+      const settings = providerSettings[activeProvider];
+      settings.mode = document.querySelector('input[name="clientMode"]:checked').value;
+      settings.customClientId = document.getElementById('customClientId').value.trim();
+    }
+
+    function changeCloudProvider() {
+      saveProviderSettings();
+      activeProvider = document.querySelector('input[name="cloudProvider"]:checked').value;
+      const settings = providerSettings[activeProvider];
+      document.querySelector('input[name="clientMode"][value="' + settings.mode + '"]').checked = true;
+      document.getElementById('customClientId').value = settings.customClientId;
+      setAuthStatus('');
+      updateCloudProviderUi();
+    }
+
+    function toggleClientInput() {
+      saveProviderSettings();
+      providerSettings[activeProvider].result = '';
+      setAuthStatus('');
+      updateCloudProviderUi();
+    }
+
+    function base64Url(bytes) {
+      return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function getRedirectUri(provider) {
+      const url = new URL(window.location.pathname, window.location.origin);
+      // Entra redirect registration must not depend on the selected UI language.
+      if (provider === 'google') {
+        const lang = new URLSearchParams(window.location.search).get('lang');
+        if (lang) url.searchParams.set('lang', lang);
+      }
+      return url.toString();
     }
 
     async function startAuth() {
-      let clientId = defaultClientId;
-      const clientMode = document.querySelector('input[name="clientMode"]:checked').value;
-      if (document.querySelector('input[name="clientMode"]:checked').value === 'custom') {
-        clientId = document.getElementById('customClientId').value;
-        sessionStorage.setItem('clientMode', clientMode);
-        sessionStorage.setItem('customClientId', clientId);
+      if (authBusy) return;
+      saveProviderSettings();
+      const provider = cloudProviders[activeProvider];
+      const settings = providerSettings[activeProvider];
+      const clientId = settings.mode === 'custom' ? settings.customClientId : provider.defaultClientId;
+      settings.result = '';
+      updateCloudProviderUi();
+      if (!clientId) {
+        setAuthStatus(activeProvider === 'onedrive' && settings.mode === 'default' ? 'oneDriveNotConfigured' : 'clientIdRequired', 'error');
+        return;
       }
-      const codeVerifier = [...crypto.getRandomValues(new Uint8Array(32))].map(b => ('0' + b.toString(16)).slice(-2)).join('');
-      const encoder = new TextEncoder();
-      const data = encoder.encode(codeVerifier);
-      const digest = await crypto.subtle.digest('SHA-256', data);
-      const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-      sessionStorage.setItem("pkce_code_verifier", codeVerifier);
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file&access_type=offline&code_challenge_method=S256&code_challenge=${codeChallenge}`;
-      window.location.href = authUrl;
-    }
-
-    async function exchangeCodeForToken(code) {
-      const codeVerifier = sessionStorage.getItem("pkce_code_verifier");
-      const clientId = document.querySelector('input[name="clientMode"]:checked').value === 'custom' ? document.getElementById('customClientId').value : defaultClientId;
-      const res = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          client_id: clientId,
-          code: code,
-          code_verifier: codeVerifier,
-          grant_type: 'authorization_code',
-          redirect_uri: redirectUri
-        }).toString()
-      });
-      const data = await res.json();
-      if (data.refresh_token) {
-        // document.getElementById('refreshToken').value = data.refresh_token;
-        document.getElementById('oauth2Base64').value = btoa(clientId + '|' + data.refresh_token);
-        // 清除 URL 上的 code 參數，避免重複觸發
-        window.history.replaceState({}, document.title, window.location.pathname);
-        // 平滑卷動到 class="icon-drive" 的元素
-        const iconDrive = document.querySelector('.icon-drive');
-        if (iconDrive) {
-          iconDrive.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (activeProvider === 'onedrive' && !/^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/i.test(clientId)) {
+        setAuthStatus('invalidMicrosoftClientId', 'error');
+        return;
+      }
+      setAuthBusy(true);
+      setAuthStatus('');
+      try {
+        const codeVerifier = base64Url(crypto.getRandomValues(new Uint8Array(32)));
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
+        const transaction = {
+          provider: activeProvider, clientId, mode: settings.mode, codeVerifier,
+          state: base64Url(crypto.getRandomValues(new Uint8Array(32))),
+          redirectUri: getRedirectUri(activeProvider),
+          createdAt: Date.now(), lang: currentLanguage
+        };
+        sessionStorage.setItem(authStorageKey, JSON.stringify(transaction));
+        const url = new URL(provider.authorizeUrl);
+        url.search = new URLSearchParams({
+          client_id: clientId, redirect_uri: transaction.redirectUri, response_type: 'code',
+          scope: provider.scope, state: transaction.state,
+          code_challenge_method: 'S256', code_challenge: base64Url(new Uint8Array(digest))
+        }).toString();
+        if (activeProvider === 'google') {
+          url.searchParams.set('access_type', 'offline');
+          url.searchParams.set('prompt', 'consent');
+        } else {
+          url.searchParams.set('response_mode', 'query');
+          url.searchParams.set('prompt', 'select_account');
         }
+        window.location.assign(url.toString());
+      } catch (error) {
+        setAuthStatus('authStorageError', 'error');
+        setAuthBusy(false);
       }
     }
 
+    async function handleOAuthCallback() {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has('code') && !params.has('error')) return;
+      // Remove authorization codes and errors before any network request or further navigation.
+      const cleanUrl = new URL(window.location.href);
+      ['code', 'state', 'error', 'error_description', 'error_uri', 'session_state', 'client_info'].forEach(key => cleanUrl.searchParams.delete(key));
+      window.history.replaceState({}, document.title, cleanUrl.toString());
+      let transaction;
+      try {
+        transaction = JSON.parse(sessionStorage.getItem(authStorageKey));
+        sessionStorage.removeItem(authStorageKey);
+      } catch (error) {
+        setAuthStatus('authSessionInvalid', 'error');
+        return;
+      }
+      if (!transaction || !Object.hasOwn(cloudProviders, transaction.provider)
+          || !transaction.state || params.get('state') !== transaction.state
+          || !Number.isFinite(transaction.createdAt) || Date.now() - transaction.createdAt > authMaxAgeMs
+          || transaction.createdAt > Date.now() || !transaction.clientId || !transaction.codeVerifier
+          || !['default', 'custom'].includes(transaction.mode)
+          || transaction.redirectUri !== getRedirectUri(transaction.provider)) {
+        setAuthStatus('authSessionInvalid', 'error');
+        return;
+      }
+      activeProvider = transaction.provider;
+      providerSettings[activeProvider].mode = transaction.mode;
+      providerSettings[activeProvider].customClientId = transaction.mode === 'custom' ? transaction.clientId : '';
+      document.querySelector('input[name="cloudProvider"][value="' + activeProvider + '"]').checked = true;
+      document.querySelector('input[name="clientMode"][value="' + transaction.mode + '"]').checked = true;
+      document.getElementById('customClientId').value = providerSettings[activeProvider].customClientId;
+      switchLanguage(transaction.lang || currentLanguage, false);
+      if (params.has('error')) {
+        const errorCode = params.get('error');
+        setAuthStatus('authFailed', 'error', /^[a-z_]{1,80}$/.test(errorCode) ? errorCode : '');
+        return;
+      }
+      await exchangeCodeForToken(params.get('code'), transaction);
+    }
+
+    async function exchangeCodeForToken(code, transaction) {
+      setAuthBusy(true);
+      setAuthStatus('authWorking');
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 30000);
+      try {
+        const isOneDrive = transaction.provider === 'onedrive';
+        const url = isOneDrive ? oneDriveTokenExchangeUrl : 'https://oauth2.googleapis.com/token';
+        const body = isOneDrive ? JSON.stringify({
+          clientId: transaction.clientId, code, codeVerifier: transaction.codeVerifier, redirectUri: transaction.redirectUri
+        }) : new URLSearchParams({
+          client_id: transaction.clientId, code, code_verifier: transaction.codeVerifier,
+          grant_type: 'authorization_code', redirect_uri: transaction.redirectUri
+        }).toString();
+        const response = await fetch(url, {
+          method: 'POST', credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer',
+          headers: { 'Content-Type': isOneDrive ? 'application/json' : 'application/x-www-form-urlencoded' },
+          body, signal: controller.signal
+        });
+        const data = await response.json();
+        if (!response.ok || data.error) {
+          // Do not print provider bodies: they may include credentials or personal information.
+          const detail = typeof data.error === 'string' && /^[a-z_]{1,80}( \(AADSTS\d+\))?$/.test(data.error) ? data.error : String(response.status);
+          setAuthStatus('authFailed', 'error', detail);
+          return;
+        }
+        if (typeof data.refresh_token !== 'string' || !data.refresh_token.trim()) {
+          setAuthStatus('authNoRefreshToken', 'error');
+          return;
+        }
+        providerSettings[transaction.provider].result = btoa(transaction.clientId + '|' + data.refresh_token);
+        updateCloudProviderUi();
+        setAuthStatus('authSuccess', 'success');
+        document.getElementById('cloudAuth').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (error) {
+        setAuthStatus('authNetworkError', 'error');
+      } finally {
+        clearTimeout(timer);
+        setAuthBusy(false);
+      }
+    }
 
   </script>
   <div class="toast toast-success" id="copyToast" data-i18n="toastCopied">已複製到剪貼簿</div>

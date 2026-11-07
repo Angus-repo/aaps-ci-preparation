@@ -7,3 +7,6 @@
 .DS_Store
 .env
 .vscode/settings.json
+# Browser checks
+node_modules/
+test-results/

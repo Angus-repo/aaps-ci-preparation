@@ -8,7 +8,7 @@
 2. Under **Authentication → Add a platform → Mobile and desktop applications**, register the loopback callback used to open the HTML, for example `http://localhost/aaps-ci-preparation.html`. Keep the path and letter case identical. The page does not include `lang` in the Microsoft callback.
 3. For a `localhost` native callback, Microsoft ignores the port during redirect matching. If the file manager opens `127.0.0.1` instead, register that actual URI, including its port, through the application manifest as documented by Microsoft. Do not silently replace the host: the authorization transaction is in the original origin's session storage.
 4. Add the Microsoft Graph **delegated** permission `Files.ReadWrite.AppFolder`. The authorization request also includes `offline_access` to obtain a refresh token. No client secret is required, and no profile/email permissions are requested.
-5. Put the public Application (client) ID in `defaultOneDriveClientId` in the HTML. Until it is supplied, the default OneDrive action shows a configuration message; **Custom** accepts a Client ID for testing. Do not put a client secret in the HTML or repository.
+5. The public native Application (client) ID `4e301264-ecaa-4496-ba6b-edd49d0deb7b` is set in `defaultOneDriveClientId`. **Custom** accepts another native Client ID for testing. Do not put a client secret in the HTML or repository.
 
 Do **not** register this callback as a single-page application (SPA). A SPA refresh token expires after 24 hours, including replacement tokens derived from it, which is unsuitable for this CI credential. A Web/confidential registration instead requires a client secret and does not match this implementation.
 
@@ -48,7 +48,7 @@ npx playwright install --with-deps chromium
 npm test
 ```
 
-The browser tests mock the identity providers and do not log into an account. Set `CHROMIUM_PATH` to use an existing Chromium installation, and optionally set `PREVIEW_DIR` to capture mobile and desktop screenshots. After supplying the real Client ID and deploying the endpoint, complete a real consent flow and verify the resulting credential in the OneDrive-capable CI workflow before release.
+The browser tests mock the identity providers and do not log into an account. Set `CHROMIUM_PATH` to use an existing Chromium installation, and optionally set `PREVIEW_DIR` to capture mobile and desktop screenshots. After registering the loopback callback and deploying the endpoint, complete a real consent flow and verify the resulting credential in the OneDrive-capable CI workflow before release.
 
 Official references:
 

@@ -97,10 +97,7 @@ test('Provider switching isolates custom IDs, output, labels and the Google-only
   await selectOneDrive();
   assert.equal(await page.textContent('#oauth2SecretLabel'), 'ONEDRIVE_OAUTH2:');
   assert.equal(await page.isVisible('#googleSecretExample'), false);
-  assert.equal(await page.isVisible('#oneDriveNotConfigured'), true);
-  await page.click('#startAuthBtn');
-  assert.match(await page.textContent('#authStatus'), /尚未設定/);
-  assert.ok(page.url().startsWith(baseUrl));
+  assert.equal(await page.isVisible('#oneDriveNotConfigured'), false);
   await page.check('input[name="clientMode"][value="custom"]');
   await page.fill('#customClientId', clientId);
   await page.check('input[name="cloudProvider"][value="google"]');
@@ -236,4 +233,22 @@ test('All available languages retain provider selection and use English fallback
     assert.equal(await page.textContent('#oauth2SecretLabel'), 'ONEDRIVE_OAUTH2:');
     assert.equal(await page.isChecked('input[name="cloudProvider"][value="onedrive"]'), true);
   }
+});
+
+
+test('Default OneDrive authorization uses the supplied native Client ID', async () => {
+  await selectOneDrive();
+  const requestPromise = page.waitForRequest(request => request.isNavigationRequest() && request.url().includes('/authorize?'));
+  await page.click('#startAuthBtn');
+  const request = await requestPromise;
+  assert.equal(new URL(request.url()).searchParams.get('client_id'), '4e301264-ecaa-4496-ba6b-edd49d0deb7b');
+});
+
+test('An empty custom Client ID is rejected before navigation', async () => {
+  await selectOneDrive();
+  await page.check('input[name="clientMode"][value="custom"]');
+  await page.fill('#customClientId', '   ');
+  await page.click('#startAuthBtn');
+  assert.match(await page.textContent('#authStatus'), /請先輸入 Client ID/);
+  assert.ok(page.url().startsWith(baseUrl));
 });

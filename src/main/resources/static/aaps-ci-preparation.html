@@ -1409,8 +1409,8 @@
     }
 
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
-    // Public application identifier only. Set this after registering the Entra native application.
-    const defaultOneDriveClientId = "";
+    // Public Entra native application identifier; no client secret is used.
+    const defaultOneDriveClientId = "4e301264-ecaa-4496-ba6b-edd49d0deb7b";
     // Native-client code redemption needs a server-side request without a browser Origin header.
     // Deploy OneDriveOAuthController at this HTTPS endpoint before distributing this HTML.
     const oneDriveTokenExchangeUrl = "https://aaps-ci-preparation.duckdns.org/api/onedrive/token";

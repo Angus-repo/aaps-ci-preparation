@@ -797,6 +797,10 @@
 
     // New provider messages fall back to English when a translation is unavailable.
     Object.assign(i18nStrings.en, {
+      "oneDriveAccountTypeLabel": "Microsoft account type",
+      "oneDrivePersonalAccount": "Personal Microsoft account",
+      "oneDriveWorkAccount": "Work or school account",
+      "oneDriveAccountTypeHint": "Choose the account that owns your OneDrive. Microsoft accounts registered with Gmail or another email address are also personal accounts.",
       "oneDriveLocalNotice": "This standalone page uses your native Entra app. After signing in, run the displayed command in a local terminal, then paste Microsoft’s JSON response below. No backend service or client secret is used.",
       "nativeExchangeTitle": "Complete OneDrive authorization",
       "nativeExchangeInstructions": "Open a terminal before signing in. After returning here, immediately run the command below on your own computer. Authorization codes are short-lived; if the code expires, start authorization again.",
@@ -831,6 +835,10 @@
       "secretNameLabel": "Secret name"
     });
     Object.assign(i18nStrings.zh_TW, {
+      "oneDriveAccountTypeLabel": "Microsoft 帳戶類型",
+      "oneDrivePersonalAccount": "個人 Microsoft 帳戶",
+      "oneDriveWorkAccount": "公司或學校帳戶",
+      "oneDriveAccountTypeHint": "請選擇 OneDrive 所屬的帳戶類型。使用 Gmail 等電子郵件地址註冊的 Microsoft 帳戶，也屬於個人帳戶。",
       "oneDriveLocalNotice": "此單一 HTML 使用你的原生 Entra App。登入後，請在本機終端機執行頁面提供的指令，再貼回 Microsoft 回傳的 JSON。不需後端服務或 Client Secret。",
       "nativeExchangeTitle": "完成 OneDrive 授權",
       "nativeExchangeInstructions": "請先開啟終端機再登入；回到此頁後，立即在自己的電腦執行下方指令。授權碼有效時間很短，若已過期，請重新開始授權。",
@@ -865,6 +873,10 @@
       "secretNameLabel": "Secret 名稱"
     });
     Object.assign(i18nStrings.zh_CN, {
+      "oneDriveAccountTypeLabel": "Microsoft 帐户类型",
+      "oneDrivePersonalAccount": "个人 Microsoft 帐户",
+      "oneDriveWorkAccount": "工作或学校帐户",
+      "oneDriveAccountTypeHint": "请选择 OneDrive 所属的帐户类型。使用 Gmail 等电子邮件地址注册的 Microsoft 帐户，也属于个人帐户。",
       "oneDriveLocalNotice": "此单一 HTML 使用你的原生 Entra App。登录后，请在本机终端执行页面提供的命令，再贴回 Microsoft 返回的 JSON。不需要后端服务或 Client Secret。",
       "nativeExchangeTitle": "完成 OneDrive 授权",
       "nativeExchangeInstructions": "请先打开终端再登录；返回此页后，立即在自己的电脑执行下方命令。授权码有效时间很短，如果已过期，请重新开始授权。",
@@ -1213,7 +1225,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="version-badge">v1.2.0</div>
+    <div class="version-badge">v1.2.1</div>
     <select id="langSelector" onchange="switchLanguage(this.value)">
         <option value="en">English</option>
         <option value="ar">العربية</option>
@@ -1272,6 +1284,14 @@
         </label>
       </fieldset>
       <h3 id="providerAuthTitle">Google Drive Auth</h3>
+      <div id="oneDriveAccountOptions" hidden>
+        <label for="oneDriveAccountType" data-i18n="oneDriveAccountTypeLabel">Microsoft account type</label>
+        <select id="oneDriveAccountType" class="styled-input" aria-describedby="oneDriveAccountTypeHint" onchange="changeOneDriveAccountType()">
+          <option value="personal" data-i18n="oneDrivePersonalAccount">Personal Microsoft account</option>
+          <option value="work" data-i18n="oneDriveWorkAccount">Work or school account</option>
+        </select>
+        <p id="oneDriveAccountTypeHint" class="auth-hint" data-i18n="oneDriveAccountTypeHint"></p>
+      </div>
       <div class="auth-controls">
         <label><input type="radio" name="clientMode" value="default" checked onchange="toggleClientInput()"> <span data-i18n="defaultRadio">Default</span></label>
         <label><input type="radio" name="clientMode" value="custom" onchange="toggleClientInput()"> <span data-i18n="customRadio">Custom</span></label>
@@ -1483,18 +1503,19 @@
       },
       onedrive: {
         defaultClientId: defaultOneDriveClientId,
-        authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
         scope: 'offline_access https://graph.microsoft.com/Files.ReadWrite.AppFolder',
         secretName: 'ONEDRIVE_OAUTH2',
         titleKey: 'oneDriveAuthTitle',
         placeholderKey: 'oneDriveClientPlaceholder'
       }
     };
+    // Route accounts explicitly so personal accounts do not depend on /common discovery.
+    const oneDriveAuthorities = Object.freeze({ personal: 'consumers', work: 'organizations' });
     const authStorageKey = 'aaps_ci_oauth_transaction';
     const authMaxAgeMs = 10 * 60 * 1000;
     const providerSettings = {
       google: { mode: 'default', customClientId: '', result: '' },
-      onedrive: { mode: 'default', customClientId: '', result: '' }
+      onedrive: { mode: 'default', customClientId: '', result: '', accountType: 'personal' }
     };
     let activeProvider = 'google';
     let currentLanguage = 'en';
@@ -1514,7 +1535,7 @@
 
     function setAuthBusy(busy) {
       authBusy = busy;
-      document.querySelectorAll('input[name="cloudProvider"], input[name="clientMode"], #customClientId, #startAuthBtn')
+      document.querySelectorAll('input[name="cloudProvider"], input[name="clientMode"], #customClientId, #oneDriveAccountType, #startAuthBtn')
         .forEach(element => { element.disabled = busy; });
     }
 
@@ -1531,6 +1552,8 @@
       document.getElementById('oauth2Base64').value = providerSettings[activeProvider].result;
       document.getElementById('oneDriveNotConfigured').hidden = !isOneDrive || !!provider.defaultClientId || isCustom;
       document.getElementById('oneDriveNotice').hidden = !isOneDrive;
+      document.getElementById('oneDriveAccountOptions').hidden = !isOneDrive;
+      document.getElementById('oneDriveAccountType').value = providerSettings.onedrive.accountType;
       document.getElementById('googleSecretExample').hidden = isOneDrive;
       document.getElementById('oneDriveSecretExample').hidden = !isOneDrive;
     }
@@ -1539,6 +1562,9 @@
       const settings = providerSettings[activeProvider];
       settings.mode = document.querySelector('input[name="clientMode"]:checked').value;
       settings.customClientId = document.getElementById('customClientId').value.trim();
+      if (activeProvider === 'onedrive') {
+        settings.accountType = document.getElementById('oneDriveAccountType').value;
+      }
     }
 
     function changeCloudProvider() {
@@ -1558,6 +1584,22 @@
       providerSettings[activeProvider].result = '';
       setAuthStatus('');
       updateCloudProviderUi();
+    }
+
+    function changeOneDriveAccountType() {
+      if (authBusy || activeProvider !== 'onedrive') return;
+      clearNativeTokenExchange();
+      saveProviderSettings();
+      providerSettings.onedrive.result = '';
+      setAuthStatus('');
+      updateCloudProviderUi();
+    }
+
+    function getOneDriveEndpoint(accountType, endpoint) {
+      if (!Object.hasOwn(oneDriveAuthorities, accountType)) {
+        throw new Error('Unsupported Microsoft account type');
+      }
+      return 'https://login.microsoftonline.com/' + oneDriveAuthorities[accountType] + '/oauth2/v2.0/' + endpoint;
     }
 
     function base64Url(bytes) {
@@ -1600,10 +1642,12 @@
           provider: activeProvider, clientId, mode: settings.mode, codeVerifier,
           state: base64Url(crypto.getRandomValues(new Uint8Array(32))),
           redirectUri: getRedirectUri(activeProvider),
-          createdAt: Date.now(), lang: currentLanguage
+          createdAt: Date.now(), lang: currentLanguage,
+          ...(activeProvider === 'onedrive' ? { accountType: settings.accountType } : {})
         };
         sessionStorage.setItem(authStorageKey, JSON.stringify(transaction));
-        const url = new URL(provider.authorizeUrl);
+        const url = new URL(activeProvider === 'onedrive'
+          ? getOneDriveEndpoint(settings.accountType, 'authorize') : provider.authorizeUrl);
         url.search = new URLSearchParams({
           client_id: clientId, redirect_uri: transaction.redirectUri, response_type: 'code',
           scope: provider.scope, state: transaction.state,
@@ -1643,6 +1687,7 @@
           || !Number.isFinite(transaction.createdAt) || Date.now() - transaction.createdAt > authMaxAgeMs
           || transaction.createdAt > Date.now() || !transaction.clientId || !transaction.codeVerifier
           || !['default', 'custom'].includes(transaction.mode)
+          || (transaction.provider === 'onedrive' && !Object.hasOwn(oneDriveAuthorities, transaction.accountType))
           || transaction.redirectUri !== getRedirectUri(transaction.provider)) {
         setAuthStatus('authSessionInvalid', 'error');
         return;
@@ -1650,6 +1695,9 @@
       activeProvider = transaction.provider;
       providerSettings[activeProvider].mode = transaction.mode;
       providerSettings[activeProvider].customClientId = transaction.mode === 'custom' ? transaction.clientId : '';
+      if (activeProvider === 'onedrive') {
+        providerSettings.onedrive.accountType = transaction.accountType;
+      }
       document.querySelector('input[name="cloudProvider"][value="' + activeProvider + '"]').checked = true;
       document.querySelector('input[name="clientMode"][value="' + transaction.mode + '"]').checked = true;
       document.getElementById('customClientId').value = providerSettings[activeProvider].customClientId;
@@ -1671,6 +1719,7 @@
       }
       pendingNativeExchange = {
         clientId: transaction.clientId,
+        tokenEndpoint: getOneDriveEndpoint(transaction.accountType, 'token'),
         form: new URLSearchParams({
           client_id: transaction.clientId, code, code_verifier: transaction.codeVerifier,
           grant_type: 'authorization_code', redirect_uri: transaction.redirectUri,
@@ -1689,7 +1738,7 @@
         output.value = '';
         return;
       }
-      const endpoint = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+      const endpoint = pendingNativeExchange.tokenEndpoint;
       // URLSearchParams encodes quotes and newlines; the body is safe in a shell single-quoted literal.
       const form = pendingNativeExchange.form;
       if (document.getElementById('nativeShell').value === 'curl') {

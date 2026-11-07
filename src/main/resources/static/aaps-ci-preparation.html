@@ -797,13 +797,26 @@
 
     // New provider messages fall back to English when a translation is unavailable.
     Object.assign(i18nStrings.en, {
+      "oneDriveLocalNotice": "This standalone page uses your native Entra app. After signing in, run the displayed command in a local terminal, then paste Microsoft’s JSON response below. No backend service or client secret is used.",
+      "nativeExchangeTitle": "Complete OneDrive authorization",
+      "nativeExchangeInstructions": "Open a terminal before signing in. After returning here, immediately run the command below on your own computer. Authorization codes are short-lived; if the code expires, start authorization again.",
+      "nativeShellLabel": "Terminal",
+      "nativePowerShell": "Windows PowerShell",
+      "nativeCurl": "macOS / Linux / Termux (curl)",
+      "nativeCommandLabel": "1. Copy and run this command",
+      "nativeCopyCommand": "Copy command",
+      "nativeResponseLabel": "2. Paste the complete Microsoft JSON response",
+      "nativeComplete": "Generate ONEDRIVE_OAUTH2",
+      "nativeCancel": "Cancel",
+      "authManualRequired": "Sign-in returned successfully. Complete the local token exchange below.",
+      "authInvalidTokenResponse": "Paste a valid JSON response containing a non-empty refresh_token.",
+      "nativePrivacyNotice": "The command contains a one-time authorization code and PKCE verifier. Run it only in a trusted local terminal; do not share it or paste it into an online console.",
       "cloudAuthTitle": "Cloud storage authorization",
       "cloudProviderLabel": "Choose cloud storage",
       "googleDriveName": "Google Drive",
       "oneDriveAuthTitle": "Microsoft OneDrive authorization",
       "oneDriveClientPlaceholder": "Your Microsoft Entra application (client) ID",
       "oneDriveNotConfigured": "The default OneDrive client is not configured yet. Select Custom to enter your Client ID.",
-      "oneDriveRelayNotice": "OneDrive authorization exchanges tokens through this tool’s HTTPS service. The service does not store tokens.",
       "oneDriveCiNotice": "Use ONEDRIVE_OAUTH2 with a CI workflow that supports OneDrive.",
       "clientIdRequired": "Please enter a Client ID before starting authorization.",
       "invalidMicrosoftClientId": "Please enter a valid Microsoft Entra application (client) ID.",
@@ -818,13 +831,26 @@
       "secretNameLabel": "Secret name"
     });
     Object.assign(i18nStrings.zh_TW, {
+      "oneDriveLocalNotice": "此單一 HTML 使用你的原生 Entra App。登入後，請在本機終端機執行頁面提供的指令，再貼回 Microsoft 回傳的 JSON。不需後端服務或 Client Secret。",
+      "nativeExchangeTitle": "完成 OneDrive 授權",
+      "nativeExchangeInstructions": "請先開啟終端機再登入；回到此頁後，立即在自己的電腦執行下方指令。授權碼有效時間很短，若已過期，請重新開始授權。",
+      "nativeShellLabel": "終端機",
+      "nativePowerShell": "Windows PowerShell",
+      "nativeCurl": "macOS／Linux／Termux（curl）",
+      "nativeCommandLabel": "1. 複製並執行這段指令",
+      "nativeCopyCommand": "複製指令",
+      "nativeResponseLabel": "2. 貼上 Microsoft 回傳的完整 JSON",
+      "nativeComplete": "產生 ONEDRIVE_OAUTH2",
+      "nativeCancel": "取消",
+      "authManualRequired": "已完成登入回呼，請在下方完成本機權杖兌換。",
+      "authInvalidTokenResponse": "請貼上包含非空白 refresh_token 的有效 JSON 回應。",
+      "nativePrivacyNotice": "指令包含一次性授權碼與 PKCE verifier，請只在可信任的本機終端機執行，不要分享或貼到線上執行環境。",
       "cloudAuthTitle": "雲端硬碟授權",
       "cloudProviderLabel": "選擇雲端硬碟",
       "googleDriveName": "Google 雲端硬碟",
       "oneDriveAuthTitle": "Microsoft OneDrive 授權",
       "oneDriveClientPlaceholder": "你的 Microsoft Entra 應用程式（用戶端）ID",
       "oneDriveNotConfigured": "OneDrive 預設授權尚未設定，請選擇「自訂」輸入 Client ID。",
-      "oneDriveRelayNotice": "OneDrive 授權會透過本工具的 HTTPS 服務交換權杖，服務不會保存權杖。",
       "oneDriveCiNotice": "請將 ONEDRIVE_OAUTH2 用於支援 OneDrive 的 CI 工作流程。",
       "clientIdRequired": "請先輸入 Client ID，再開始授權。",
       "invalidMicrosoftClientId": "請輸入有效的 Microsoft Entra 應用程式（用戶端）ID。",
@@ -839,13 +865,26 @@
       "secretNameLabel": "Secret 名稱"
     });
     Object.assign(i18nStrings.zh_CN, {
+      "oneDriveLocalNotice": "此单一 HTML 使用你的原生 Entra App。登录后，请在本机终端执行页面提供的命令，再贴回 Microsoft 返回的 JSON。不需要后端服务或 Client Secret。",
+      "nativeExchangeTitle": "完成 OneDrive 授权",
+      "nativeExchangeInstructions": "请先打开终端再登录；返回此页后，立即在自己的电脑执行下方命令。授权码有效时间很短，如果已过期，请重新开始授权。",
+      "nativeShellLabel": "终端",
+      "nativePowerShell": "Windows PowerShell",
+      "nativeCurl": "macOS／Linux／Termux（curl）",
+      "nativeCommandLabel": "1. 复制并执行这段命令",
+      "nativeCopyCommand": "复制命令",
+      "nativeResponseLabel": "2. 贴上 Microsoft 返回的完整 JSON",
+      "nativeComplete": "生成 ONEDRIVE_OAUTH2",
+      "nativeCancel": "取消",
+      "authManualRequired": "已完成登录回调，请在下方完成本机令牌兑换。",
+      "authInvalidTokenResponse": "请贴上包含非空白 refresh_token 的有效 JSON 响应。",
+      "nativePrivacyNotice": "命令包含一次性授权码与 PKCE verifier，请只在可信任的本机终端执行，不要分享或贴到在线执行环境。",
       "cloudAuthTitle": "云端硬盘授权",
       "cloudProviderLabel": "选择云端硬盘",
       "googleDriveName": "Google 云端硬盘",
       "oneDriveAuthTitle": "Microsoft OneDrive 授权",
       "oneDriveClientPlaceholder": "你的 Microsoft Entra 应用程序（客户端）ID",
       "oneDriveNotConfigured": "OneDrive 默认授权尚未设置，请选择“自定义”输入 Client ID。",
-      "oneDriveRelayNotice": "OneDrive 授权会通过本工具的 HTTPS 服务交换令牌，服务不会保存令牌。",
       "oneDriveCiNotice": "请将 ONEDRIVE_OAUTH2 用于支持 OneDrive 的 CI 工作流程。",
       "clientIdRequired": "请先输入 Client ID，再开始授权。",
       "invalidMicrosoftClientId": "请输入有效的 Microsoft Entra 应用程序（客户端）ID。",
@@ -961,6 +1000,9 @@
     .auth-status { padding: 12px; border-radius: 6px; background: #eef5ff; overflow-wrap: anywhere; }
     .auth-status.error { color: #a61b1b; background: #fff0f0; }
     .auth-status.success { color: #176b35; background: #edf8f0; }
+    .native-exchange { margin: 16px 0; padding: 16px; border: 1px solid #dadce0; border-radius: 8px; min-width: 0; }
+    .native-exchange textarea { resize: vertical; overflow-wrap: anywhere; font-family: monospace; }
+    .native-exchange select { max-width: 100%; }
     .secret-tip { background: #f9f9f9; border-radius: 6px; padding: 12px 16px; overflow-wrap: anywhere; }
     .cloud-auth .styled-input { box-sizing: border-box; min-width: 0; }
     .cloud-auth .right-button { flex-shrink: 0; }
@@ -1238,11 +1280,30 @@
       </div>
       <p id="oneDriveNotConfigured" class="auth-hint" data-i18n="oneDriveNotConfigured" hidden></p>
       <div id="oneDriveNotice" class="auth-hint" hidden>
-        <p data-i18n="oneDriveRelayNotice"></p>
+        <p data-i18n="oneDriveLocalNotice"></p>
+        <p data-i18n="nativeExchangeInstructions"></p>
         <p data-i18n="oneDriveCiNotice"></p>
-        <a href="https://github.com/Angus-repo/aaps-ci-preparation/blob/main/docs/onedrive-setup.md" target="_blank" rel="noopener noreferrer" data-i18n="oneDriveSetupLink">OneDrive setup instructions</a>
+        <a href="https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-app-registration" target="_blank" rel="noopener noreferrer" data-i18n="oneDriveSetupLink">OneDrive setup instructions</a>
       </div>
       <p id="authStatus" class="auth-status" role="status" aria-live="polite" hidden></p>
+      <div id="oneDriveManualExchange" class="native-exchange" hidden>
+        <h3 data-i18n="nativeExchangeTitle">Complete OneDrive authorization</h3>
+        <label for="nativeShell" data-i18n="nativeShellLabel">Terminal</label>
+        <select id="nativeShell" class="styled-input" onchange="updateNativeTokenCommand()">
+          <option value="powershell" data-i18n="nativePowerShell">Windows PowerShell</option>
+          <option value="curl" data-i18n="nativeCurl">macOS / Linux / Termux (curl)</option>
+        </select>
+        <label for="nativeTokenCommand" data-i18n="nativeCommandLabel">1. Copy and run this command</label>
+        <textarea id="nativeTokenCommand" class="styled-input" rows="7" readonly spellcheck="false" autocomplete="off"></textarea>
+        <button type="button" onclick="copyToClipboard('nativeTokenCommand')" data-i18n="nativeCopyCommand">Copy command</button>
+        <p class="auth-hint" data-i18n="nativePrivacyNotice"></p>
+        <label for="nativeTokenResponse" data-i18n="nativeResponseLabel">2. Paste the complete Microsoft JSON response</label>
+        <textarea id="nativeTokenResponse" class="styled-input" rows="4" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+        <div class="auth-controls">
+          <button type="button" class="btn-green" onclick="completeNativeTokenExchange()" data-i18n="nativeComplete">Generate ONEDRIVE_OAUTH2</button>
+          <button type="button" onclick="cancelNativeTokenExchange()" data-i18n="nativeCancel">Cancel</button>
+        </div>
+      </div>
       <div class="flex-row">
         <label for="oauth2Base64" id="oauth2SecretLabel" class="label-no-margin">GDRIVE_OAUTH2:</label>
         <button class="right-button" onclick="copyToClipboardText(cloudProviders[activeProvider].secretName)"><i class="fa-regular fa-copy"></i> <span data-i18n="copyBtn">Copy</span></button>
@@ -1411,9 +1472,6 @@
     const defaultClientId = "705061051276-5ssikkg2ag39l7hj9t63saq549n3s2n5.apps.googleusercontent.com";
     // Public Entra native application identifier; no client secret is used.
     const defaultOneDriveClientId = "4e301264-ecaa-4496-ba6b-edd49d0deb7b";
-    // Native-client code redemption needs a server-side request without a browser Origin header.
-    // Deploy OneDriveOAuthController at this HTTPS endpoint before distributing this HTML.
-    const oneDriveTokenExchangeUrl = "https://aaps-ci-preparation.duckdns.org/api/onedrive/token";
     const cloudProviders = {
       google: {
         defaultClientId,
@@ -1441,6 +1499,7 @@
     let activeProvider = 'google';
     let currentLanguage = 'en';
     let authBusy = false;
+    let pendingNativeExchange = null;
 
     function authText(key) {
       return (i18nStrings[currentLanguage] || {})[key] || i18nStrings.en[key] || key;
@@ -1483,6 +1542,7 @@
     }
 
     function changeCloudProvider() {
+      clearNativeTokenExchange();
       saveProviderSettings();
       activeProvider = document.querySelector('input[name="cloudProvider"]:checked').value;
       const settings = providerSettings[activeProvider];
@@ -1493,6 +1553,7 @@
     }
 
     function toggleClientInput() {
+      clearNativeTokenExchange();
       saveProviderSettings();
       providerSettings[activeProvider].result = '';
       setAuthStatus('');
@@ -1515,6 +1576,7 @@
 
     async function startAuth() {
       if (authBusy) return;
+      clearNativeTokenExchange();
       saveProviderSettings();
       const provider = cloudProviders[activeProvider];
       const settings = providerSettings[activeProvider];
@@ -1600,23 +1662,104 @@
       await exchangeCodeForToken(params.get('code'), transaction);
     }
 
+    // Native Entra apps cannot redeem codes from browser JavaScript (CORS).
+    // Build a local command instead; no token, verifier or code is sent to an intermediary.
+    function prepareNativeTokenExchange(code, transaction) {
+      if (!code) {
+        setAuthStatus('authSessionInvalid', 'error');
+        return;
+      }
+      pendingNativeExchange = {
+        clientId: transaction.clientId,
+        form: new URLSearchParams({
+          client_id: transaction.clientId, code, code_verifier: transaction.codeVerifier,
+          grant_type: 'authorization_code', redirect_uri: transaction.redirectUri,
+          scope: cloudProviders.onedrive.scope
+        }).toString()
+      };
+      updateNativeTokenCommand();
+      document.getElementById('oneDriveManualExchange').hidden = false;
+      setAuthStatus('authManualRequired');
+      document.getElementById('oneDriveManualExchange').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateNativeTokenCommand() {
+      const output = document.getElementById('nativeTokenCommand');
+      if (!pendingNativeExchange) {
+        output.value = '';
+        return;
+      }
+      const endpoint = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+      // URLSearchParams encodes quotes and newlines; the body is safe in a shell single-quoted literal.
+      const form = pendingNativeExchange.form;
+      if (document.getElementById('nativeShell').value === 'curl') {
+        output.value = "curl --silent --show-error --request POST '" + endpoint + "' "
+          + "--header 'Content-Type: application/x-www-form-urlencoded' --data-raw '" + form + "'";
+      } else {
+        output.value = "$aapsTokenResponse = Invoke-RestMethod -Method Post -Uri '" + endpoint + "' "
+          + "-ContentType 'application/x-www-form-urlencoded' -Body '" + form + "'\n"
+          + "@{refresh_token = $aapsTokenResponse.refresh_token} | ConvertTo-Json -Compress";
+      }
+    }
+
+    function clearNativeTokenExchange() {
+      pendingNativeExchange = null;
+      document.getElementById('nativeTokenCommand').value = '';
+      document.getElementById('nativeTokenResponse').value = '';
+      document.getElementById('oneDriveManualExchange').hidden = true;
+    }
+
+    function cancelNativeTokenExchange() {
+      clearNativeTokenExchange();
+      setAuthStatus('');
+    }
+
+    function completeNativeTokenExchange() {
+      if (!pendingNativeExchange || activeProvider !== 'onedrive') {
+        setAuthStatus('authSessionInvalid', 'error');
+        return;
+      }
+      let data;
+      try {
+        data = JSON.parse(document.getElementById('nativeTokenResponse').value.trim());
+      } catch (error) {
+        setAuthStatus('authInvalidTokenResponse', 'error');
+        return;
+      }
+      if (data && typeof data.error === 'string') {
+        const detail = /^[a-z_]{1,80}$/.test(data.error) ? data.error : '';
+        setAuthStatus('authFailed', 'error', detail);
+        return;
+      }
+      if (!data || typeof data.refresh_token !== 'string' || !/^[\x21-\x7e]+$/.test(data.refresh_token)
+          || data.refresh_token.includes('|')) {
+        setAuthStatus('authInvalidTokenResponse', 'error');
+        return;
+      }
+      providerSettings.onedrive.result = btoa(pendingNativeExchange.clientId + '|' + data.refresh_token);
+      clearNativeTokenExchange();
+      updateCloudProviderUi();
+      setAuthStatus('authSuccess', 'success');
+    }
+
     async function exchangeCodeForToken(code, transaction) {
+      if (transaction.provider === 'onedrive') {
+        prepareNativeTokenExchange(code, transaction);
+        return;
+      }
       setAuthBusy(true);
       setAuthStatus('authWorking');
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 30000);
       try {
-        const isOneDrive = transaction.provider === 'onedrive';
-        const url = isOneDrive ? oneDriveTokenExchangeUrl : 'https://oauth2.googleapis.com/token';
-        const body = isOneDrive ? JSON.stringify({
-          clientId: transaction.clientId, code, codeVerifier: transaction.codeVerifier, redirectUri: transaction.redirectUri
-        }) : new URLSearchParams({
+        const url = 'https://oauth2.googleapis.com/token';
+        const body = new URLSearchParams({
           client_id: transaction.clientId, code, code_verifier: transaction.codeVerifier,
           grant_type: 'authorization_code', redirect_uri: transaction.redirectUri
         }).toString();
         const response = await fetch(url, {
           method: 'POST', credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer',
-          headers: { 'Content-Type': isOneDrive ? 'application/json' : 'application/x-www-form-urlencoded' },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body, signal: controller.signal
         });
         const data = await response.json();

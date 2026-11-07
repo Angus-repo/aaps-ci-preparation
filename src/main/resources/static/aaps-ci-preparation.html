@@ -797,6 +797,9 @@
 
     // New provider messages fall back to English when a translation is unavailable.
     Object.assign(i18nStrings.en, {
+      "oneDriveRedirectLabel": "Redirect URI to register in Entra",
+      "oneDriveCopyRedirect": "Copy Redirect URI",
+      "oneDriveRedirectInstructions": "In the Entra app registration for your selected Client ID, open Authentication → Redirect URI settings → Mobile and desktop applications. Add the complete URI shown above and save. If you move or rename this HTML file, check the URI again before signing in.",
       "oneDriveAccountTypeLabel": "Microsoft account type",
       "oneDrivePersonalAccount": "Personal Microsoft account",
       "oneDriveWorkAccount": "Work or school account",
@@ -835,6 +838,9 @@
       "secretNameLabel": "Secret name"
     });
     Object.assign(i18nStrings.zh_TW, {
+      "oneDriveRedirectLabel": "需登錄到 Entra 的 Redirect URI",
+      "oneDriveCopyRedirect": "複製 Redirect URI",
+      "oneDriveRedirectInstructions": "在所選 Client ID 對應的 Entra 應用程式中，開啟「驗證 → 重新導向 URI 設定 → Mobile and desktop applications（行動裝置與傳統型應用程式）」，新增上方完整網址並儲存。若移動或重新命名此 HTML，請在登入前重新確認網址。",
       "oneDriveAccountTypeLabel": "Microsoft 帳戶類型",
       "oneDrivePersonalAccount": "個人 Microsoft 帳戶",
       "oneDriveWorkAccount": "公司或學校帳戶",
@@ -873,6 +879,9 @@
       "secretNameLabel": "Secret 名稱"
     });
     Object.assign(i18nStrings.zh_CN, {
+      "oneDriveRedirectLabel": "需注册到 Entra 的 Redirect URI",
+      "oneDriveCopyRedirect": "复制 Redirect URI",
+      "oneDriveRedirectInstructions": "在所选 Client ID 对应的 Entra 应用中，打开“身份验证 → 重定向 URI 设置 → Mobile and desktop applications（移动和桌面应用程序）”，添加上方完整网址并保存。如果移动或重命名此 HTML，请在登录前重新确认网址。",
       "oneDriveAccountTypeLabel": "Microsoft 帐户类型",
       "oneDrivePersonalAccount": "个人 Microsoft 帐户",
       "oneDriveWorkAccount": "工作或学校帐户",
@@ -1225,7 +1234,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="version-badge">v1.2.1</div>
+    <div class="version-badge">v1.2.2</div>
     <select id="langSelector" onchange="switchLanguage(this.value)">
         <option value="en">English</option>
         <option value="ar">العربية</option>
@@ -1300,6 +1309,10 @@
       </div>
       <p id="oneDriveNotConfigured" class="auth-hint" data-i18n="oneDriveNotConfigured" hidden></p>
       <div id="oneDriveNotice" class="auth-hint" hidden>
+        <label for="oneDriveRedirectUri" data-i18n="oneDriveRedirectLabel">Redirect URI to register in Entra</label>
+        <input id="oneDriveRedirectUri" class="styled-input" type="text" readonly spellcheck="false" autocomplete="off" aria-describedby="oneDriveRedirectInstructions">
+        <button type="button" onclick="copyToClipboard('oneDriveRedirectUri')" data-i18n="oneDriveCopyRedirect">Copy Redirect URI</button>
+        <p id="oneDriveRedirectInstructions" data-i18n="oneDriveRedirectInstructions"></p>
         <p data-i18n="oneDriveLocalNotice"></p>
         <p data-i18n="nativeExchangeInstructions"></p>
         <p data-i18n="oneDriveCiNotice"></p>
@@ -1552,6 +1565,7 @@
       document.getElementById('oauth2Base64').value = providerSettings[activeProvider].result;
       document.getElementById('oneDriveNotConfigured').hidden = !isOneDrive || !!provider.defaultClientId || isCustom;
       document.getElementById('oneDriveNotice').hidden = !isOneDrive;
+      document.getElementById('oneDriveRedirectUri').value = getRedirectUri('onedrive');
       document.getElementById('oneDriveAccountOptions').hidden = !isOneDrive;
       document.getElementById('oneDriveAccountType').value = providerSettings.onedrive.accountType;
       document.getElementById('googleSecretExample').hidden = isOneDrive;
@@ -1607,7 +1621,9 @@
     }
 
     function getRedirectUri(provider) {
-      const url = new URL(window.location.pathname, window.location.origin);
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.hash = '';
       // Entra redirect registration must not depend on the selected UI language.
       if (provider === 'google') {
         const lang = new URLSearchParams(window.location.search).get('lang');
